@@ -7,6 +7,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 void				*paths(char *cmd, char **env);
 
