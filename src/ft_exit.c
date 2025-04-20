@@ -26,6 +26,7 @@ int	build_exit(char **args)
 			ft_putstr_fd("minishell: exit: ", 2);
 			ft_putstr_fd(args[1], 2);
 			ft_putendl_fd(": numeric argument required", 2);
+			write_history(".minishell_history");
 			exit(255);
 		}
 		if (args[2])
@@ -33,7 +34,9 @@ int	build_exit(char **args)
 			ft_putendl_fd("minishell: exit: too many arguments", 2);
 			return (1); // çıkma ama hata ver
 		}
+		write_history(".minishell_history");
 		exit(ft_atoi(args[1]) % 256);
 	}
+	write_history(".minishell_history");
 	exit(0);
 }

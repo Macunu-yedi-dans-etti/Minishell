@@ -28,6 +28,7 @@ static void	exec(char *cmd, char **env)
 {
 	char	**s_cmd;
 	char	*path;
+	pid_t	pid;
 
 	if (!cmd)
 	{
@@ -41,7 +42,7 @@ static void	exec(char *cmd, char **env)
 		ft_free(s_cmd);
 		return;
 	}
-	if (ft_strncmp(s_cmd[0], "exit", 4) == 0)
+	if (ft_strncmp(s_cmd[0], "exit", 5) == 0)
 	{
 		if (build_exit(s_cmd) != 0)
 		{
@@ -56,11 +57,25 @@ static void	exec(char *cmd, char **env)
 		ft_free(s_cmd);
 		return;
 	}
-	if (execve(path, s_cmd, env) == -1)
+	// fork + execuv
+	pid = fork();
+	if (pid == 0)
 	{
-		ft_err(s_cmd[0]);
-		ft_free(s_cmd);
+		if (execve(path, s_cmd, env) == -1)
+		{
+			ft_err(s_cmd[0]);
+			ft_free(s_cmd);
+			write_history(".minishell_history");
+			exit(127);
+		}
 	}
+	else if (pid > 0)
+	{
+		waitpid(pid, NULL, 0);
+	}
+	else
+		perror("minishell: fork failed");
+	ft_free(s_cmd);
 }
 
 int main(int ac, char **av, char **env)
@@ -68,12 +83,13 @@ int main(int ac, char **av, char **env)
 	char *input;
 	(void) ac;
 	(void) av;
+
+	read_history(".minishell_history"); // geçmişi okur
 	/*int fd;
 
 	fd = open(".minishell_history", O_RDONLY, 0777);
 
 	if (read_checker(fd))*/
-	read_history(".minishell_history"); //geçmişi okuyan fonksiyon
 
 	while (1)
 	{
