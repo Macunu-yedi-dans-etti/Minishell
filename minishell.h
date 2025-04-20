@@ -13,4 +13,5 @@ void				ft_free(char **arr);
 
 void				ft_err(char *str);
 
+int                 build_exit(char **args);
 # endif
