@@ -41,7 +41,7 @@ static void	exec(char *cmd, char **env)
 		ft_free(s_cmd);
 		return;
 	}
-	if (ft_strcmp(s_cmd[0], "exit") == 0)
+	if (ft_strncmp(s_cmd[0], "exit", 4) == 0)
 	{
 		if (build_exit(s_cmd) != 0)
 		{
