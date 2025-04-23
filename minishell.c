@@ -41,8 +41,8 @@ static void exec(char *cmd, char **env)
 		return;
 	}
 
-	// 🔁 exit builtin
-	if (ft_strcmp(s_cmd[0], "exit") == 0)
+	// 🔁 exit builtin (gpt)
+	if (ft_strncmp(s_cmd[0], "exit", 4) == 0)
 	{
 		if (build_exit(s_cmd) != 0)
 		{
@@ -51,8 +51,8 @@ static void exec(char *cmd, char **env)
 		}
 	}
 
-	// 🔁 env builtin
-	if (ft_strcmp(s_cmd[0], "env") == 0)
+	// 🔁 env builtin (gpt) ben konrolü ana fonksiyondan önce ayrı bir fonksiyonda yapıyordum yanlış dedi
+	if (ft_strncmp(s_cmd[0], "env", 3) == 0)
 	{
 		builtin_env(env);
 		ft_free(s_cmd);
