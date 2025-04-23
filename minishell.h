@@ -9,11 +9,15 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-void				*paths(char *cmd, char **env);
+void	*paths(char *cmd, char **env);
 
-void				ft_free(char **arr);
+void	ft_free(char **arr);
 
-void				ft_err(char *str);
+void	ft_err(char *str);
 
-int                 build_exit(char **args);
+int		build_exit(char **args);
+
+char	**copy_env(char **envp);
+int		builtin_env(char **env);
+
 # endif

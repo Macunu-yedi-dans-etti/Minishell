@@ -23,66 +23,78 @@ static int read_history_file(const char *filename)
 
 static void exec(char *cmd, char **env)
 {
-    char **s_cmd;
-    char *path;
-    pid_t pid;
+	char **s_cmd;
+	char *path;
+	pid_t pid;
 
-    if (!cmd)
-    {
-        ft_putendl_fd("minishell: empty command", 2);
-        return;
-    }
+	if (!cmd)
+	{
+		ft_putendl_fd("minishell: empty command", 2);
+		return;
+	}
 
-    s_cmd = ft_split(cmd, ' ');
-    if (!s_cmd || !s_cmd[0])
-    {
-        ft_putendl_fd("minishell: invalid command", 2);
-        ft_free(s_cmd);
-        return;
-    }
+	s_cmd = ft_split(cmd, ' ');
+	if (!s_cmd || !s_cmd[0])
+	{
+		ft_putendl_fd("minishell: invalid command", 2);
+		ft_free(s_cmd);
+		return;
+	}
 
-    if (ft_strncmp(s_cmd[0], "exit", 4) == 0)
-    {
-        if (build_exit(s_cmd) != 0)
-        {
-            ft_free(s_cmd);
-            return;
-        }
-    }
+	// 🔁 exit builtin
+	if (ft_strcmp(s_cmd[0], "exit") == 0)
+	{
+		if (build_exit(s_cmd) != 0)
+		{
+			ft_free(s_cmd);
+			return;
+		}
+	}
 
-    path = paths(s_cmd[0], env);
-    if (!path)
-    {
-        exit_error(s_cmd[0], s_cmd); // Hatalı komut için error mesajı
-        return;
-    }
+	// 🔁 env builtin
+	if (ft_strcmp(s_cmd[0], "env") == 0)
+	{
+		builtin_env(env);
+		ft_free(s_cmd);
+		return;
+	}
 
-    pid = fork();
-    if (pid == 0)
-    {
-        if (execve(path, s_cmd, env) == -1)
-        {
-            exit_error(s_cmd[0], s_cmd); // execve hatası
-            write_history(".minishell_history");
-            exit(127); // 127 komut bulunamadığında yaygın olarak kullanılır
-        }
-    }
-    else if (pid > 0)
-    {
-        waitpid(pid, NULL, 0);
-    }
-    else
-        perror("minishell: fork failed");
+	// 🔍 path çöz ve exec
+	path = paths(s_cmd[0], env);
+	if (!path)
+	{
+		exit_error(s_cmd[0], s_cmd);
+		return;
+	}
 
-    ft_free(s_cmd);
+	pid = fork();
+	if (pid == 0)
+	{
+		if (execve(path, s_cmd, env) == -1)
+		{
+			exit_error(s_cmd[0], s_cmd);
+			write_history(".minishell_history");
+			exit(127);
+		}
+	}
+	else if (pid > 0)
+	{
+		waitpid(pid, NULL, 0);
+	}
+	else
+		perror("minishell: fork failed");
+
+	ft_free(s_cmd);
 }
 
 int main(int ac, char **av, char **env)
 {
     char *input;
+    char **v1env;
     (void) ac;
     (void) av;
 
+    v1env = copy_env(env); // sistem zamanlayıcısını taklit etmek için env yi kopyalamalıyım (gpt tavsiyesi)
     /* Geçmiş dosyasını okuma */
     if (read_history_file(".minishell_history") == 0)
         read_history(".minishell_history"); // geçmişi okur
@@ -99,7 +111,7 @@ int main(int ac, char **av, char **env)
         if (*input)
             add_history(input); // Lineda veri girdisi olursa bunu geçmişe ekle
 
-        exec(input, env);  // Komutları çalıştır
+        exec(input, v1env);  // Komutları çalıştır
         free(input);
     }
 
