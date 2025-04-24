@@ -21,7 +21,7 @@ static int read_history_file(const char *filename)
     return 0;
 }
 
-static void exec(char *cmd, char **env)
+static void exec(char *cmd, char ***env)
 {
 	char **s_cmd;
 	char *path;
@@ -50,17 +50,31 @@ static void exec(char *cmd, char **env)
 			return;
 		}
 	}
+	
+	if (ft_strncmp(s_cmd[0], "export", 6) == 0)
+	{
+		command_export(env, s_cmd);
+		ft_free(s_cmd);
+		return;
+	}
+
+	if (ft_strncmp(s_cmd[0], "unset", 5) == 0)
+	{
+		command_unset(env, s_cmd);
+		ft_free(s_cmd);
+		return;
+	}
 
 	// 🔁 env builtin (gpt) ben konrolü ana fonksiyondan önce ayrı bir fonksiyonda yapıyordum yanlış dedi
 	if (ft_strncmp(s_cmd[0], "env", 3) == 0)
 	{
-		builtin_env(env);
+		builtin_env(*env);
 		ft_free(s_cmd);
 		return;
 	}
 
 	// 🔍 path çöz ve exec
-	path = paths(s_cmd[0], env);
+	path = paths(s_cmd[0], *env);
 	if (!path)
 	{
 		exit_error(s_cmd[0], s_cmd);
@@ -70,7 +84,7 @@ static void exec(char *cmd, char **env)
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve(path, s_cmd, env) == -1)
+		if (execve(path, s_cmd, *env) == -1)
 		{
 			exit_error(s_cmd[0], s_cmd);
 			write_history(".minishell_history");
@@ -111,7 +125,7 @@ int main(int ac, char **av, char **env)
         if (*input)
             add_history(input); // Lineda veri girdisi olursa bunu geçmişe ekle
 
-        exec(input, v1env);  // Komutları çalıştır
+        exec(input, &v1env);  // Komutları çalıştır
         free(input);
     }
 

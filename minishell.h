@@ -20,4 +20,9 @@ int		build_exit(char **args);
 char	**copy_env(char **envp);
 int		builtin_env(char **env);
 
+char    **add_to_env(char **env, char *new_var);
+int     command_export(char ***env, char **args);
+
+char	**remove_from_env(char **env, const char *key);
+int	command_unset(char ***env, char **args);
 # endif
