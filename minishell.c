@@ -21,18 +21,19 @@ static int read_history_file(const char *filename)
     return 0;
 }
 
-static void exec(char *cmd, char ***env)
+static void exec(char *cmd, t_token *tokens, char ***env)
 {
 	char **s_cmd;
 	char *path;
 	pid_t pid;
+	(void) tokens;
 
 	if (!cmd)
 	{
 		ft_putendl_fd("minishell: empty command", 2);
 		return;
 	}
-
+	
 	s_cmd = ft_split(cmd, ' ');
 	if (!s_cmd || !s_cmd[0])
 	{
@@ -103,10 +104,12 @@ static void exec(char *cmd, char ***env)
 
 int main(int ac, char **av, char **env)
 {
-    char *input;
-    char **v1env;
-    (void) ac;
-    (void) av;
+ 	char *input;
+   	char **v1env;
+   	(void) ac;
+  	(void) av;
+	t_token *tokens;
+	t_cmd *cmds;
 
     v1env = copy_env(env); // sistem zamanlayıcısını taklit etmek için env yi kopyalamalıyım (gpt tavsiyesi)
     /* Geçmiş dosyasını okuma */
@@ -125,10 +128,16 @@ int main(int ac, char **av, char **env)
         if (*input)
             add_history(input); // Lineda veri girdisi olursa bunu geçmişe ekle
 
-        exec(input, &v1env);  // Komutları çalıştır
+	tokens = lexer(input);
+	cmds = parser(tokens);
+	//print_tokens(tokens);
+        exec(input, tokens, &v1env);  // Komutları çalıştır
         free(input);
+//	ft_free_stacks(&tokens);
+	free_input_token(tokens);
+	free_cmds(cmds);
     }
-
+	
     write_history(".minishell_history"); // Geçmişi dosyaya yaz
     return 0;
 }
