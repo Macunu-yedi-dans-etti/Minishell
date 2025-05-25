@@ -1,0 +1,11 @@
+#ifndef COLOR_H
+
+# define COLOR_H
+
+
+# define GREEN "\001\033[1;92m\002"
+# define RED "\001\033[1;91m\002"
+# define BLUE "\001\033[1;94m\002"
+# define WHITE "\001\033[0;97m\002"
+
+#endif

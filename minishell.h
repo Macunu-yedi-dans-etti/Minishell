@@ -2,6 +2,7 @@
 # define MINI_SHELL_H
 
 # include "includes/libft/libft.h"
+# include "includes/color.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <readline/readline.h>
