@@ -2,7 +2,9 @@
 
 static void add_token(t_token **head, char *value, t_token_type type)
 {
-	t_token *new = malloc(sizeof(t_token));
+	t_token *new;
+	
+	new = malloc(sizeof(t_token));
 	new->value = value;
 	new->type = type;
 	new->next = NULL;
@@ -11,7 +13,8 @@ static void add_token(t_token **head, char *value, t_token_type type)
 		*head = new;
 	else
 	{
-		t_token *temp = *head;
+		t_token *temp;
+		temp = *head;
 		while (temp->next)
 			temp = temp->next;
 		temp->next = new;

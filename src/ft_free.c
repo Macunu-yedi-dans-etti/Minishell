@@ -31,26 +31,26 @@ void	ft_free_stacks(t_token **a_stack)
 
 void free_input_token(t_token *cmds)
 {
-    t_token *tmp;
+	t_token *tmp;
 
-    while (cmds)
-    {
-        tmp = cmds;
-        cmds = cmds->next;
-        free(tmp);
-    }
+	while (cmds)
+	{
+		tmp = cmds;
+		cmds = cmds->next;
+		free(tmp);
+	}
 }
 
 void free_cmds(t_cmd *cmds)
 {
-    t_cmd *tmp;
+	t_cmd *tmp;
 
-    while (cmds)
-    {
-        tmp = cmds;
-        cmds = cmds->next;
-        // burada komutun argümanları veya path gibi alanları da serbest bırakabilirsin
-        free(tmp);
-    }
+	while (cmds)
+	{
+		tmp = cmds;
+		cmds = cmds->next;
+		// burada komutun argümanları veya path gibi alanları da serbest bırakabilirsin
+		free(tmp);
+	}
 }
 

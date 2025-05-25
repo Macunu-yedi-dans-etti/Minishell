@@ -21,13 +21,13 @@ typedef enum e_token_type
 
 typedef struct s_cmd
 {
-    char    *cmd;         // Komutun kendisi (örneğin "ls")
-    char    **args;       // Argümanlar (örneğin {"ls", "-la", NULL})
-    char    *redir_in;    // < dosya
-    char    *redir_out;   // > dosya
-    char    *redir_append; // >> dosya
-    char    *heredoc;     // << limiter
-    struct s_cmd *next;   // pipe için bir sonraki komut
+	char    *cmd;         // Komutun kendisi (örneğin "ls")
+	char    **args;       // Argümanlar (örneğin {"ls", "-la", NULL})
+	char    *redir_in;    // < dosya
+	char    *redir_out;   // > dosya
+	char    *redir_append; // >> dosya
+	char    *heredoc;     // << limiter
+	struct s_cmd *next;   // pipe için bir sonraki komut
 } t_cmd;
 
 typedef struct s_token
