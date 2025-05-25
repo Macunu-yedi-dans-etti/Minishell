@@ -24,7 +24,7 @@ t_token *lexer(const char *input)
 	int i;
 	int start;
 
-	*tokens = NULL;
+	tokens = NULL;
 	i = 0;
 
 	while (input[i])

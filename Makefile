@@ -1,6 +1,6 @@
 NAME = minishell
 
-SRCS = minishell.c src/env_location.c  src/ft_err.c src/ft_free.c src/ft_exit.c src/ft_env.c fonk/export.c fonk/unset.c lexer.c parser.c
+SRCS = minishell.c src/env_location.c  src/ft_err.c src/ft_free.c src/ft_exit.c src/ft_env.c fonk/export.c fonk/unset.c lexer.c parser.c src/executor.c
 OBJS = $(SRCS:.c=.o)
 
 LIBFT_DIR = includes/libft

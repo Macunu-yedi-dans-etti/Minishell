@@ -19,22 +19,23 @@ typedef enum e_token_type
 	T_REDIR_HEREDOC  // <<
 }	t_token_type;
 
+typedef struct s_cmd
+{
+    char    *cmd;         // Komutun kendisi (örneğin "ls")
+    char    **args;       // Argümanlar (örneğin {"ls", "-la", NULL})
+    char    *redir_in;    // < dosya
+    char    *redir_out;   // > dosya
+    char    *redir_append; // >> dosya
+    char    *heredoc;     // << limiter
+    struct s_cmd *next;   // pipe için bir sonraki komut
+} t_cmd;
+
 typedef struct s_token
 {
 	char			*value;         // token metni
 	t_token_type	type;           // token tipi
 	struct s_token	*next;          // bağlı liste yapısı
 }	t_token;
-
-typedef struct s_cmd
-{
-	char			**args;        // ["cat", NULL] veya ["grep", "hello", NULL]
-	char			*infile;      	// NULL veya "input.txt"
-	char			*outfile;     	      // NULL veya "output.txt"
-	int				append;       // 0 normal >, 1 >>
-	struct s_cmd	*next;  		      // pipe varsa sonraki komut
-}	t_cmd;
-
 
 void	*paths(char *cmd, char **env);
 
@@ -61,5 +62,7 @@ void	free_tokens(t_token *head);
 t_cmd	*parser(t_token *tokens);
 void	free_cmds(t_cmd *cmds);
 void free_input_token(t_token *cmds);
+
+void exec_cmds(t_cmd *cmds, char ***env);
 
 # endif

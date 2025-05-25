@@ -1,17 +1,10 @@
 #include "minishell.h"
 
-/* Hata mesajlarını daha anlamlı hale getirmek için */
-static void exit_error(char *cmd, char **s_cmd)
-{
-    ft_putstr_fd("minishell: command not found: ", 2);
-    ft_putendl_fd(cmd, 2);
-    ft_free(s_cmd);
-}
-
-/* Dosya okuma kontrolünü daha güvenli yapmak için open kullanabiliriz */
 static int read_history_file(const char *filename)
 {
-    int fd = open(filename, O_RDONLY);
+    int fd;
+    
+    fd = open(filename, O_RDONLY);
     if (fd == -1)
     {
         ft_putstr_fd("minishell: history file could not be opened\n", 2);
@@ -21,100 +14,19 @@ static int read_history_file(const char *filename)
     return 0;
 }
 
-static void exec(char *cmd, t_token *tokens, char ***env)
-{
-	char **s_cmd;
-	char *path;
-	pid_t pid;
-	(void) tokens;
-
-	if (!cmd)
-	{
-		ft_putendl_fd("minishell: empty command", 2);
-		return;
-	}
-	
-	s_cmd = ft_split(cmd, ' ');
-	if (!s_cmd || !s_cmd[0])
-	{
-		ft_putendl_fd("minishell: invalid command", 2);
-		ft_free(s_cmd);
-		return;
-	}
-
-	// 🔁 exit builtin (gpt)
-	if (ft_strncmp(s_cmd[0], "exit", 4) == 0)
-	{
-		if (build_exit(s_cmd) != 0)
-		{
-			ft_free(s_cmd);
-			return;
-		}
-	}
-	
-	if (ft_strncmp(s_cmd[0], "export", 6) == 0)
-	{
-		command_export(env, s_cmd);
-		ft_free(s_cmd);
-		return;
-	}
-
-	if (ft_strncmp(s_cmd[0], "unset", 5) == 0)
-	{
-		command_unset(env, s_cmd);
-		ft_free(s_cmd);
-		return;
-	}
-
-	// 🔁 env builtin (gpt) ben konrolü ana fonksiyondan önce ayrı bir fonksiyonda yapıyordum yanlış dedi
-	if (ft_strncmp(s_cmd[0], "env", 3) == 0)
-	{
-		builtin_env(*env);
-		ft_free(s_cmd);
-		return;
-	}
-
-	// 🔍 path çöz ve exec
-	path = paths(s_cmd[0], *env);
-	if (!path)
-	{
-		exit_error(s_cmd[0], s_cmd);
-		return;
-	}
-
-	pid = fork();
-	if (pid == 0)
-	{
-		if (execve(path, s_cmd, *env) == -1)
-		{
-			exit_error(s_cmd[0], s_cmd);
-			write_history(".minishell_history");
-			exit(127);
-		}
-	}
-	else if (pid > 0)
-	{
-		waitpid(pid, NULL, 0);
-	}
-	else
-		perror("minishell: fork failed");
-
-	ft_free(s_cmd);
-}
-
 int main(int ac, char **av, char **env)
 {
- 	char *input;
-   	char **v1env;
-   	(void) ac;
-  	(void) av;
-	t_token *tokens;
-	t_cmd *cmds;
+    char *input;
+    char **v1env;
+    (void)ac;
+    (void)av;
+    t_token *tokens;
+    t_cmd *cmds;
 
-    v1env = copy_env(env); // sistem zamanlayıcısını taklit etmek için env yi kopyalamalıyım (gpt tavsiyesi)
-    /* Geçmiş dosyasını okuma */
+    v1env = copy_env(env);
+
     if (read_history_file(".minishell_history") == 0)
-        read_history(".minishell_history"); // geçmişi okur
+        read_history(".minishell_history");
 
     while (1)
     {
@@ -126,19 +38,18 @@ int main(int ac, char **av, char **env)
         }
 
         if (*input)
-            add_history(input); // Lineda veri girdisi olursa bunu geçmişe ekle
+            add_history(input);
 
-	tokens = lexer(input);
-	cmds = parser(tokens);
-	//print_tokens(tokens);
-        exec(input, tokens, &v1env);  // Komutları çalıştır
+        tokens = lexer(input);
+        cmds = parser(tokens);
+        exec_cmds(cmds, &v1env);
+
         free(input);
-//	ft_free_stacks(&tokens);
-	free_input_token(tokens);
-	free_cmds(cmds);
+        free_input_token(tokens);
+        free_cmds(cmds);
     }
-	
-    write_history(".minishell_history"); // Geçmişi dosyaya yaz
+
+    write_history(".minishell_history");
     return 0;
 }
 
