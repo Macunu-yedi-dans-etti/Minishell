@@ -3,67 +3,112 @@
 
 # include "includes/libft/libft.h"
 # include "includes/color.h"
+# include "Get_Next_Line/get_next_line.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+# include <signal.h>
+# include <dirent.h>
+# include <sys/ioctl.h>
 
-typedef enum e_token_type
+typedef struct s_list
 {
-	T_WORD,
-	T_PIPE,
-	T_REDIR_OUT,     // >
-	T_REDIR_IN,      // <
-	T_REDIR_APPEND,  // >>
-	T_REDIR_HEREDOC  // <<
-}	t_token_type;
+	void			*content;
+	struct	s_list	*next;
+}	t_list;
 
-typedef struct s_cmd
+typedef struct s_request
 {
-	char    *cmd;         // Komutun kendisi (örneğin "ls")
-	char    **args;       // Argümanlar (örneğin {"ls", "-la", NULL})
-	char    *redir_in;    // < dosya
-	char    *redir_out;   // > dosya
-	char    *redir_append; // >> dosya
-	char    *heredoc;     // << limiter
-	struct s_cmd *next;   // pipe için bir sonraki komut
-} t_cmd;
+	t_list	*cmds;
+	char	**envp;
+	pid_t	pid;
+	int		exit_stat;
+}	t_req;
 
-typedef struct s_token
+typedef struct s_shell
 {
-	char			*value;         // token metni
-	t_token_type	type;           // token tipi
-	struct s_token	*next;          // bağlı liste yapısı
-}	t_token;
+	char	**full_cmd;// {"ls", "-l", NULL}
+	char	*full_path;// /bin/ls
+	int		infile;
+	int		outfile;
+	char    *infile_path;
+    char    *outfile_path;
+    int     append_out;
+}	t_shell;
 
-void	*paths(char *cmd, char **env);
+typedef enum e_redirect_type
+{
+    R_IN,       // <
+    R_OUT,      // >
+    R_APPEND    // >>
+}   t_redirect_type;
 
-void	ft_free(char **arr);
+//exit
+extern int exit_status;
 
-void	ft_err(char *str);
-void    ft_free_stacks(t_token **a_stack);
+//enviroment
+char	**mini_setenv(char *var, char *value, char **envp, int n);
+char	*mini_getenv(char *var, char **envp, int n);
+char **mini_unsetenv(char ***envp, const char *var);
 
-int		build_exit(char **args);
+//mini_setenv_line
+char **mini_setenv_line(char ***envp, const char *line);
 
-char	**copy_env(char **envp);
-int		builtin_env(char **env);
+//utility
+int	ft_find_chr(const char *s, char c);
+char	**ft_double_extension(char **matrix, char *new_str);
+char	**ft_double_copy(char **envp);
+t_list	*ft_lstnew(void *content);
+void	ft_lstadd_back(t_list **lst, t_list *new_node);
 
-char    **add_to_env(char **env, char *new_var);
-int     command_export(char ***env, char **args);
+//resolve_path
+char *resolve_path(char *cmd, char **envp);
 
-char	**remove_from_env(char **env, const char *key);
-int	command_unset(char ***env, char **args);
+//ft_free
+void	ft_free(char **tab);
+void	ft_double_free(char ***freee);
+void free_cmds(t_list *cmds);
+void free_all(t_req *req);
 
-t_token	*lexer(const char *input);
-//void	add_token(t_token **head, char *value, t_token_type type);
-void	free_tokens(t_token *head);
-//void	print_tokens(t_token *head);  // debug
-t_cmd	*parser(t_token *tokens);
-void	free_cmds(t_cmd *cmds);
-void free_input_token(t_token *cmds);
+//signal
+void    handle_sigint(int sig);
 
-void exec_cmds(t_cmd *cmds, char ***env);
+//input_message
+char *mini_getinput(t_req input);
+
+
+///parse ve tokenize 
+
+//tokenizer
+char	**tokenize_input(const char *input);;
+
+//parser
+t_list	*parse_tokens(char **tokens, t_req *req);
+
+//executor
+void execute_cmds(t_list *cmds, t_req *req);
+
+//builtin
+int run_builtin(t_shell *cmd, t_req *req);
+int is_builtin(char *cmd);
+int builtin_echo(t_shell *cmd);//echo
+int builtin_pwd(void);//pwd
+int builtin_env(char **envp);//env
+int builtin_cd(char **args, char **envp);
+int builtin_export(char **args, t_req *req);
+int builtin_unset(char **args, t_req *req);
+int builtin_exit(char **args);
+
+
+//redirect
+int open_redirect_file(char *filename, t_redirect_type type);
+int apply_redirects(t_shell *cmd);
+
+//heredoc
+int handle_heredoc(const char *delimiter);
+
 
 # endif

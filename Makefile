@@ -1,6 +1,30 @@
 NAME = minishell
 
-SRCS = minishell.c src/env_location.c  src/ft_err.c src/ft_free.c src/ft_exit.c src/ft_env.c fonk/export.c fonk/unset.c lexer.c parser.c src/executor.c
+SRCS = minishell.c \
+       src/signal.c \
+	   src/input_message.c\
+	   src/parser/tokenizer.c\
+	   src/parser/parser.c\
+	   src/executor/executor.c\
+	   src/builtin/builtin_check.c\
+	   src/builtin/builtin_cd.c\
+	   src/builtin/builtin_echo.c\
+	   src/builtin/builtin_env.c\
+	   src/builtin/builtin_exit.c\
+	   src/builtin/builtin_export.c\
+	   src/builtin/builtin_unset.c\
+	   src/builtin/builtin_pwd.c\
+	   src/builtin/run_builtin.c\
+	   src/redirect/redirect_handler.c\
+	   src/redirect/heredoc_handler.c\
+       general_utility/ft_free.c \
+       general_utility/utility.c \
+	   general_utility/resolve_path.c\
+       enviroment_utility/enviroment.c\
+	   enviroment_utility/mini_setenv_line.c\
+       Get_Next_Line/get_next_line.c \
+       Get_Next_Line/get_next_line_utils.c
+
 OBJS = $(SRCS:.c=.o)
 
 LIBFT_DIR = includes/libft
