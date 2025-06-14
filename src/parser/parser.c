@@ -1,8 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 14:37:35 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
-static t_shell *init_cmd(void)
+static t_shell	*init_cmd(void)
 {
-	t_shell *cmd = malloc(sizeof(t_shell));
+	t_shell	*cmd;
+
+	cmd = malloc(sizeof(t_shell));
 	if (!cmd)
 		return (NULL);
 	cmd->full_cmd = NULL;
@@ -15,15 +29,19 @@ static t_shell *init_cmd(void)
 	return (cmd);
 }
 
-static int is_redirect(char *token)
+static int	is_redirect(char *token)
 {
-	return (!ft_strncmp(token, "<", 2) || !ft_strncmp(token, ">", 2) ||
-		!ft_strncmp(token, ">>", 3) || !ft_strncmp(token, "<<", 3));
+	return (!ft_strncmp(token, "<", 2)
+		|| !ft_strncmp(token, ">", 2)
+		|| !ft_strncmp(token, ">>", 3)
+		|| !ft_strncmp(token, "<<", 3));
 }
 
-static int set_redirection(t_shell *cmd, char **tokens, int *i)
+static int	set_redirection(t_shell *cmd, char **tokens, int *i)
 {
-	char *redir = tokens[*i];
+	char	*redir;
+
+	redir = tokens[*i];
 	(*i)++;
 	if (!tokens[*i])
 		return (1);
@@ -49,14 +67,14 @@ static int set_redirection(t_shell *cmd, char **tokens, int *i)
 	return (0);
 }
 
-t_list *parse_tokens(char **tokens, t_req *req)
+t_list	*parse_tokens(char **tokens, t_req *req)
 {
-    int i;
-	t_list *cmds;
-	t_shell *current;
+	int		i;
+	t_list	*cmds;
+	t_shell	*current;
 
-    i = 0;
-    cmds = NULL;
+	i = 0;
+	cmds = NULL;
 	(void)req;
 	while (tokens[i])
 	{
@@ -69,12 +87,12 @@ t_list *parse_tokens(char **tokens, t_req *req)
 			{
 				if (set_redirection(current, tokens, &i))
 				{
-					free_cmds(cmds);
-					return (NULL);
+					return (free_cmds(cmds), NULL);
 				}
 			}
 			else
-				current->full_cmd = ft_double_extension(current->full_cmd, tokens[i++]);
+				current->full_cmd = ft_double_extension(current->full_cmd,
+					tokens[i++]);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 		if (tokens[i])

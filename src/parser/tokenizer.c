@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 14:45:01 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 static int	is_separator(char c)
@@ -14,6 +26,7 @@ static char	*get_token(const char *input, int *i)
 {
 	int		start;
 	char	quote;
+	char	op;
 
 	while (is_separator(input[*i]))
 		(*i)++;
@@ -28,9 +41,10 @@ static char	*get_token(const char *input, int *i)
 			(*i)++;
 		return (ft_substr(input, start + 1, *i - start - 2));
 	}
-	else if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i])
+	else if ((input[*i] == '>' || input[*i] == '<')
+		&& input[*i + 1] == input[*i])
 	{
-		char op = input[*i];
+		op = input[*i];
 		(*i) += 2;
 		if (op == '>')
 			return (ft_strdup(">>"));
@@ -46,7 +60,6 @@ static char	*get_token(const char *input, int *i)
 		return (ft_substr(input, start, *i - start));
 	}
 }
-
 
 char	**tokenize_input(const char *input)
 {

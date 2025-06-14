@@ -1,11 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   enviroment.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 12:40:29 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-static char *ft_strjoin_free(char *s1, const char *s2)
+static char	*ft_strjoin_free(char *s1, const char *s2)
 {
-	char *res;
+	char	*res;
+
 	res = ft_strjoin(s1, s2);
 	free(s1);
-	return res;
+	return (res);
 }
 
 char	**mini_setenv(char *var, char *value, char **envp, int n)
@@ -16,12 +29,8 @@ char	**mini_setenv(char *var, char *value, char **envp, int n)
 
 	if (n < 0)
 		n = ft_strlen(var);
-
-	// VAR=VALUE
 	new_entry = ft_strjoin(var, "=");
-	new_entry = ft_strjoin_free(new_entry, value); //ilk argümanı free'ler
-
-	//  envp içinde var mı? Varsa güncelle
+	new_entry = ft_strjoin_free(new_entry, value);
 	i = 0;
 	while (envp && envp[i])
 	{
@@ -36,18 +45,17 @@ char	**mini_setenv(char *var, char *value, char **envp, int n)
 		}
 		i++;
 	}
-
-	// 3. Yoksa envp'yi genişleterek ekle
 	envp = ft_double_extension(envp, new_entry);
 	free(new_entry);
 	return (envp);
 }
 
-char **mini_unsetenv(char ***envp, const char *var)
+char	**mini_unsetenv(char ***envp, const char *var)
 {
-	int i, j;
-	int len;
-	char **new_env;
+	int		i;
+	int		j;
+	int		len;
+	char	**new_env;
 
 	i = 0;
 	j = 0;
@@ -59,8 +67,8 @@ char **mini_unsetenv(char ***envp, const char *var)
 	new_env = malloc(sizeof(char *) * (i + 1));
 	if (!new_env)
 		return (NULL);
-	i = 0;
-	while ((*envp)[i])
+	i = -1;
+	while ((*envp)[i++])
 	{
 		if (!ft_strncmp((*envp)[i], var, len) && (*envp)[i][len] == '=')
 			free((*envp)[i]);
@@ -76,12 +84,11 @@ char **mini_unsetenv(char ***envp, const char *var)
 
 char	*mini_getenv(char *var, char **envp, int n)
 {
-	int		i;
-	int		len;
+	int	i;
+	int	len;
 
 	if (n < 0)
 		n = ft_strlen(var);
-
 	i = 0;
 	while (envp && envp[i])
 	{

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_cd.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 14:19:50 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 14:20:01 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
-int builtin_cd(char **args, char **envp)
+int	builtin_cd(char **args, char **envp)
 {
-	char *path;
+	char	*path;
 
 	path = args[1];
 	if (!path)

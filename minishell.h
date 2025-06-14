@@ -47,7 +47,7 @@ typedef enum e_redirect_type
 }   t_redirect_type;
 
 //exit
-extern int exit_status;
+extern int g_exit_status;
 
 //enviroment
 char	**mini_setenv(char *var, char *value, char **envp, int n);

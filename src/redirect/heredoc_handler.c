@@ -1,13 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_handler.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 14:45:33 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
-int handle_heredoc(const char *delimiter)
+int	handle_heredoc(const char *delimiter)
 {
 	char	*line;
 	int		pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
 		return (-1);
-
 	while (1)
 	{
 		line = readline("> ");

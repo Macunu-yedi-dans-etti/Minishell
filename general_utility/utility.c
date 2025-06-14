@@ -1,15 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utility.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/12 12:45:39 by musoysal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	ft_find_chr(const char *s, char c)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s[i] && s[i] != c)
 		i++;
-	return i;
+	return (i);
 }
-
 
 char	**ft_double_extension(char **matrix, char *new_str)
 {
@@ -25,13 +36,11 @@ char	**ft_double_extension(char **matrix, char *new_str)
 	i = 0;
 	while (matrix && matrix[i])
 	{
-		new_matrix[i] = ft_strdup(matrix[i]); 
+		new_matrix[i] = ft_strdup(matrix[i]);
 		i++;
 	}
-
 	new_matrix[i] = ft_strdup(new_str);
 	new_matrix[i + 1] = NULL;
-
 	if (matrix)
 	{
 		i = 0;
@@ -39,7 +48,6 @@ char	**ft_double_extension(char **matrix, char *new_str)
 			free(matrix[i++]);
 		free(matrix);
 	}
-
 	return (new_matrix);
 }
 
