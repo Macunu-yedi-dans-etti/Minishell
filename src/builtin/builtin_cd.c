@@ -5,210 +5,137 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 14:19:50 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:20:01 by musoysal         ###   ########.fr       */
+/*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
+/*   Updated: 2025/06/24 18:37:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-#include <errno.h>
-int getOrSetExitCode(int value)
-{
-	static int code = 0;
-
-	if (value == -1)
-		return (code);
-	code = value;
-	return (code);
-}
-/**
- * Environment değişkenlerinden key'e karşılık gelen değeri döndürür.
- */
-char *getEnvValue(char **env, char *key)
-{
-	int i;
-	int key_len;
-
-	i = 0;
-	key_len = ft_strlen(key);
-	while (env[i])
-	{
-		if (ft_strncmp((const char *)env[i], (const char *)key, key_len) == 0 && env[i][key_len] == '=')
-			return (ft_strchr(env[i], '=') + 1);
-		i++;
-	}
-	return (NULL);
-}
-
-/**
- * cd hatalarında stderr'e mesaj yazdırır ve exit_code(1) çağırır.
- */
-static int printCdError(char *path, char *message)
+static void	print_cd_error(char *arg, char *msg)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
-	if (path && *path)
+	if (arg)
 	{
-		ft_putstr_fd(path, 2);
+		ft_putstr_fd(arg, 2);
 		ft_putstr_fd(": ", 2);
 	}
-	ft_putendl_fd(message, 2);
-	getOrSetExitCode(1);
-	return (1);
+	ft_putendl_fd(msg, 2);
 }
 
-/**
- * cd komutu için hedef yolu hesaplar (~, -, ~/ gibi).
+/*
+ * Tilde expand: Eğer argüman ~ veya ~/ ile başlıyorsa HOME ile değiştir.
+ * Geri dönüş malloc'lu string (free edilmesi gerekir).
+ * Aksi halde NULL döner.
  */
-char *resolveCdPath(char **env, char **args)
+static char	*expand_tilde(char *arg, t_req *req)
 {
-	char *path;
-	char *home;
-	char *joined;
+	char	*home;
+	char	*result;
 
-	path = args[1];
-	if (!path)
-		return (ft_strdup(getEnvValue(env, "HOME")));
-	if (ft_strncmp(path, "-", ft_strlen(path)) == 0)
-	{
-		path = getEnvValue(env, "OLDPWD");
-		if (!path)
-			return (printCdError(NULL, "OLDPWD not set"), NULL);
-		ft_putendl_fd(path, 1);
-		return (ft_strdup(path));
-	}
-	if (ft_strncmp(path, "~", ft_strlen(path)) == 0)
-	{
-		home = getEnvValue(env, "HOME");
-		if (!home)
-			return (printCdError(NULL, "HOME not set"), NULL);
-		return (ft_strdup(home));
-	}
-	if (ft_strncmp(path, "~/", 2) == 0)
-	{
-		home = getEnvValue(env, "HOME");
-		if (!home)
-			return (printCdError(NULL, "HOME not set"), NULL);
-		joined = ft_strjoin(home, path + 1);
-		if (!joined)
-			return (printCdError(NULL, "memory allocation error"), NULL);
-		return (joined);
-	}
-	return (ft_strdup(path));
+	if (arg[0] != '~')
+		return (NULL);
+	home = mini_getenv("HOME", req->envp, 4);
+	if (!home)
+		return (NULL);
+	if (arg[1] == '\0') // sadece ~
+		result = ft_strdup(home);
+	else if (arg[1] == '/') // ~/ veya ~/foo
+		result = ft_strjoin(home, arg + 1);
+	else // ~kullanıcı gibi durumları destekleme (bash'te var ama zorunlu değil)
+		result = NULL;
+	free(home);
+	return (result);
 }
 
-/**
- * Ortam değişkenlerinde var olanı günceller, yoksa ekler.
+/*
+ * Hangi path'in kullanılacağını ve free edilip edilmeyeceğini belirler.
  */
-static int updateEnvVariable(char **env, char *var)
+static char	*get_cd_target(t_shell *cmd, t_req *req, int *need_free)
 {
-	int i;
-	int len;
-	char *key;
-	char **new_env;
+	char	*target;
+	char	*expanded;
 
-	key = ft_substr(var, 0, ft_strchr(var, '=') - var);
-	if (!key)
-		return (1);
-	len = ft_strlen(key);
-	i = 0;
-	while ((env)[i])
+	*need_free = 0;
+	if (!cmd->full_cmd[1])
 	{
-		if (ft_strncmp((env)[i], key, len) == 0 && (env)[i][len] == '=')
+		target = mini_getenv("HOME", req->envp, 4);
+		*need_free = 1;
+	}
+	else if (!ft_strncmp(cmd->full_cmd[1], "-", 2))
+	{
+		target = mini_getenv("OLDPWD", req->envp, 6);
+		if (target)
+			ft_putendl_fd(target, STDOUT_FILENO);
+		*need_free = 1;
+	}
+	else if (cmd->full_cmd[1][0] == '~')
+	{
+		expanded = expand_tilde(cmd->full_cmd[1], req);
+		if (expanded)
 		{
-			free((env)[i]);
-			(env)[i] = ft_strdup(var);
-			free(key);
-			return (0);
+			target = expanded;
+			*need_free = 1;
 		}
-		i++;
+		else
+		{
+			target = cmd->full_cmd[1];
+			*need_free = 0;
+		}
 	}
-	new_env = malloc(sizeof(char *) * (i + 2));
-	if (!new_env)
-		return (free(key), 1);
-	i = -1;
-	while ((env)[++i])
-		new_env[i] = (env)[i];
-	new_env[i] = ft_strdup(var);
-	new_env[i + 1] = NULL;
-	free(env);
-	env = new_env;
-	free(key);
-	return (0);
-}
-
-/**
- * PWD ve OLDPWD ortam değişkenlerini günceller.
- */
-int updateCdEnvVariables(char **envp, char *old_pwd)
-{
-	char *pwd;
-	char *pwd_var;
-	char *oldpwd_var;
-
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-		return (free(old_pwd), printCdError(NULL, "error retrieving current directory"));
-	pwd_var = ft_strjoin("PWD=", pwd);
-	oldpwd_var = ft_strjoin("OLDPWD=", old_pwd);
-	free(pwd);
-	free(old_pwd);
-	if (!pwd_var || !oldpwd_var)
-		return (free(pwd_var), free(oldpwd_var), printCdError(NULL, "memory allocation error"));
-	if (updateEnvVariable(envp, pwd_var) != 0 || updateEnvVariable(envp, oldpwd_var) != 0)
+	else
 	{
-		free(pwd_var);
-		free(oldpwd_var);
-		return (printCdError(NULL, "error updating environment variables"));
+		target = cmd->full_cmd[1];
+		*need_free = 0;
 	}
-	free(pwd_var);
-	free(oldpwd_var);
-	return (0);
+	return (target);
 }
 
-/**
- * Dizin kontrolü yapar ve hata durumunda uygun mesajı döndürür.
- */
-static int changeDirectory(char *path)
+int	builtin_cd(t_shell *cmd, t_req *req)
 {
-	int chdir_result;
-	chdir_result = chdir(path);
-	if (chdir_result != 0)
-		return (printCdError(path, strerror(errno)));
-	return (0);
-}
+	char	*target;
+	char	*oldpwd;
+	char	*newpwd;
+	int		arg_count;
+	int		need_free;
 
-/**
- * cd builtin fonksiyonu: argümanları işler, dizini değiştirir ve ortamı günceller.
- */
-int	builtin_cd(char **args, char **envp)
-{
-	char *final_path;
-	char *old_pwd;
-	int argc;
-
-	argc = 0;
-	while (args[argc])
-		argc++;
-	if (argc > 2)
-		return (printCdError(NULL, "too many arguments"));
-	final_path = resolveCdPath(envp, args);
-	if (!final_path)
+	arg_count = 0;
+	while (cmd->full_cmd[arg_count])
+		arg_count++;
+	if (arg_count > 2)
+	{
+		print_cd_error(NULL, "too many arguments");
 		return (1);
-
-	old_pwd = getcwd(NULL, 0);
-	if (!old_pwd)
-		return (free(final_path), printCdError(NULL, "error retrieving current directory"));
-
-	if (changeDirectory(final_path) != 0)
-	{
-		free(old_pwd);
-		return (free(final_path), printCdError(final_path, strerror(errno)));
 	}
-
-	if (updateCdEnvVariables(envp, old_pwd) != 0)
-		return (free(final_path), 1);
-
-	free(final_path);
+	oldpwd = getcwd(NULL, 0);
+	if (!oldpwd)
+		oldpwd = ft_strdup("");
+	target = get_cd_target(cmd, req, &need_free);
+	if (!target)
+	{
+		if (!cmd->full_cmd[1] || (cmd->full_cmd[1][0] == '~' && !mini_getenv("HOME", req->envp, 4)))
+			print_cd_error(NULL, "HOME not set");
+		else
+			print_cd_error(NULL, "OLDPWD not set");
+		free(oldpwd);
+		return (1);
+	}
+	if (chdir(target) != 0)
+	{
+		print_cd_error(target, strerror(errno));
+		free(oldpwd);
+		if (need_free)
+			free(target);
+		return (1);
+	}
+	req->envp = mini_setenv("OLDPWD", oldpwd, req->envp, 6);
+	free(oldpwd);
+	newpwd = getcwd(NULL, 0);
+	if (!newpwd)
+		newpwd = ft_strdup("");
+	req->envp = mini_setenv("PWD", newpwd, req->envp, 3);
+	free(newpwd);
+	if (need_free)
+		free(target);
 	return (0);
 }

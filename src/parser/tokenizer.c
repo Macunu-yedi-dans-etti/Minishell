@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:45:01 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:47:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,66 +22,111 @@ static int	is_operator(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-static char	*get_token(const char *input, int *i)
+static t_token	*create_token(const char *str, int quote)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->str = ft_strdup(str);
+	token->quote = quote;
+	return (token);
+}
+
+static t_token	*get_token(const char *input, int *i)
 {
 	int		start;
 	char	quote;
 	char	op;
+	t_token	*token;
+	int		len;
+	char	op_str[3];
+	char	*substr;
 
-	while (is_separator(input[*i]))
+	while (input[*i] && is_separator(input[*i]))
 		(*i)++;
 	start = *i;
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
 		quote = input[*i];
 		(*i)++;
+		start = *i;
 		while (input[*i] && input[*i] != quote)
 			(*i)++;
+		len = *i - start;
 		if (input[*i] == quote)
 			(*i)++;
-		return (ft_substr(input, start + 1, *i - start - 2));
+		substr = ft_substr(input, start, len);
+		token = create_token(substr, (quote == '\'') ? 1 : 2);
+		free(substr);
+		return (token);
 	}
-	else if ((input[*i] == '>' || input[*i] == '<')
-		&& input[*i + 1] == input[*i])
+	else if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i])
 	{
 		op = input[*i];
 		(*i) += 2;
 		if (op == '>')
-			return (ft_strdup(">>"));
+			token = create_token(">>", 0);
 		else
-			return (ft_strdup("<<"));
+			token = create_token("<<", 0);
+		return (token);
 	}
 	else if (is_operator(input[*i]))
-		return (ft_substr(input, (*i)++, 1));
+	{
+		op_str[0] = input[*i];
+		op_str[1] = 0;
+		(*i)++;
+		token = create_token(op_str, 0);
+		return (token);
+	}
 	else
 	{
+		start = *i;
 		while (input[*i] && !is_separator(input[*i]) && !is_operator(input[*i]))
 			(*i)++;
-		return (ft_substr(input, start, *i - start));
+		substr = ft_substr(input, start, *i - start);
+		token = create_token(substr, 0);
+		free(substr);
+		return (token);
 	}
 }
 
-char	**tokenize_input(const char *input)
+t_token	**tokenize_input(const char *input)
 {
-	char	**tokens;
-	char	*token;
+	t_token	**tokens;
+	t_token	*token;
+	t_token	**tmp;
 	int		i;
 	int		count;
+	int		j;
 
-	tokens = NULL;
 	i = 0;
 	count = 0;
+	tokens = NULL;
 	while (input[i])
 	{
 		token = get_token(input, &i);
-		if (token && token[0] != '\0')
+		if (token && token->str && token->str[0] != '\0')
 		{
-			tokens = ft_double_extension(tokens, token);
-			free(token);
+			tmp = malloc(sizeof(t_token *) * (count + 2));
+			j = 0;
+			while (j < count)
+			{
+				tmp[j] = tokens[j];
+				j++;
+			}
+			tmp[count] = token;
+			tmp[count + 1] = NULL;
+			free(tokens);
+			tokens = tmp;
 			count++;
 		}
-		else
+		else if (token)
+		{
+			free(token->str);
 			free(token);
+		}
 	}
 	return (tokens);
 }

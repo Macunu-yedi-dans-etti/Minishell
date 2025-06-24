@@ -23,7 +23,7 @@ int	run_builtin(t_shell *cmd, t_req *req)
 	if (!ft_strncmp(cmd->full_cmd[0], "env", 4))
 		return (builtin_env(req->envp));
 	if (!ft_strncmp(cmd->full_cmd[0], "cd", 3))
-		return (builtin_cd(cmd->full_cmd, req->envp));
+		return (builtin_cd(cmd, req));
 	if (!ft_strncmp(cmd->full_cmd[0], "export", 7))
 		return (builtin_export(cmd->full_cmd, req));
 	if (!ft_strncmp(cmd->full_cmd[0], "unset", 6))

@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 12:40:29 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:28:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	**mini_setenv(char *var, char *value, char **envp, int n)
 		len = ft_find_chr(envp[i], '=');
 		if (len < n)
 			len = n;
-		if (!ft_strncmp(envp[i], var, len))
+		if (!ft_strncmp(envp[i], var, len) && envp[i][len] == '=')
 		{
 			free(envp[i]);
 			envp[i] = new_entry;
@@ -67,8 +67,9 @@ char	**mini_unsetenv(char ***envp, const char *var)
 	new_env = malloc(sizeof(char *) * (i + 1));
 	if (!new_env)
 		return (NULL);
-	i = -1;
-	while ((*envp)[i++])
+	i = 0;
+	j = 0;
+	while ((*envp)[i])
 	{
 		if (!ft_strncmp((*envp)[i], var, len) && (*envp)[i][len] == '=')
 			free((*envp)[i]);

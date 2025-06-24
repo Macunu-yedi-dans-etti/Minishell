@@ -29,7 +29,7 @@ static t_shell	*init_cmd(void)
 	return (cmd);
 }
 
-static int	is_redirect(char *token)
+static int	is_redirect(const char *token)
 {
 	return (!ft_strncmp(token, "<", 2)
 		|| !ft_strncmp(token, ">", 2)
@@ -37,29 +37,29 @@ static int	is_redirect(char *token)
 		|| !ft_strncmp(token, "<<", 3));
 }
 
-static int	set_redirection(t_shell *cmd, char **tokens, int *i)
+static int	set_redirection(t_shell *cmd, t_token **tokens, int *i)
 {
 	char	*redir;
 
-	redir = tokens[*i];
+	redir = tokens[*i]->str;
 	(*i)++;
 	if (!tokens[*i])
 		return (1);
 	if (!ft_strncmp(redir, "<", 2))
-		cmd->infile_path = ft_strdup(tokens[*i]);
+		cmd->infile_path = ft_strdup(tokens[*i]->str);
 	else if (!ft_strncmp(redir, ">", 2))
 	{
-		cmd->outfile_path = ft_strdup(tokens[*i]);
+		cmd->outfile_path = ft_strdup(tokens[*i]->str);
 		cmd->append_out = 0;
 	}
 	else if (!ft_strncmp(redir, ">>", 3))
 	{
-		cmd->outfile_path = ft_strdup(tokens[*i]);
+		cmd->outfile_path = ft_strdup(tokens[*i]->str);
 		cmd->append_out = 1;
 	}
 	else if (!ft_strncmp(redir, "<<", 3))
 	{
-		cmd->infile = handle_heredoc(tokens[*i]);
+		cmd->infile = handle_heredoc(tokens[*i]->str);
 		if (cmd->infile < 0)
 			return (1);
 	}
@@ -67,7 +67,7 @@ static int	set_redirection(t_shell *cmd, char **tokens, int *i)
 	return (0);
 }
 
-t_list	*parse_tokens(char **tokens, t_req *req)
+t_list	*parse_tokens(t_token **tokens, t_req *req)
 {
 	int		i;
 	t_list	*cmds;
@@ -81,18 +81,16 @@ t_list	*parse_tokens(char **tokens, t_req *req)
 		current = init_cmd();
 		if (!current)
 			return (NULL);
-		while (tokens[i] && ft_strncmp(tokens[i], "|", 2))
+		while (tokens[i] && ft_strncmp(tokens[i]->str, "|", 2))
 		{
-			if (is_redirect(tokens[i]))
+			if (is_redirect(tokens[i]->str))
 			{
 				if (set_redirection(current, tokens, &i))
-				{
 					return (free_cmds(cmds), NULL);
-				}
 			}
 			else
 				current->full_cmd = ft_double_extension(current->full_cmd,
-					tokens[i++]);
+					tokens[i++]->str);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 		if (tokens[i])

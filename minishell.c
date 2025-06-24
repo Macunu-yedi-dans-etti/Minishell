@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:53:28 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:00:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,11 @@ static void	tier_pid(t_req *p)
 	pid = fork();
 	if (pid < 0)
 	{
-		ft_double_free(&p->envp);//perror( NULL, 1); fork fail fork hatası tespit
+		ft_double_free(&p->envp);
+		perror("fork");
 		exit(1);
 	}
-	if (!pid)
+	if (pid == 0)
 	{
 		ft_double_free(&p->envp);
 		exit(1);
@@ -52,13 +53,13 @@ static t_req	init_variable(t_req prompt, char *str, char **av)
 	char	*num;
 	char	*shlvl;
 
-	str = getcwd(NULL, 0);//PWD
+	str = getcwd(NULL, 0);
 	if (str)
 	{
 		prompt.envp = mini_setenv("PWD", str, prompt.envp, 3);
 		free(str);
 	}
-	shlvl = mini_getenv("SHLVL", prompt.envp, 5);//SHLVL
+	shlvl = mini_getenv("SHLVL", prompt.envp, 5);
 	if (!shlvl || ft_atoi(shlvl) <= 0)
 		num = ft_strdup("1");
 	else
@@ -66,17 +67,16 @@ static t_req	init_variable(t_req prompt, char *str, char **av)
 	free(shlvl);
 	prompt.envp = mini_setenv("SHLVL", num, prompt.envp, 5);
 	free(num);
- 	str = mini_getenv("PATH", prompt.envp, 4);//PATH
+	str = mini_getenv("PATH", prompt.envp, 4);
 	if (!str)
-		prompt.envp = mini_setenv("PATH", \
-			"/usr/local/sbin:/usr/local/bin:/usr/bin:/bin", \
+		prompt.envp = mini_setenv("PATH",
+			"/usr/local/sbin:/usr/local/bin:/usr/bin:/bin",
 			prompt.envp, 4);
 	free(str);
-	str = mini_getenv("_", prompt.envp, 1);//  _ değişkeni (program adı argv[0])
+	str = mini_getenv("_", prompt.envp, 1);
 	if (!str && av[0])
 		prompt.envp = mini_setenv("_", av[0], prompt.envp, 1);
 	free(str);
-
 	return (prompt);
 }
 
@@ -93,14 +93,29 @@ static t_req	responses(char **av, char **env)
 	return (response);
 }
 
+static void	append_history_file(const char *filename, const char *line)
+{
+	int	fd;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd < 0)
+		return ;
+	write(fd, line, ft_strlen(line));
+	write(fd, "\n", 1);
+	close(fd);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	char	*output;
-	char	**tokens;
+	char	*old;
+	int		i;
+	t_token	**tokens;
 	t_list	*cmds;
 	t_list	*tmp;
 	t_req	response;
+	t_shell *cmd;
 
 	(void)ac;
 	response = responses(av, env);
@@ -116,19 +131,28 @@ int	main(int ac, char **av, char **env)
 		if (output && output[0])
 		{
 			add_history(output);
+			append_history_file(".minishell_history", output);
 			tokens = tokenize_input(output);
+			i = 0;
+			while (tokens && tokens[i])
+			{
+				old = tokens[i]->str;
+				tokens[i]->str = expand_str(tokens[i]->str, response.envp, tokens[i]->quote);
+				free(old);
+				i++;
+			}
 			cmds = parse_tokens(tokens, &response);
 			tmp = cmds;
 			while (tmp)
 			{
-				t_shell *cmd = tmp->content;
+				cmd = tmp->content;
 				if (cmd->full_cmd && cmd->full_cmd[0])
 					cmd->full_path = resolve_path(cmd->full_cmd[0], response.envp);
 				tmp = tmp->next;
 			}
 			execute_cmds(cmds, &response);
 			free_cmds(cmds);
-			ft_double_free(&tokens);
+			free_tokens(tokens);
 		}
 		if (!output)
 		{

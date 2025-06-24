@@ -13,6 +13,7 @@
 # include <signal.h>
 # include <dirent.h>
 # include <sys/ioctl.h>
+#include <errno.h>
 
 typedef struct s_list
 {
@@ -46,6 +47,19 @@ typedef enum e_redirect_type
     R_APPEND    // >>
 }   t_redirect_type;
 
+typedef enum e_quote_type
+{
+    QUOTE_NONE,
+    QUOTE_SINGLE,
+    QUOTE_DOUBLE
+}   t_quote_type;
+
+typedef struct s_token
+{
+    char        *str;
+    t_quote_type quote;
+}   t_token;
+
 //exit
 extern int g_exit_status;
 
@@ -72,6 +86,7 @@ void	ft_free(char **tab);
 void	ft_double_free(char ***freee);
 void free_cmds(t_list *cmds);
 void free_all(t_req *req);
+void free_tokens(t_token **tokens); // YENİ
 
 //signal
 void    handle_sigint(int sig);
@@ -79,15 +94,14 @@ void    handle_sigint(int sig);
 //input_message
 char *mini_getinput(t_req input);
 
+// tokenizer
+t_token	**tokenize_input(const char *input);
 
-///parse ve tokenize 
+// parser
+t_list	*parse_tokens(t_token **tokens, t_req *req);
 
-//tokenizer
-char	**tokenize_input(const char *input);;
-
-//parser
-t_list	*parse_tokens(char **tokens, t_req *req);
-
+//expander
+char *expand_str(const char *input, char **envp, int quote);
 //executor
 void execute_cmds(t_list *cmds, t_req *req);
 
@@ -97,11 +111,10 @@ int is_builtin(char *cmd);
 int builtin_echo(t_shell *cmd);//echo
 int builtin_pwd(void);//pwd
 int builtin_env(char **envp);//env
-int builtin_cd(char **args, char **envp);
+int builtin_cd(t_shell *cmd, t_req *req);
 int builtin_export(char **args, t_req *req);
 int builtin_unset(char **args, t_req *req);
 int builtin_exit(char **args);
-
 
 //redirect
 int open_redirect_file(char *filename, t_redirect_type type);
@@ -109,6 +122,5 @@ int apply_redirects(t_shell *cmd);
 
 //heredoc
 int handle_heredoc(const char *delimiter);
-
 
 # endif

@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:23:33 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:28:36 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:06:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	exec_external_cmd(t_shell *cmd, t_req *req, int input_fd,
 	int output_fd)
 {
 	pid_t	pid;
+	char	*notfound_cmd;
 
 	pid = fork();
 	if (pid == 0)
@@ -30,6 +31,15 @@ static void	exec_external_cmd(t_shell *cmd, t_req *req, int input_fd,
 			dup2(cmd->outfile, STDOUT_FILENO);
 		else if (output_fd != STDOUT_FILENO)
 			dup2(output_fd, STDOUT_FILENO);
+		if (!cmd->full_path)
+		{
+			if (cmd->full_cmd && cmd->full_cmd[0])
+				notfound_cmd = cmd->full_cmd[0];
+			else
+				notfound_cmd = "(null)";
+			fprintf(stderr, "minishell: command not found: %s\n", notfound_cmd);
+			exit(127);
+		}
 		execve(cmd->full_path, cmd->full_cmd, req->envp);
 		perror("execve");
 		exit(EXIT_FAILURE);
@@ -45,6 +55,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 	int		input_fd;
 	int		backup_stdout;
 	int		backup_stdin;
+	int		out_fd;
 	t_shell	*cmd;
 	
 	input_fd = STDIN_FILENO;
@@ -87,8 +98,11 @@ void	execute_cmds(t_list *cmds, t_req *req)
 		{
 			if (node->next)
 				pipe(pipe_fd);
-			exec_external_cmd(cmd, req, input_fd,
-				node->next ? pipe_fd[1] : STDOUT_FILENO);
+			if (node->next)
+				out_fd = pipe_fd[1];
+			else
+				out_fd = STDOUT_FILENO;
+			exec_external_cmd(cmd, req, input_fd, out_fd);
 			if (input_fd != STDIN_FILENO)
 				close(input_fd);
 			if (node->next)

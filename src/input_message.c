@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:46:35 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:47:21 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:52:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,23 @@ char	*mini_getinput(t_req input)
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 		cwd = ft_strdup("∅");
-	temp = ft_strjoin(user, "@soysal&&halusminishell ");
-	input_str = ft_strjoin(temp, cwd);
+
+	temp = ft_strjoin(GREEN, user);
+	input_str = ft_strjoin(temp, WHITE "@");
 	free(temp);
+	temp = ft_strjoin(input_str, BLUE "soysal&&halusminishell ");
+	free(input_str);
+	input_str = temp;
+	temp = ft_strjoin(input_str, CYAN);
+	free(input_str);
+	input_str = temp;
+	temp = ft_strjoin(input_str, cwd);
+	free(input_str);
 	free(user);
 	free(cwd);
-	temp = ft_strjoin(input_str, " $ ");
+	input_str = temp;
+	temp = ft_strjoin(input_str, WHITE " $ " DEFAULT);
 	free(input_str);
+
 	return (temp);
 }

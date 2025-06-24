@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:46:16 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 21:51:16 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ int	apply_redirects(t_shell *cmd)
 	}
 	if (cmd->outfile_path)
 	{
-		mode = cmd->append_out ? R_APPEND : R_OUT; // kısa oldu düzeltilecek yasaklı fonksiyon
+		if (cmd->append_out)
+			mode = R_APPEND;
+		else
+			mode = R_OUT;
 		cmd->outfile = open_redirect_file(cmd->outfile_path, mode);
 		if (cmd->outfile < 0)
 			return (1);

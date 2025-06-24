@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 12:45:39 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:36:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	**ft_double_extension(char **matrix, char *new_str)
 	i = 0;
 	while (matrix && matrix[i])
 		i++;
-	new_matrix = (char **)malloc(sizeof(char *) * (i + 2));
+	new_matrix = (char **)malloc(sizeof(char *) * (i + (new_str ? 2 : 1)));
 	if (!new_matrix)
 		return (NULL);
 	i = 0;
@@ -39,15 +39,11 @@ char	**ft_double_extension(char **matrix, char *new_str)
 		new_matrix[i] = ft_strdup(matrix[i]);
 		i++;
 	}
-	new_matrix[i] = ft_strdup(new_str);
-	new_matrix[i + 1] = NULL;
+	if (new_str)
+		new_matrix[i++] = ft_strdup(new_str);
+	new_matrix[i] = NULL;
 	if (matrix)
-	{
-		i = 0;
-		while (matrix[i])
-			free(matrix[i++]);
-		free(matrix);
-	}
+		ft_free(matrix);
 	return (new_matrix);
 }
 
