@@ -23,11 +23,6 @@ static void	print_cd_error(char *arg, char *msg)
 	ft_putendl_fd(msg, 2);
 }
 
-/*
- * Tilde expand: Eğer argüman ~ veya ~/ ile başlıyorsa HOME ile değiştir.
- * Geri dönüş malloc'lu string (free edilmesi gerekir).
- * Aksi halde NULL döner.
- */
 static char	*expand_tilde(char *arg, t_req *req)
 {
 	char	*home;
@@ -38,19 +33,16 @@ static char	*expand_tilde(char *arg, t_req *req)
 	home = mini_getenv("HOME", req->envp, 4);
 	if (!home)
 		return (NULL);
-	if (arg[1] == '\0') // sadece ~
+	if (arg[1] == '\0')
 		result = ft_strdup(home);
-	else if (arg[1] == '/') // ~/ veya ~/foo
+	else if (arg[1] == '/')
 		result = ft_strjoin(home, arg + 1);
-	else // ~kullanıcı gibi durumları destekleme (bash'te var ama zorunlu değil)
+	else
 		result = NULL;
 	free(home);
 	return (result);
 }
 
-/*
- * Hangi path'in kullanılacağını ve free edilip edilmeyeceğini belirler.
- */
 static char	*get_cd_target(t_shell *cmd, t_req *req, int *need_free)
 {
 	char	*target;
