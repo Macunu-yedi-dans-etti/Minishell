@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 18:35:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 01:10:12 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,21 @@ void	ft_free(char **tab)
 		return ;
 	i = 0;
 	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
+		free(tab[i++]);
 	free(tab);
 }
 
-void	ft_double_free(char ***freee)
+void	ft_double_free(char ***ptr)
 {
 	int	i;
 
-	i = 0;
-	if (!freee || !*freee)
+	if (!ptr || !*ptr)
 		return ;
-	while ((*freee)[i])
-	{
-		free((*freee)[i]);
-		i++;
-	}
-	free(*freee);
-	*freee = NULL;
+	i = 0;
+	while ((*ptr)[i])
+		free((*ptr)[i++]);
+	free(*ptr);
+	*ptr = NULL;
 }
 
 void	free_cmds(t_list *cmds)
@@ -67,10 +61,10 @@ void	free_cmds(t_list *cmds)
 
 void	free_tokens(t_token **tokens)
 {
-	int i;
+	int	i;
 
 	if (!tokens)
-		return;
+		return ;
 	i = 0;
 	while (tokens[i])
 	{

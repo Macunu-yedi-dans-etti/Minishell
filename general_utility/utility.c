@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 18:36:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 01:37:47 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,16 @@ int	ft_find_chr(const char *s, char c)
 char	**ft_double_extension(char **matrix, char *new_str)
 {
 	int		i;
+	int		size;
 	char	**new_matrix;
 
 	i = 0;
 	while (matrix && matrix[i])
 		i++;
-	new_matrix = (char **)malloc(sizeof(char *) * (i + (new_str ? 2 : 1)));
+	size = i + 1;
+	if (new_str)
+		size++;
+	new_matrix = (char **)malloc(sizeof(char *) * size);
 	if (!new_matrix)
 		return (NULL);
 	i = 0;
@@ -103,3 +107,4 @@ void	ft_lstadd_back(t_list **lst, t_list *new_node)
 		temp = temp->next;
 	temp->next = new_node;
 }
+

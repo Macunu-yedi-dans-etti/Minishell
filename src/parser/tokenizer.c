@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 19:47:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 04:47:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,66 +30,88 @@ static t_token	*create_token(const char *str, int quote)
 	if (!token)
 		return (NULL);
 	token->str = ft_strdup(str);
+	if (!token->str)
+		return (free(token), NULL);
 	token->quote = quote;
+	return (token);
+}
+
+static t_token	*get_quoted_token(const char *input, int *i)
+{
+	t_token	*token;
+	char	*substr;
+	char	quote;
+	int		start;
+	int		quote_type;
+
+	quote = input[*i];
+	(*i)++;
+	start = *i;
+	while (input[*i] && input[*i] != quote)
+		(*i)++;
+	substr = ft_substr(input, start, *i - start);
+	if (input[*i] == quote)
+		(*i)++;
+	if (!substr)
+		return (NULL);
+	if (quote == '\'')
+		quote_type = 1;
+	else
+		quote_type = 2;
+	token = create_token(substr, quote_type);
+	free(substr);
+	return (token);
+}
+
+
+static t_token	*get_operator_token(const char *input, int *i)
+{
+	char	op[3];
+
+	if ((input[*i] == '<' || input[*i] == '>') && input[*i] == input[*i + 1])
+	{
+		op[0] = input[*i];
+		op[1] = input[*i];
+		op[2] = '\0';
+		*i += 2;
+	}
+	else
+	{
+		op[0] = input[*i];
+		op[1] = '\0';
+		(*i)++;
+	}
+	return (create_token(op, 0));
+}
+
+static t_token	*get_word_token(const char *input, int *i)
+{
+	t_token	*token;
+	char	*substr;
+	int		start;
+
+	start = *i;
+	while (input[*i] && !is_separator(input[*i]) && !is_operator(input[*i]))
+		(*i)++;
+	substr = ft_substr(input, start, *i - start);
+	if (!substr)
+		return (NULL);
+	token = create_token(substr, 0);
+	free(substr);
 	return (token);
 }
 
 static t_token	*get_token(const char *input, int *i)
 {
-	int		start;
-	char	quote;
-	char	op;
-	t_token	*token;
-	int		len;
-	char	op_str[3];
-	char	*substr;
-
 	while (input[*i] && is_separator(input[*i]))
 		(*i)++;
-	start = *i;
+	if (!input[*i])
+		return (NULL);
 	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		quote = input[*i];
-		(*i)++;
-		start = *i;
-		while (input[*i] && input[*i] != quote)
-			(*i)++;
-		len = *i - start;
-		if (input[*i] == quote)
-			(*i)++;
-		substr = ft_substr(input, start, len);
-		token = create_token(substr, (quote == '\'') ? 1 : 2);
-		free(substr);
-		return (token);
-	}
-	else if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i])
-	{
-		op = input[*i];
-		(*i) += 2;
-		if (op == '>')
-			token = create_token(">>", 0);
-		else
-			token = create_token("<<", 0);
-		return (token);
-	}
-	else if (is_operator(input[*i]))
-	{
-		op_str[0] = input[*i];
-		op_str[1] = 0;
-		(*i)++;
-		token = create_token(op_str, 0);
-		return (token);
-	}
-	else
-	{
-		start = *i;
-		while (input[*i] && !is_separator(input[*i]) && !is_operator(input[*i]))
-			(*i)++;
-		substr = ft_substr(input, start, *i - start);
-		token = create_token(substr, 0);
-		free(substr);
-		return (token);
-	}
+		return (get_quoted_token(input, i));
+	if (is_operator(input[*i]))
+		return (get_operator_token(input, i));
+	return (get_word_token(input, i));
 }
 
 t_token	**tokenize_input(const char *input)
@@ -98,8 +120,8 @@ t_token	**tokenize_input(const char *input)
 	t_token	*token;
 	t_token	**tmp;
 	int		i;
-	int		count;
 	int		j;
+	int		count;
 
 	i = 0;
 	count = 0;
@@ -110,17 +132,15 @@ t_token	**tokenize_input(const char *input)
 		if (token && token->str && token->str[0] != '\0')
 		{
 			tmp = malloc(sizeof(t_token *) * (count + 2));
-			j = 0;
-			while (j < count)
-			{
+			if (!tmp)
+				return (free_tokens(tokens), NULL);
+			j = -1;
+			while (++j < count)
 				tmp[j] = tokens[j];
-				j++;
-			}
-			tmp[count] = token;
-			tmp[count + 1] = NULL;
+			tmp[count++] = token;
+			tmp[count] = NULL;
 			free(tokens);
 			tokens = tmp;
-			count++;
 		}
 		else if (token)
 		{

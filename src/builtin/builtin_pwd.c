@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:22:01 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/14 19:00:59 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 03:32:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,14 @@ int	builtin_pwd(void)
 
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
-	{	
-		perror("getcwd");	
+	{
+		ft_putstr_fd("minishell: pwd: ", 2);
+		perror("");
+		g_exit_status = 1;
 		return (1);
 	}
-	printf("%s\n", cwd);
+	ft_putendl_fd(cwd, STDOUT_FILENO);
 	free(cwd);
+	g_exit_status = 0;
 	return (0);
 }
-

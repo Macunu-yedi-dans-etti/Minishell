@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:45:33 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 05:45:33 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,17 @@ int	handle_heredoc(const char *delimiter)
 	int		pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
+	{
+		perror("minishell: pipe");
+		g_exit_status = 1;
 		return (-1);
+	}
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || !ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
+		if (!line)
+			break ;
+		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
 			free(line);
 			break ;

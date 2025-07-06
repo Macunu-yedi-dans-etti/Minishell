@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 18:28:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 00:01:28 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,3 +102,4 @@ char	*mini_getenv(char *var, char **envp, int n)
 	}
 	return (NULL);
 }
+

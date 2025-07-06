@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 18:37:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 02:24:19 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int	builtin_cd(t_shell *cmd, t_req *req)
 	if (arg_count > 2)
 	{
 		print_cd_error(NULL, "too many arguments");
+		g_exit_status = 1;
 		return (1);
 	}
 	oldpwd = getcwd(NULL, 0);
@@ -110,6 +111,7 @@ int	builtin_cd(t_shell *cmd, t_req *req)
 		else
 			print_cd_error(NULL, "OLDPWD not set");
 		free(oldpwd);
+		g_exit_status = 1;
 		return (1);
 	}
 	if (chdir(target) != 0)
@@ -118,6 +120,7 @@ int	builtin_cd(t_shell *cmd, t_req *req)
 		free(oldpwd);
 		if (need_free)
 			free(target);
+		g_exit_status = 1;
 		return (1);
 	}
 	req->envp = mini_setenv("OLDPWD", oldpwd, req->envp, 6);
@@ -129,5 +132,6 @@ int	builtin_cd(t_shell *cmd, t_req *req)
 	free(newpwd);
 	if (need_free)
 		free(target);
+	g_exit_status = 0;
 	return (0);
 }

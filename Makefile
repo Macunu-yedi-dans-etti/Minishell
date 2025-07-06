@@ -18,6 +18,7 @@ SRCS = minishell.c \
 	   src/redirect/redirect_handler.c\
 	   src/redirect/heredoc_handler.c\
 	   src/expander/expander.c\
+	   src/mini_error.c\
        general_utility/ft_free.c \
        general_utility/utility.c \
 	   general_utility/resolve_path.c\

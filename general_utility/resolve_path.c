@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:43:30 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 18:35:36 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 01:23:14 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static char	*join_path(const char *dir, const char *cmd)
 	char	*full;
 
 	temp = ft_strjoin(dir, "/");
+	if (!temp)
+		return (NULL);
 	full = ft_strjoin(temp, cmd);
 	free(temp);
 	return (full);
@@ -30,7 +32,9 @@ char	*resolve_path(char *cmd, char **envp)
 	char	*full_path;
 	int		i;
 
-	if (!cmd || ft_strchr(cmd, '/'))
+	if (!cmd)
+		return (NULL);
+	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
 	path_value = mini_getenv("PATH", envp, 4);
 	if (!path_value)
@@ -43,7 +47,7 @@ char	*resolve_path(char *cmd, char **envp)
 	while (paths[i])
 	{
 		full_path = join_path(paths[i], cmd);
-		if (access(full_path, X_OK) == 0)
+		if (full_path && access(full_path, X_OK) == 0)
 		{
 			ft_double_free(&paths);
 			return (full_path);

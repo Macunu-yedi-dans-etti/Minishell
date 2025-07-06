@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/24 21:51:16 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 05:51:16 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@ int	open_redirect_file(char *filename, t_redirect_type type)
 
 	fd = -1;
 	if (!filename)
+	{
+		ft_putstr_fd("minishell: redirect: filename is NULL\n", 2);
+		g_exit_status = 1;
 		return (-1);
+	}
 	if (type == R_IN)
 		fd = open(filename, O_RDONLY);
 	else if (type == R_OUT)
@@ -26,7 +30,11 @@ int	open_redirect_file(char *filename, t_redirect_type type)
 	else if (type == R_APPEND)
 		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
 		perror(filename);
+		g_exit_status = 1;
+	}
 	return (fd);
 }
 

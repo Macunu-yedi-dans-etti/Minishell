@@ -1,6 +1,7 @@
 #ifndef MINI_SHELL_H
 # define MINI_SHELL_H
 
+#include "includes/mini_error.h"
 # include "includes/libft/libft.h"
 # include "includes/color.h"
 # include "Get_Next_Line/get_next_line.h"
@@ -90,6 +91,9 @@ void free_tokens(t_token **tokens); // YENİ
 
 //signal
 void    handle_sigint(int sig);
+void	handle_sigquit(int sig);
+void	setup_signals(void);
+void	reset_signals(void);
 
 //input_message
 char *mini_getinput(t_req input);

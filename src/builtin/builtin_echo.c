@@ -6,11 +6,27 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:23 by musoysal          #+#    #+#             */
-/*   Updated: 2025/06/12 14:20:42 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/06 02:40:07 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+static int	is_valid_n_flag(char *arg)
+{
+	int	i;
+
+	if (!arg || arg[0] != '-')
+		return (0);
+	i = 1;
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	builtin_echo(t_shell *cmd)
 {
@@ -19,7 +35,7 @@ int	builtin_echo(t_shell *cmd)
 
 	i = 1;
 	newline = 1;
-	if (cmd->full_cmd[1] && !ft_strncmp(cmd->full_cmd[1], "-n", 3))
+	while (cmd->full_cmd[i] && is_valid_n_flag(cmd->full_cmd[i]))
 	{
 		newline = 0;
 		i++;
@@ -33,5 +49,6 @@ int	builtin_echo(t_shell *cmd)
 	}
 	if (newline)
 		write(STDOUT_FILENO, "\n", 1);
+	g_exit_status = 0;
 	return (0);
 }
