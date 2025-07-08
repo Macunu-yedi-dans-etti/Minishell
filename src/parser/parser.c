@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 04:37:35 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/08 11:41:24 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,34 +92,68 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 	t_list	*cmds;
 	t_shell	*current;
 	int		i;
+	int		has_cmd;
 
-	(void)req;
 	cmds = NULL;
 	i = 0;
+	(void) req;
 	if (!tokens || !tokens[0])
 		return (NULL);
+
+	if (!ft_strncmp(tokens[0]->str, "|", 2))
+		return (ms_error(ERR_PIPE_SYNTAX, "|", 2), NULL);
+
 	while (tokens[i])
 	{
 		current = init_cmd();
 		if (!current)
-			return (ms_error(ERR_ALLOC, "command", 1), NULL);
+			return (ms_error(ERR_ALLOC, "command", 1), free_cmds(cmds), NULL);
+
+		has_cmd = 0;
+
 		while (tokens[i] && ft_strncmp(tokens[i]->str, "|", 2))
 		{
 			if (is_redirect(tokens[i]->str))
 			{
 				if (set_redirection(current, tokens, &i))
-					return (free_cmds(cmds), NULL);
+					return (free(current), free_cmds(cmds), NULL);
 			}
 			else
 			{
-				current->full_cmd = ft_double_extension(current->full_cmd,
-						tokens[i]->str);
+				current->full_cmd = ft_double_extension(current->full_cmd, tokens[i]->str);
+				if (!current->full_cmd)
+					return (ms_error(ERR_ALLOC, "full_cmd", 1), free(current), free_cmds(cmds), NULL);
+				has_cmd = 1;
 				i++;
 			}
 		}
+
+		if (!has_cmd)
+		{
+			ms_error(ERR_PIPE_SYNTAX, "|", 2);
+			free(current);
+			return (free_cmds(cmds), NULL);
+		}
+
+		if (!current->full_path && current->full_cmd)
+		{
+			current->full_path = resolve_path(current->full_cmd[0], req->envp);
+			if (!current->full_path)
+			{
+				ms_error(ERR_NO_CMD, current->full_cmd[0], 127);
+				free(current);
+				return (free_cmds(cmds), NULL);
+			}
+		}
+
 		ft_lstadd_back(&cmds, ft_lstnew(current));
+
 		if (tokens[i])
+		{
+			if (!tokens[i + 1])
+				return (ms_error(ERR_PIPE_SYNTAX, "|", 2), free_cmds(cmds), NULL);
 			i++;
+		}
 	}
 	return (cmds);
 }
