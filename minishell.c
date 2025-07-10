@@ -118,9 +118,7 @@ int	main(int ac, char **av, char **env)
 	int		k;	
 	t_token	**tokens;
 	t_list	*cmds;
-	t_list	*tmp;
 	t_req	res;
-	t_shell	*cmd;
 
 	(void)ac;
 	res = setup(av, env);
@@ -173,14 +171,6 @@ int	main(int ac, char **av, char **env)
 			{
 				free_tokens(tokens);
 				continue;
-			}
-			tmp = cmds;
-			while (tmp)
-			{
-				cmd = tmp->content;
-				if (cmd->full_cmd && cmd->full_cmd[0] && !is_builtin(cmd->full_cmd[0]))
-					cmd->full_path = resolve_path(cmd->full_cmd[0], res.envp);
-				tmp = tmp->next;
 			}
 			res.exit_stat = g_exit_status;
 			execute_cmds(cmds, &res);

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   resolve_path.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 12:43:30 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 01:23:14 by musoysal         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static char	*join_path(const char *dir, const char *cmd)
@@ -43,6 +31,7 @@ char	*resolve_path(char *cmd, char **envp)
 	free(path_value);
 	if (!paths)
 		return (NULL);
+	full_path = NULL;
 	i = 0;
 	while (paths[i])
 	{
@@ -53,6 +42,7 @@ char	*resolve_path(char *cmd, char **envp)
 			return (full_path);
 		}
 		free(full_path);
+		full_path = NULL;
 		i++;
 	}
 	ft_double_free(&paths);

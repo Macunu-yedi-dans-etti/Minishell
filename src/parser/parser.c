@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/08 11:41:24 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/10 20:00:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@ static t_shell	*init_cmd(void)
 
 	cmd = malloc(sizeof(t_shell));
 	if (!cmd)
-	{
-		ms_error(ERR_ALLOC, "t_shell", 1);
-		return (NULL);
-	}
+		return (ms_error(ERR_ALLOC, "t_shell", 1), NULL);
 	cmd->full_cmd = NULL;
 	cmd->full_path = NULL;
 	cmd->infile = STDIN_FILENO;
@@ -45,31 +42,23 @@ static int	is_redirect(const char *token)
 static int	handle_redir(t_shell *cmd, char *redir, char *file)
 {
 	if (!ft_strncmp(redir, "<", 2))
-	{
 		cmd->infile_path = ft_strdup(file);
-		if (!cmd->infile_path)
-			return (ms_error(ERR_ALLOC, "infile_path", 1), 1);
-	}
 	else if (!ft_strncmp(redir, ">", 2))
 	{
 		cmd->outfile_path = ft_strdup(file);
 		cmd->append_out = 0;
-		if (!cmd->outfile_path)
-			return (ms_error(ERR_ALLOC, "outfile_path", 1), 1);
 	}
 	else if (!ft_strncmp(redir, ">>", 3))
 	{
 		cmd->outfile_path = ft_strdup(file);
 		cmd->append_out = 1;
-		if (!cmd->outfile_path)
-			return (ms_error(ERR_ALLOC, "outfile_path", 1), 1);
 	}
 	else if (!ft_strncmp(redir, "<<", 3))
-	{
 		cmd->infile = handle_heredoc(file);
-		if (cmd->infile < 0)
-			return (ms_error(ERR_HEREDOC, file, 1), 1);
-	}
+	if ((redir[0] == '<' && !cmd->infile_path)
+		|| ((redir[0] == '>' || redir[1] == '>') && !cmd->outfile_path)
+		|| (redir[1] == '<' && cmd->infile < 0))
+		return (ms_error(ERR_ALLOC, redir, 1), 1);
 	return (0);
 }
 
@@ -97,20 +86,17 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 
 	cmds = NULL;
 	i = 0;
-	(void) req;
+	(void)req;
 	if (!tokens || !tokens[0])
 		return (NULL);
 	if (!ft_strncmp(tokens[0]->str, "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2), NULL);
-
 	while (tokens[i])
 	{
 		current = init_cmd();
 		if (!current)
-			return (ms_error(ERR_ALLOC, "command", 1), free_cmds(cmds), NULL);
-
+			return (free_cmds(cmds), NULL);
 		has_cmd = 0;
-
 		while (tokens[i] && ft_strncmp(tokens[i]->str, "|", 2))
 		{
 			if (is_redirect(tokens[i]->str))
@@ -118,54 +104,33 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 				if (set_redirection(current, tokens, &i))
 					return (free(current), free_cmds(cmds), NULL);
 			}
-			else
+			else if (tokens[i]->str && tokens[i]->str[0] != '\0')
 			{
-				if (tokens[i]->str && tokens[i]->str[0] != '\0')
-				{
-					expanded = ft_strdup(tokens[i]->str);
-					if (!expanded)
-					{
-						ms_error(ERR_ALLOC, "expanded token", 1);
-						free(current);
-						free_cmds(cmds);
-						return NULL;
-					}
-					current->full_cmd = ft_double_extension(current->full_cmd, expanded);
-					free(expanded);
-					if (!current->full_cmd)
-					{
-						ms_error(ERR_ALLOC, "full_cmd", 1);
-						free(current);
-						free_cmds(cmds);
-						return NULL;
-					}
-					has_cmd = 1;
-				}
-				i++;
+				expanded = ft_strdup(tokens[i]->str);
+				if (!expanded)
+					return (ms_error(ERR_ALLOC, "expanded", 1),
+						free(current), free_cmds(cmds), NULL);
+				current->full_cmd = ft_double_extension(current->full_cmd, expanded);
+				free(expanded);
+				if (!current->full_cmd)
+					return (ms_error(ERR_ALLOC, "full_cmd", 1),
+						free(current), free_cmds(cmds), NULL);
+				has_cmd = 1;
 			}
+			i++;
 		}
-
 		if (!has_cmd)
-		{
-			ms_error(ERR_PIPE_SYNTAX, "|", 2);
-			free(current);
-			return (free_cmds(cmds), NULL);
-		}
-
-		if (!current->full_path && current->full_cmd && !is_builtin(current->full_cmd[0]))
+			return (ms_error(ERR_PIPE_SYNTAX, "|", 2),
+				free(current), free_cmds(cmds), NULL);
+		if (!current->full_path && current->full_cmd
+			&& !is_builtin(current->full_cmd[0]))
 		{
 			current->full_path = resolve_path(current->full_cmd[0], req->envp);
 			if (!current->full_path)
-			{
-				ms_error(ERR_NO_CMD, current->full_cmd[0], 127);
-				free(current);
-				return (free_cmds(cmds), NULL);
-			}
+				return (ms_error(ERR_NO_CMD, current->full_cmd[0], 127),
+					free(current), free_cmds(cmds), NULL);
 		}
-
-
 		ft_lstadd_back(&cmds, ft_lstnew(current));
-
 		if (tokens[i])
 		{
 			if (!tokens[i + 1])
