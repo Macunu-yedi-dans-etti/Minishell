@@ -93,13 +93,13 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 	t_shell	*current;
 	int		i;
 	int		has_cmd;
+	char	*expanded;
 
 	cmds = NULL;
 	i = 0;
 	(void) req;
 	if (!tokens || !tokens[0])
 		return (NULL);
-
 	if (!ft_strncmp(tokens[0]->str, "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2), NULL);
 
@@ -120,10 +120,27 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 			}
 			else
 			{
-				current->full_cmd = ft_double_extension(current->full_cmd, tokens[i]->str);
-				if (!current->full_cmd)
-					return (ms_error(ERR_ALLOC, "full_cmd", 1), free(current), free_cmds(cmds), NULL);
-				has_cmd = 1;
+				if (tokens[i]->str && tokens[i]->str[0] != '\0')
+				{
+					expanded = ft_strdup(tokens[i]->str);
+					if (!expanded)
+					{
+						ms_error(ERR_ALLOC, "expanded token", 1);
+						free(current);
+						free_cmds(cmds);
+						return NULL;
+					}
+					current->full_cmd = ft_double_extension(current->full_cmd, expanded);
+					free(expanded);
+					if (!current->full_cmd)
+					{
+						ms_error(ERR_ALLOC, "full_cmd", 1);
+						free(current);
+						free_cmds(cmds);
+						return NULL;
+					}
+					has_cmd = 1;
+				}
 				i++;
 			}
 		}
@@ -135,7 +152,7 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 			return (free_cmds(cmds), NULL);
 		}
 
-		if (!current->full_path && current->full_cmd)
+		if (!current->full_path && current->full_cmd && !is_builtin(current->full_cmd[0]))
 		{
 			current->full_path = resolve_path(current->full_cmd[0], req->envp);
 			if (!current->full_path)
@@ -145,6 +162,7 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 				return (free_cmds(cmds), NULL);
 			}
 		}
+
 
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 

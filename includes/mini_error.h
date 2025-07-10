@@ -5,7 +5,7 @@
 
 typedef enum e_error_type
 {
-    ERR_QUOTE = 1,
+    ERR_QUOTE,
     ERR_NO_DIR,
     ERR_NO_PERM,
     ERR_NO_CMD,

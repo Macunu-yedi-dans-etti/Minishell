@@ -114,6 +114,8 @@ int	main(int ac, char **av, char **env)
 	char	*output;
 	char	*old;
 	int		i;
+	int		j;
+	int		k;	
 	t_token	**tokens;
 	t_list	*cmds;
 	t_list	*tmp;
@@ -148,12 +150,35 @@ int	main(int ac, char **av, char **env)
 				free(old);
 				i++;
 			}
+			j = 0;
+			while (tokens && tokens[j])
+			{
+				if (tokens[j]->str[0] == '\0')
+				{
+					free(tokens[j]->str);
+					free(tokens[j]);
+					k = j;
+					while (tokens[k + 1])
+					{
+						tokens[k] = tokens[k + 1];
+						k++;
+					}
+					tokens[k] = NULL;
+					continue;
+				}
+				j++;
+			}
 			cmds = parse_tokens(tokens, &res);
+			if (!cmds)
+			{
+				free_tokens(tokens);
+				continue;
+			}
 			tmp = cmds;
 			while (tmp)
 			{
 				cmd = tmp->content;
-				if (cmd->full_cmd && cmd->full_cmd[0])
+				if (cmd->full_cmd && cmd->full_cmd[0] && !is_builtin(cmd->full_cmd[0]))
 					cmd->full_path = resolve_path(cmd->full_cmd[0], res.envp);
 				tmp = tmp->next;
 			}
