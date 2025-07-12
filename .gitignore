@@ -1,0 +1,19 @@
+# Build artifacts
+*.o
+*.a
+minishell
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*~
+
+# History files
+.minishell_history

@@ -41,10 +41,26 @@ char	**ft_double_extension(char **matrix, char *new_str)
 	while (matrix && matrix[i])
 	{
 		new_matrix[i] = ft_strdup(matrix[i]);
+		if (!new_matrix[i])
+		{
+			while (--i >= 0)
+				free(new_matrix[i]);
+			free(new_matrix);
+			return (NULL);
+		}
 		i++;
 	}
 	if (new_str)
+	{
 		new_matrix[i++] = ft_strdup(new_str);
+		if (!new_matrix[i - 1])
+		{
+			while (--i >= 0)
+				free(new_matrix[i]);
+			free(new_matrix);
+			return (NULL);
+		}
+	}
 	new_matrix[i] = NULL;
 	if (matrix)
 		ft_free(matrix);
