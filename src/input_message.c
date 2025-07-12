@@ -18,6 +18,7 @@ char	*mini_getinput(t_req input)
 	char	*cwd;
 	char	*input_str;
 	char	*temp;
+	char	hostname[256];
 
 	user = mini_getenv("USER", input.envp, 4);
 	if (!user)
@@ -40,7 +41,17 @@ char	*mini_getinput(t_req input)
 	free(temp);
 	if (!input_str)
 		return (free(cwd), g_exit_status = 1, NULL);
-	temp = ft_strjoin(input_str, BLUE "soysal&&halusminishell ");
+	if (gethostname(hostname, sizeof(hostname)) != 0)
+		ft_strlcpy(hostname, "minishell", sizeof(hostname));
+	temp = ft_strjoin(input_str, BLUE);
+	free(input_str);
+	if (!temp)
+		return (free(cwd), g_exit_status = 1, NULL);
+	input_str = ft_strjoin(temp, hostname);
+	free(temp);
+	if (!input_str)
+		return (free(cwd), g_exit_status = 1, NULL);
+	temp = ft_strjoin(input_str, " ");
 	free(input_str);
 	if (!temp)
 		return (free(cwd), g_exit_status = 1, NULL);

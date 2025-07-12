@@ -15,6 +15,7 @@
 # include <dirent.h>
 # include <sys/ioctl.h>
 #include <errno.h>
+#include <unistd.h>
 
 typedef struct s_request
 {
