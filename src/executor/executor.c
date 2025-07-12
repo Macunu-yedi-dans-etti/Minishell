@@ -13,6 +13,8 @@ static void	set_fd(int fd_from, int fd_to)
 
 static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
+	int	devnull;
+
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
@@ -22,6 +24,17 @@ static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 		exit(1);
 	set_fd(cmd->infile != STDIN_FILENO ? cmd->infile : in_fd, STDIN_FILENO);
 	set_fd(cmd->outfile != STDOUT_FILENO ? cmd->outfile : out_fd, STDOUT_FILENO);
+	if (is_builtin(cmd->full_cmd[0]))
+	{
+		devnull = open("/dev/null", O_RDONLY);
+		if (devnull != -1)
+		{
+			dup2(devnull, STDIN_FILENO);
+			close(devnull);
+		}
+		run_builtin(cmd, req);
+		exit(g_exit_status);
+	}
 	if (!cmd->full_path)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
@@ -145,6 +158,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 	t_list	*node;
 	t_shell	*cmd;
 	int		input_fd;
+	int		prev_input_fd;
 	pid_t	*pids;
 	int		count;
 	int		i;
@@ -160,6 +174,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 	}
 	node = cmds;
 	input_fd = STDIN_FILENO;
+	prev_input_fd = STDIN_FILENO;
 	i = 0;
 	while (node)
 	{
@@ -173,7 +188,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 			node = node->next;
 			continue;
 		}
-		if (is_builtin(cmd->full_cmd[0]) && !node->next)
+		if (count == 1 && is_builtin(cmd->full_cmd[0]))
 		{
 			exec_single_builtin(cmd, req, input_fd);
 			input_fd = STDIN_FILENO;
@@ -184,6 +199,9 @@ void	execute_cmds(t_list *cmds, t_req *req)
 			free(pids);
 			return;
 		}
+		if (prev_input_fd != STDIN_FILENO)
+			close(prev_input_fd);
+		prev_input_fd = input_fd;
 		i++;
 		node = node->next;
 	}
@@ -200,5 +218,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 		}
 		i++;
 	}
+	if (input_fd != STDIN_FILENO)
+		close(input_fd);
 	free(pids);
 }
