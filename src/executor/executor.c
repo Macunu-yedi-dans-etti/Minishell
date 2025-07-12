@@ -49,8 +49,7 @@ static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	exit(g_exit_status);
 }
 
-static pid_t	exec_external_cmd(t_shell *cmd, t_req *req,
-	int in_fd, int out_fd)
+static pid_t	exec_external_cmd(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
 	pid_t	pid;
 
@@ -79,38 +78,42 @@ static void	restore_io(int *backup_in, int *backup_out)
 	}
 }
 
-static void	exec_single_builtin(t_shell *cmd, t_req *req)
+static void	exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
 {
 	int	backup_out;
 	int	backup_in;
 
+	backup_out = -1;
+	backup_in = -1;
 	if (!cmd->full_cmd || !cmd->full_cmd[0])
 	{
 		g_exit_status = 0;
 		return ;
 	}
-	backup_out = -1;
-	backup_in = -1;
-	if (apply_redirects(cmd) == 0)
-	{
-		if (cmd->outfile != STDOUT_FILENO)
-		{
-			backup_out = dup(STDOUT_FILENO);
-			dup2(cmd->outfile, STDOUT_FILENO);
-		}
-		if (cmd->infile != STDIN_FILENO)
-		{
-			backup_in = dup(STDIN_FILENO);
-			dup2(cmd->infile, STDIN_FILENO);
-		}
-		run_builtin(cmd, req);
-		restore_io(&backup_in, &backup_out);
-	}
-	else
+	if (apply_redirects(cmd) != 0)
 	{
 		ft_putendl_fd("minishell: redirection failed", 2);
 		g_exit_status = 1;
+		return ;
 	}
+	if (cmd->infile == STDIN_FILENO && input_fd != STDIN_FILENO)
+	{
+		backup_in = dup(STDIN_FILENO);
+		dup2(input_fd, STDIN_FILENO);
+		close(input_fd);
+	}
+	else if (cmd->infile != STDIN_FILENO)
+	{
+		backup_in = dup(STDIN_FILENO);
+		dup2(cmd->infile, STDIN_FILENO);
+	}
+	if (cmd->outfile != STDOUT_FILENO)
+	{
+		backup_out = dup(STDOUT_FILENO);
+		dup2(cmd->outfile, STDOUT_FILENO);
+	}
+	run_builtin(cmd, req);
+	restore_io(&backup_in, &backup_out);
 }
 
 static int	handle_exec(t_shell *cmd, t_req *req,
@@ -153,37 +156,41 @@ void	execute_cmds(t_list *cmds, t_req *req)
 	{
 		perror("malloc");
 		g_exit_status = 1;
-	return;
+		return;
 	}
 	node = cmds;
 	input_fd = STDIN_FILENO;
 	i = 0;
 	while (node)
 	{
-    cmd = (t_shell *)node->content;
-    if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
-    {
-        ft_putendl_fd("minishell: invalid or empty command", 2);
-        g_exit_status = 0;
-        pids[i] = -1;
-        i++;
-        node = node->next;
-        continue;
-    }
-    if (is_builtin(cmd->full_cmd[0]) && !node->next)
-        exec_single_builtin(cmd, req);
-    else if (handle_exec(cmd, req, &input_fd, &pids[i], !!node->next))
-    {
-        free(pids);
-        return;
-    }
-    i++;
-    node = node->next;
+		cmd = (t_shell *)node->content;
+		if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
+		{
+			ft_putendl_fd("minishell: invalid or empty command", 2);
+			g_exit_status = 0;
+			pids[i] = -1;
+			i++;
+			node = node->next;
+			continue;
+		}
+		if (is_builtin(cmd->full_cmd[0]) && !node->next)
+		{
+			exec_single_builtin(cmd, req, input_fd);
+			input_fd = STDIN_FILENO;
+			pids[i] = -1;
+		}
+		else if (handle_exec(cmd, req, &input_fd, &pids[i], !!node->next))
+		{
+			free(pids);
+			return;
+		}
+		i++;
+		node = node->next;
 	}
 	i = 0;
 	while (i < count)
 	{
-		if (pids[i] != -1)
+		if (pids[i] > 0)
 		{
 			waitpid(pids[i], &status, 0);
 			if (WIFEXITED(status))

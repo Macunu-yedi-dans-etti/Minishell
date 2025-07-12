@@ -72,6 +72,7 @@ char	**ft_double_extension(char **matrix, char *new_str);
 char	**ft_double_copy(char **envp);
 t_list	*ft_lstnew(void *content);
 void	ft_lstadd_back(t_list **lst, t_list *new_node);
+void	strip_newline(char *s);
 
 //resolve_path
 char *resolve_path(char *cmd, char **envp);

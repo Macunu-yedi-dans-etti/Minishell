@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 04:47:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 03:20:02 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ static t_token	*get_quoted_token(const char *input, int *i)
 	start = *i;
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
+	if (!input[*i])
+		return (ms_error(ERR_QUOTE, NULL, 2), NULL);
 	substr = ft_substr(input, start, *i - start);
-	if (input[*i] == quote)
-		(*i)++;
+	(*i)++;
 	if (!substr)
 		return (NULL);
 	if (quote == '\'')
@@ -62,7 +63,6 @@ static t_token	*get_quoted_token(const char *input, int *i)
 	free(substr);
 	return (token);
 }
-
 
 static t_token	*get_operator_token(const char *input, int *i)
 {
@@ -129,6 +129,11 @@ t_token	**tokenize_input(const char *input)
 	while (input[i])
 	{
 		token = get_token(input, &i);
+		if (!token)
+		{
+			free_tokens(tokens);
+			return (NULL);
+		}
 		if (token && token->str && token->str[0] != '\0')
 		{
 			tmp = malloc(sizeof(t_token *) * (count + 2));

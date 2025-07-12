@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/10 20:00:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 20:00:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 			{
 				if (set_redirection(current, tokens, &i))
 					return (free(current), free_cmds(cmds), NULL);
+				continue;
 			}
 			else if (tokens[i]->str && tokens[i]->str[0] != '\0')
 			{
@@ -131,11 +132,11 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 					free(current), free_cmds(cmds), NULL);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
-		if (tokens[i])
+		if (tokens[i] && tokens[i]->str && !ft_strncmp(tokens[i]->str, "|", 2))
 		{
-			if (!tokens[i + 1])
-				return (ms_error(ERR_PIPE_SYNTAX, "|", 2), free_cmds(cmds), NULL);
 			i++;
+			if (!tokens[i])
+				return (ms_error(ERR_PIPE_SYNTAX, "|", 2), free_cmds(cmds), NULL);
 		}
 	}
 	return (cmds);

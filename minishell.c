@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 06:55:12 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 15:00:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,14 +108,27 @@ static void	append_history_file(const char *filename, const char *line)
 	close(fd);
 }
 
+static void	remove_token(t_token **tokens, int idx)
+{
+	int	k;
+
+	free(tokens[idx]->str);
+	free(tokens[idx]);
+	k = idx;
+	while (tokens[k + 1])
+	{
+		tokens[k] = tokens[k + 1];
+		k++;
+	}
+	tokens[k] = NULL;
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	char	*output;
 	char	*old;
 	int		i;
-	int		j;
-	int		k;	
 	t_token	**tokens;
 	t_list	*cmds;
 	t_req	res;
@@ -146,25 +159,12 @@ int	main(int ac, char **av, char **env)
 				old = tokens[i]->str;
 				tokens[i]->str = expand_str(old, res.envp, tokens[i]->quote);
 				free(old);
-				i++;
-			}
-			j = 0;
-			while (tokens && tokens[j])
-			{
-				if (tokens[j]->str[0] == '\0')
+				if (!tokens[i]->str || tokens[i]->str[0] == '\0')
 				{
-					free(tokens[j]->str);
-					free(tokens[j]);
-					k = j;
-					while (tokens[k + 1])
-					{
-						tokens[k] = tokens[k + 1];
-						k++;
-					}
-					tokens[k] = NULL;
-					continue;
+					remove_token(tokens, i);
+					continue ;
 				}
-				j++;
+				i++;
 			}
 			cmds = parse_tokens(tokens, &res);
 			if (!cmds)
@@ -182,4 +182,3 @@ int	main(int ac, char **av, char **env)
 	free_all(&res);
 	exit(g_exit_status);
 }
-

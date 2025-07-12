@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
+/*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/06 16:01:35 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/06 16:01:35 by haloztur         ###   ########.fr       */
+/*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
+/*   Updated: 2025/07/12 04:24:38 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,33 +97,20 @@ char	*expand_str(const char *input, char **envp, int quote)
 	int		len;
 	char	*result;
 	char	*expanded;
-	char	quote_flag;
 
-	i = 0;
-	len = 1;
-	quote_flag = 0;
 	if (!input)
 		return (NULL);
 	if (quote == 1)
 		return (ft_strdup(input));
+	i = 0;
+	len = 1;
 	result = malloc(1);
 	if (!result)
 		return (NULL);
 	result[0] = '\0';
 	while (input[i])
 	{
-		if (!quote_flag && (input[i] == '"' || input[i] == '\''))
-		{
-			quote_flag = input[i++];
-			continue ;
-		}
-		if (quote_flag && input[i] == quote_flag)
-		{
-			quote_flag = 0;
-			i++;
-			continue ;
-		}
-		if (input[i] == '$' && quote_flag != '\'')
+		if (input[i] == '$')
 		{
 			expanded = expand_var(input, &i, envp);
 			if (!expanded)
@@ -134,7 +121,7 @@ char	*expand_str(const char *input, char **envp, int quote)
 				return (NULL);
 			continue ;
 		}
-		if (input[i] == '\\' && quote_flag == '"'
+		if (input[i] == '\\' && quote == 2
 			&& (input[i + 1] == '"' || input[i + 1] == '$' || input[i + 1] == '\\'))
 			i++;
 		result = append_char(result, input[i++], &len);

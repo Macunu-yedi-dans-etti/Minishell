@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 01:37:47 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 02:45:47 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,3 +108,12 @@ void	ft_lstadd_back(t_list **lst, t_list *new_node)
 	temp->next = new_node;
 }
 
+void	strip_newline(char *s)
+{
+	size_t	len;
+	if (!s)
+		return ;
+	len = ft_strlen(s);
+	while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r'))
+		s[--len] = '\0';
+}
