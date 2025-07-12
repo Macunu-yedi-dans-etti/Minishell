@@ -6,13 +6,13 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 02:24:19 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 23:49:49 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static void	print_cd_error(char *arg, char *msg)
+static void print_cd_error(char *arg, char *msg)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
 	if (arg)
@@ -23,10 +23,10 @@ static void	print_cd_error(char *arg, char *msg)
 	ft_putendl_fd(msg, 2);
 }
 
-static char	*expand_tilde(char *arg, t_req *req)
+static char *expand_tilde(char *arg, t_req *req)
 {
-	char	*home;
-	char	*result;
+	char *home;
+	char *result;
 
 	if (arg[0] != '~')
 		return (NULL);
@@ -42,11 +42,11 @@ static char	*expand_tilde(char *arg, t_req *req)
 	free(home);
 	return (result);
 }
-
-static char	*get_cd_target(t_shell *cmd, t_req *req, int *need_free)
+#include <string.h>
+static char *get_cd_target(t_shell *cmd, t_req *req, int *need_free)
 {
-	char	*target;
-	char	*expanded;
+	char *target;
+	char *expanded;
 
 	*need_free = 0;
 	if (!cmd->full_cmd[1])
@@ -83,22 +83,22 @@ static char	*get_cd_target(t_shell *cmd, t_req *req, int *need_free)
 	return (target);
 }
 
-int	builtin_cd(t_shell *cmd, t_req *req)
+int builtin_cd(t_shell *cmd, t_req *req)
 {
-	char	*target;
-	char	*oldpwd;
-	char	*newpwd;
-	int		arg_count;
-	int		need_free;
+	char *target;
+	char *oldpwd;
+	char *newpwd;
+	int arg_count;
+	int need_free;
 
 	arg_count = 0;
 	while (cmd->full_cmd[arg_count])
 		arg_count++;
 	if (arg_count > 2)
 	{
-		print_cd_error(NULL, "too many arguments");
-		g_exit_status = 1;
-		return (1);
+		// print_cd_error(NULL, "too many arguments");
+//		g_exit_status = 0; 
+		return (0);
 	}
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)

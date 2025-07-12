@@ -6,17 +6,17 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 15:00:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 23:40:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int	g_exit_status;
+extern int g_exit_status;
 
-static int	read_history_file(const char *filename)
+static int read_history_file(const char *filename)
 {
-	int	fd;
+	int fd;
 
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
@@ -28,9 +28,9 @@ static int	read_history_file(const char *filename)
 	return (0);
 }
 
-static void	tier_pid(t_req *p)
+static void tier_pid(t_req *p)
 {
-	pid_t	pid;
+	pid_t pid;
 
 	pid = fork();
 	if (pid < 0)
@@ -48,10 +48,10 @@ static void	tier_pid(t_req *p)
 	p->pid = pid - 1;
 }
 
-static t_req	init_variable(t_req prompt, char *str, char **av)
+static t_req init_variable(t_req prompt, char *str, char **av)
 {
-	char	*num;
-	char	*shlvl;
+	char *num;
+	char *shlvl;
 
 	str = getcwd(NULL, 0);
 	if (str)
@@ -70,8 +70,8 @@ static t_req	init_variable(t_req prompt, char *str, char **av)
 	str = mini_getenv("PATH", prompt.envp, 4);
 	if (!str)
 		prompt.envp = mini_setenv("PATH",
-				"/usr/local/sbin:/usr/local/bin:/usr/bin:/bin",
-				prompt.envp, 4);
+								  "/usr/local/sbin:/usr/local/bin:/usr/bin:/bin",
+								  prompt.envp, 4);
 	free(str);
 	str = mini_getenv("_", prompt.envp, 1);
 	if (!str && av[0])
@@ -80,9 +80,9 @@ static t_req	init_variable(t_req prompt, char *str, char **av)
 	return (prompt);
 }
 
-static t_req	setup(char **av, char **env)
+static t_req setup(char **av, char **env)
 {
-	t_req	res;
+	t_req res;
 
 	res.cmds = NULL;
 	res.envp = ft_double_copy(env);
@@ -93,24 +93,24 @@ static t_req	setup(char **av, char **env)
 	return (res);
 }
 
-static void	append_history_file(const char *filename, const char *line)
+static void append_history_file(const char *filename, const char *line)
 {
-	int	fd;
+	int fd;
 
 	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
 	{
 		ms_error(ERR_NO_DIR, "history file could not be opened for append", 1);
-		return ;
+		return;
 	}
 	write(fd, line, ft_strlen(line));
 	write(fd, "\n", 1);
 	close(fd);
 }
 
-static void	remove_token(t_token **tokens, int idx)
+static void remove_token(t_token **tokens, int idx)
 {
-	int	k;
+	int k;
 
 	free(tokens[idx]->str);
 	free(tokens[idx]);
@@ -123,15 +123,15 @@ static void	remove_token(t_token **tokens, int idx)
 	tokens[k] = NULL;
 }
 
-int	main(int ac, char **av, char **env)
+int main(int ac, char **av, char **env)
 {
-	char	*input;
-	char	*output;
-	char	*old;
-	int		i;
-	t_token	**tokens;
-	t_list	*cmds;
-	t_req	res;
+	char *input;
+	char *output;
+	char *old;
+	int i;
+	t_token **tokens;
+	t_list *cmds;
+	t_req res;
 
 	(void)ac;
 	res = setup(av, env);
@@ -145,8 +145,9 @@ int	main(int ac, char **av, char **env)
 		free(input);
 		if (!output)
 		{
-			write(1, "exit\n", 5);
-			break ;
+			if (isatty(STDIN_FILENO))
+				write(1, "exit\n", 5);
+			break;
 		}
 		if (output[0])
 		{
@@ -162,7 +163,7 @@ int	main(int ac, char **av, char **env)
 				if (!tokens[i]->str || tokens[i]->str[0] == '\0')
 				{
 					remove_token(tokens, i);
-					continue ;
+					continue;
 				}
 				i++;
 			}
