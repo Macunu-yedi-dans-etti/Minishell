@@ -1,4 +1,7 @@
 #include "../../minishell.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 extern int g_exit_status;
 
@@ -11,10 +14,27 @@ static void set_fd(int fd_from, int fd_to)
 	}
 }
 
+static void close_extra_fds(int keep1, int keep2)
+{
+	int fd_limit = 1024; // makul bir üst sınır
+	for (int fd = 3; fd < fd_limit; fd++)
+	{
+		if (fd != keep1 && fd != keep2)
+			close(fd);
+	}
+}
+
 static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
 	int devnull;
 
+	// --- Ekstra: Tüm gereksiz fd'leri kapat ---
+	close_extra_fds(in_fd, out_fd);
+	// Debug: Açık kalan fd'leri göster
+	// fprintf(stderr, "CHILD: in_fd=%d, out_fd=%d\n", in_fd, out_fd);
+	// ------------------------------------------------------------------------
+
+	set_cmd_signals(); // Set signals for child processes
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
@@ -24,6 +44,14 @@ static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 		exit(1);
 	set_fd(cmd->infile != STDIN_FILENO ? cmd->infile : in_fd, STDIN_FILENO);
 	set_fd(cmd->outfile != STDOUT_FILENO ? cmd->outfile : out_fd, STDOUT_FILENO);
+
+	// --- CRITICAL: Close original pipe fds after dup2 to prevent pipe hang ---
+	if (in_fd != STDIN_FILENO)
+		close(in_fd);
+	if (out_fd != STDOUT_FILENO)
+		close(out_fd);
+	// ------------------------------------------------------------------------
+
 	if (is_builtin(cmd->full_cmd[0]))
 	{
 		devnull = open("/dev/null", O_RDONLY);
@@ -148,8 +176,15 @@ static int handle_exec(t_shell *cmd, t_req *req,
 		close(*input_fd);
 	if (has_next)
 	{
+		// Close write end in parent after child starts
 		close(pipe_fd[1]);
 		*input_fd = pipe_fd[0];
+	}
+	else
+	{
+		// Last command - no need to keep any pipe open
+		if (*input_fd != STDIN_FILENO)
+			close(*input_fd);
 	}
 	return (0);
 }

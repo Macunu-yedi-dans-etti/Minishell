@@ -98,6 +98,7 @@ void handle_sigint(int sig);
 void handle_sigquit(int sig);
 void setup_signals(void);
 void reset_signals(void);
+void set_cmd_signals(void);
 
 // input_message
 char *mini_getinput(t_req input);

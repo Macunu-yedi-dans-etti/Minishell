@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 23:43:55 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:46:20 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,11 @@ static t_token *get_operator_token(const char *input, int *i)
 static t_token *get_word_token(const char *input, int *i)
 {
 	int quote_type = 0;
-	char *result = malloc(1);
+	char *result;
 	int len = 0;
+	int capacity = 32; // Initial capacity
+
+	result = malloc(capacity);
 	if (!result)
 		return NULL;
 	result[0] = '\0';
@@ -86,15 +89,23 @@ static t_token *get_word_token(const char *input, int *i)
 					free(result);
 					return NULL;
 				}
-				int oldlen = len;
-				len += j - *i - 1;
-				result = realloc(result, len + 1);
-				if (!result)
+				int substr_len = j - *i - 1;
+				// Check if we need to expand the buffer
+				if (len + substr_len >= capacity - 1)
 				{
-					free(substr);
-					return NULL;
+					while (len + substr_len >= capacity - 1)
+						capacity *= 2;
+					char *new_result = realloc(result, capacity);
+					if (!new_result)
+					{
+						free(substr);
+						free(result);
+						return NULL;
+					}
+					result = new_result;
 				}
-				memcpy(result + oldlen, substr, j - *i - 1);
+				memcpy(result + len, substr, substr_len);
+				len += substr_len;
 				result[len] = '\0';
 				free(substr);
 				*i = j + 1;
@@ -102,14 +113,34 @@ static t_token *get_word_token(const char *input, int *i)
 			else
 			{
 				// unmatched quote, treat as literal
-				result = realloc(result, len + 2);
+				if (len >= capacity - 1)
+				{
+					capacity *= 2;
+					char *new_result = realloc(result, capacity);
+					if (!new_result)
+					{
+						free(result);
+						return NULL;
+					}
+					result = new_result;
+				}
 				result[len++] = input[(*i)++];
 				result[len] = '\0';
 			}
 		}
 		else
 		{
-			result = realloc(result, len + 2);
+			if (len >= capacity - 1)
+			{
+				capacity *= 2;
+				char *new_result = realloc(result, capacity);
+				if (!new_result)
+				{
+					free(result);
+					return NULL;
+				}
+				result = new_result;
+			}
 			result[len++] = input[(*i)++];
 			result[len] = '\0';
 		}
@@ -138,10 +169,15 @@ t_token **tokenize_input(const char *input)
 	int i;
 	int j;
 	int count;
+	int capacity;
 
 	i = 0;
 	count = 0;
-	tokens = NULL;
+	capacity = 16; // Initial capacity
+	tokens = malloc(sizeof(t_token *) * capacity);
+	if (!tokens)
+		return (NULL);
+	tokens[0] = NULL;
 	while (input[i])
 	{
 		token = get_token(input, &i);
@@ -152,16 +188,24 @@ t_token **tokenize_input(const char *input)
 		}
 		if (token && token->str && token->str[0] != '\0')
 		{
-			tmp = malloc(sizeof(t_token *) * (count + 2));
-			if (!tmp)
-				return (free_tokens(tokens), NULL);
-			j = -1;
-			while (++j < count)
-				tmp[j] = tokens[j];
-			tmp[count++] = token;
-			tmp[count] = NULL;
-			free(tokens);
-			tokens = tmp;
+			// Check if we need to expand the array
+			if (count >= capacity - 1)
+			{
+				capacity *= 2;
+				tmp = malloc(sizeof(t_token *) * capacity);
+				if (!tmp)
+				{
+					free_tokens(tokens);
+					return (NULL);
+				}
+				j = -1;
+				while (++j < count)
+					tmp[j] = tokens[j];
+				free(tokens);
+				tokens = tmp;
+			}
+			tokens[count++] = token;
+			tokens[count] = NULL;
 		}
 		else if (token)
 		{

@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 00:05:12 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:34:51 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int apply_redirects(t_shell *cmd)
 	int last_in = -1, last_out = -1;
 	int fd;
 	int error = 0;
+
 	// Open all redirects in order
 	while (redir)
 	{

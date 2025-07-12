@@ -6,18 +6,19 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:47:29 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 23:32:26 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:37:48 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <readline/readline.h>
 
-int	g_exit_status;
+int g_exit_status;
 
 #define EXIT_SIGINT 130
 #define EXIT_SIGQUIT 131
 
-void	handle_sigint(int sig)
+void handle_sigint(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -29,7 +30,7 @@ void	handle_sigint(int sig)
 	}
 }
 
-void	handle_sigquit(int sig)
+void handle_sigquit(int sig)
 {
 	if (sig == SIGQUIT)
 	{
@@ -38,13 +39,19 @@ void	handle_sigquit(int sig)
 	}
 }
 
-void	setup_signals(void)
+void setup_signals(void)
 {
 	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
+	signal(SIGQUIT, SIG_IGN);
 }
 
-void	reset_signals(void)
+void reset_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
+void set_cmd_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
