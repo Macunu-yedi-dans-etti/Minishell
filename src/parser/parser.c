@@ -55,9 +55,9 @@ static int	handle_redir(t_shell *cmd, char *redir, char *file)
 	}
 	else if (!ft_strncmp(redir, "<<", 3))
 		cmd->infile = handle_heredoc(file);
-	if ((redir[0] == '<' && !cmd->infile_path)
+	if ((!ft_strncmp(redir, "<", 2) && !cmd->infile_path)
 		|| ((redir[0] == '>' || redir[1] == '>') && !cmd->outfile_path)
-		|| (redir[1] == '<' && cmd->infile < 0))
+		|| (!ft_strncmp(redir, "<<", 3) && cmd->infile < 0))
 		return (ms_error(ERR_ALLOC, redir, 1), 1);
 	return (0);
 }
