@@ -6,15 +6,16 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 05:51:16 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:05:12 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include <string.h>
 
-int	open_redirect_file(char *filename, t_redirect_type type)
+int open_redirect_file(char *filename, t_redirect_type type)
 {
-	int	fd;
+	int fd;
 
 	fd = -1;
 	if (!filename)
@@ -32,31 +33,72 @@ int	open_redirect_file(char *filename, t_redirect_type type)
 	if (fd < 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
-		perror(filename);
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putendl_fd(strerror(errno), 2);
 		g_exit_status = 1;
 	}
 	return (fd);
 }
 
-int	apply_redirects(t_shell *cmd)
+int apply_redirects(t_shell *cmd)
 {
-	int	mode;
-
-	if (cmd->infile_path)
+	t_redirect *redir = cmd->redirects;
+	int last_in = -1, last_out = -1;
+	int fd;
+	int error = 0;
+	// Open all redirects in order
+	while (redir)
 	{
-		cmd->infile = open_redirect_file(cmd->infile_path, R_IN);
-		if (cmd->infile < 0)
-			return (1);
+		if (redir->type == R_IN)
+		{
+			fd = open_redirect_file(redir->filename, R_IN);
+			if (fd < 0)
+			{
+				error = 1;
+				break;
+			}
+			if (last_in != -1 && last_in != STDIN_FILENO)
+				close(last_in);
+			last_in = fd;
+		}
+		else if (redir->type == R_OUT)
+		{
+			fd = open_redirect_file(redir->filename, R_OUT);
+			if (fd < 0)
+			{
+				error = 1;
+				break;
+			}
+			if (last_out != -1 && last_out != STDOUT_FILENO)
+				close(last_out);
+			last_out = fd;
+		}
+		else if (redir->type == R_APPEND)
+		{
+			fd = open_redirect_file(redir->filename, R_APPEND);
+			if (fd < 0)
+			{
+				error = 1;
+				break;
+			}
+			if (last_out != -1 && last_out != STDOUT_FILENO)
+				close(last_out);
+			last_out = fd;
+		}
+		redir = redir->next;
 	}
-	if (cmd->outfile_path)
+	if (error)
 	{
-		if (cmd->append_out)
-			mode = R_APPEND;
-		else
-			mode = R_OUT;
-		cmd->outfile = open_redirect_file(cmd->outfile_path, mode);
-		if (cmd->outfile < 0)
-			return (1);
+		if (last_in != -1 && last_in != STDIN_FILENO)
+			close(last_in);
+		if (last_out != -1 && last_out != STDOUT_FILENO)
+			close(last_out);
+		return 1;
 	}
-	return (0);
+	if (last_in != -1)
+		cmd->infile = last_in;
+	if (last_out != -1)
+		cmd->outfile = last_out;
+	return 0;
 }

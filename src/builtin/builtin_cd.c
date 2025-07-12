@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 23:49:49 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/12 23:56:22 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,8 @@ int builtin_cd(t_shell *cmd, t_req *req)
 		arg_count++;
 	if (arg_count > 2)
 	{
-		// print_cd_error(NULL, "too many arguments");
-//		g_exit_status = 0; 
-		return (0);
+		// bash ignores extra arguments to cd
+		// just use the first argument
 	}
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)

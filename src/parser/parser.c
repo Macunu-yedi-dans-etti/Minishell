@@ -6,17 +6,17 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 20:00:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 00:04:35 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-extern int	g_exit_status;
+extern int g_exit_status;
 
-static t_shell	*init_cmd(void)
+static t_shell *init_cmd(void)
 {
-	t_shell	*cmd;
+	t_shell *cmd;
 
 	cmd = malloc(sizeof(t_shell));
 	if (!cmd)
@@ -25,46 +25,46 @@ static t_shell	*init_cmd(void)
 	cmd->full_path = NULL;
 	cmd->infile = STDIN_FILENO;
 	cmd->outfile = STDOUT_FILENO;
-	cmd->infile_path = NULL;
-	cmd->outfile_path = NULL;
-	cmd->append_out = 0;
+	cmd->redirects = NULL;
 	return (cmd);
 }
 
-static int	is_redirect(const char *token)
+// Helper to add a redirect to the list
+static void add_redirect(t_shell *cmd, t_redirect_type type, char *filename)
 {
-	return (!ft_strncmp(token, "<", 2)
-		|| !ft_strncmp(token, ">", 2)
-		|| !ft_strncmp(token, ">>", 3)
-		|| !ft_strncmp(token, "<<", 3));
+	t_redirect *redir = malloc(sizeof(t_redirect));
+	if (!redir)
+		return;
+	redir->filename = ft_strdup(filename);
+	redir->type = type;
+	redir->next = NULL;
+	t_redirect **p = &cmd->redirects;
+	while (*p)
+		p = &(*p)->next;
+	*p = redir;
 }
 
-static int	handle_redir(t_shell *cmd, char *redir, char *file)
+static int is_redirect(const char *token)
+{
+	return (!ft_strncmp(token, "<", 2) || !ft_strncmp(token, ">", 2) || !ft_strncmp(token, ">>", 3) || !ft_strncmp(token, "<<", 3));
+}
+
+static int handle_redir(t_shell *cmd, char *redir, char *file)
 {
 	if (!ft_strncmp(redir, "<", 2))
-		cmd->infile_path = ft_strdup(file);
+		add_redirect(cmd, R_IN, file);
 	else if (!ft_strncmp(redir, ">", 2))
-	{
-		cmd->outfile_path = ft_strdup(file);
-		cmd->append_out = 0;
-	}
+		add_redirect(cmd, R_OUT, file);
 	else if (!ft_strncmp(redir, ">>", 3))
-	{
-		cmd->outfile_path = ft_strdup(file);
-		cmd->append_out = 1;
-	}
+		add_redirect(cmd, R_APPEND, file);
 	else if (!ft_strncmp(redir, "<<", 3))
-		cmd->infile = handle_heredoc(file);
-	if ((redir[0] == '<' && !cmd->infile_path)
-		|| ((redir[0] == '>' || redir[1] == '>') && !cmd->outfile_path)
-		|| (redir[1] == '<' && cmd->infile < 0))
-		return (ms_error(ERR_ALLOC, redir, 1), 1);
-	return (0);
+		cmd->infile = handle_heredoc(file); // heredoc özel
+	return 0;
 }
 
-static int	set_redirection(t_shell *cmd, t_token **tokens, int *i)
+static int set_redirection(t_shell *cmd, t_token **tokens, int *i)
 {
-	char	*redir;
+	char *redir;
 
 	redir = tokens[*i]->str;
 	(*i)++;
@@ -76,13 +76,26 @@ static int	set_redirection(t_shell *cmd, t_token **tokens, int *i)
 	return (0);
 }
 
-t_list	*parse_tokens(t_token **tokens, t_req *req)
+void free_redirects(t_redirect *redir)
 {
-	t_list	*cmds;
-	t_shell	*current;
-	int		i;
-	int		has_cmd;
-	char	*expanded;
+	t_redirect *tmp;
+	while (redir)
+	{
+		tmp = redir->next;
+		if (redir->filename)
+			free(redir->filename);
+		free(redir);
+		redir = tmp;
+	}
+}
+
+t_list *parse_tokens(t_token **tokens, t_req *req)
+{
+	t_list *cmds;
+	t_shell *current;
+	int i;
+	int has_cmd;
+	char *expanded;
 
 	cmds = NULL;
 	i = 0;
@@ -110,26 +123,25 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 				expanded = ft_strdup(tokens[i]->str);
 				if (!expanded)
 					return (ms_error(ERR_ALLOC, "expanded", 1),
-						free(current), free_cmds(cmds), NULL);
+							free(current), free_cmds(cmds), NULL);
 				current->full_cmd = ft_double_extension(current->full_cmd, expanded);
 				free(expanded);
 				if (!current->full_cmd)
 					return (ms_error(ERR_ALLOC, "full_cmd", 1),
-						free(current), free_cmds(cmds), NULL);
+							free(current), free_cmds(cmds), NULL);
 				has_cmd = 1;
 			}
 			i++;
 		}
 		if (!has_cmd)
 			return (ms_error(ERR_PIPE_SYNTAX, "|", 2),
-				free(current), free_cmds(cmds), NULL);
-		if (!current->full_path && current->full_cmd
-			&& !is_builtin(current->full_cmd[0]))
+					free(current), free_cmds(cmds), NULL);
+		if (!current->full_path && current->full_cmd && !is_builtin(current->full_cmd[0]))
 		{
 			current->full_path = resolve_path(current->full_cmd[0], req->envp);
 			if (!current->full_path)
 				return (ms_error(ERR_NO_CMD, current->full_cmd[0], 127),
-					free(current), free_cmds(cmds), NULL);
+						free(current), free_cmds(cmds), NULL);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 		if (tokens[i] && tokens[i]->str && !ft_strncmp(tokens[i]->str, "|", 2))

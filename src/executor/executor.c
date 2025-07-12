@@ -1,8 +1,8 @@
 #include "../../minishell.h"
 
-extern int	g_exit_status;
+extern int g_exit_status;
 
-static void	set_fd(int fd_from, int fd_to)
+static void set_fd(int fd_from, int fd_to)
 {
 	if (fd_from != fd_to)
 	{
@@ -11,9 +11,9 @@ static void	set_fd(int fd_from, int fd_to)
 	}
 }
 
-static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
+static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
-	int	devnull;
+	int devnull;
 
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
@@ -39,7 +39,9 @@ static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
 		ft_putendl_fd(cmd->full_cmd && cmd->full_cmd[0]
-			? cmd->full_cmd[0] : "(null)", 2);
+						  ? cmd->full_cmd[0]
+						  : "(null)",
+					  2);
 		exit(127);
 	}
 	execve(cmd->full_path, cmd->full_cmd, req->envp);
@@ -62,9 +64,9 @@ static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	exit(g_exit_status);
 }
 
-static pid_t	exec_external_cmd(t_shell *cmd, t_req *req, int in_fd, int out_fd)
+static pid_t exec_external_cmd(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
-	pid_t	pid;
+	pid_t pid;
 
 	pid = fork();
 	if (pid < 0)
@@ -77,7 +79,7 @@ static pid_t	exec_external_cmd(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	return (pid);
 }
 
-static void	restore_io(int *backup_in, int *backup_out)
+static void restore_io(int *backup_in, int *backup_out)
 {
 	if (*backup_out != -1)
 	{
@@ -91,23 +93,22 @@ static void	restore_io(int *backup_in, int *backup_out)
 	}
 }
 
-static void	exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
+static void exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
 {
-	int	backup_out;
-	int	backup_in;
+	int backup_out;
+	int backup_in;
 
 	backup_out = -1;
 	backup_in = -1;
 	if (!cmd->full_cmd || !cmd->full_cmd[0])
 	{
 		g_exit_status = 0;
-		return ;
+		return;
 	}
 	if (apply_redirects(cmd) != 0)
 	{
-		ft_putendl_fd("minishell: redirection failed", 2);
 		g_exit_status = 1;
-		return ;
+		return;
 	}
 	if (cmd->infile == STDIN_FILENO && input_fd != STDIN_FILENO)
 	{
@@ -129,11 +130,11 @@ static void	exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
 	restore_io(&backup_in, &backup_out);
 }
 
-static int	handle_exec(t_shell *cmd, t_req *req,
-	int *input_fd, pid_t *pid, int has_next)
+static int handle_exec(t_shell *cmd, t_req *req,
+					   int *input_fd, pid_t *pid, int has_next)
 {
-	int	pipe_fd[2];
-	int	out_fd;
+	int pipe_fd[2];
+	int out_fd;
 
 	out_fd = STDOUT_FILENO;
 	if (has_next)
@@ -153,16 +154,16 @@ static int	handle_exec(t_shell *cmd, t_req *req,
 	return (0);
 }
 
-void	execute_cmds(t_list *cmds, t_req *req)
+void execute_cmds(t_list *cmds, t_req *req)
 {
-	t_list	*node;
-	t_shell	*cmd;
-	int		input_fd;
-	int		prev_input_fd;
-	pid_t	*pids;
-	int		count;
-	int		i;
-	int		status;
+	t_list *node;
+	t_shell *cmd;
+	int input_fd;
+	int prev_input_fd;
+	pid_t *pids;
+	int count;
+	int i;
+	int status;
 
 	count = ft_lstsize(cmds);
 	pids = malloc(sizeof(pid_t) * count);
