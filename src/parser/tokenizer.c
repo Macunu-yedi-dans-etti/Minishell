@@ -6,12 +6,12 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 00:46:20 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:57:51 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <string.h>
+
 
 static int is_separator(char c)
 {

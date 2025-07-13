@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 23:56:22 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 11:13:17 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ static char *expand_tilde(char *arg, t_req *req)
 	free(home);
 	return (result);
 }
-#include <string.h>
 static char *get_cd_target(t_shell *cmd, t_req *req, int *need_free)
 {
 	char *target;
@@ -96,8 +95,9 @@ int builtin_cd(t_shell *cmd, t_req *req)
 		arg_count++;
 	if (arg_count > 2)
 	{
-		// bash ignores extra arguments to cd
-		// just use the first argument
+		g_exit_status = 1;
+		ms_error(ERR_NO_CMD, "too many arguments", 1);
+		return (1);
 	}
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/06 08:59:54 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/13 11:17:15 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int	builtin_exit(char **args)
 	{
 		if (!is_numeric(args[1]))
 		{
-			ms_error(ERR_NO_CMD, "exit: numeric argument required", 255);
-			exit(255);
+			ms_error(ERR_NO_CMD, "exit: numeric argument required", 2);
+			exit(2);
 		}
 		if (args[2])
 		{
