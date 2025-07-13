@@ -4,7 +4,6 @@
 #include "includes/mini_error.h"
 #include "includes/libft/libft.h"
 #include "includes/color.h"
-#include "Get_Next_Line/get_next_line.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <readline/readline.h>
@@ -98,7 +97,6 @@ void handle_sigint(int sig);
 void handle_sigquit(int sig);
 void setup_signals(void);
 void reset_signals(void);
-void set_cmd_signals(void);
 
 // input_message
 char *mini_getinput(t_req input);
@@ -124,6 +122,10 @@ int builtin_cd(t_shell *cmd, t_req *req);
 int builtin_export(char **args, t_req *req);
 int builtin_unset(char **args, t_req *req);
 int builtin_exit(char **args);
+
+// cd utils
+void print_cd_error(char *arg, char *msg);
+char *get_cd_target(t_shell *cmd, t_req *req, int *need_free);
 
 // redirect
 int open_redirect_file(char *filename, t_redirect_type type);

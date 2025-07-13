@@ -6,18 +6,74 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:46:35 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 06:52:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 13:36:50 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+static char	*build_prompt_part2(char *input_str, char *cwd)
+{
+	char	*temp;
+
+	temp = ft_strjoin(input_str, CYAN);
+	free(input_str);
+	if (!temp)
+	{
+		g_exit_status = 1;
+		return (free(cwd), NULL);
+	}
+	input_str = ft_strjoin(temp, cwd);
+	free(cwd);
+	free(temp);
+	if (!input_str)
+	{
+		g_exit_status = 1;
+		return (NULL);
+	}
+	temp = ft_strjoin(input_str, WHITE " $ " DEFAULT);
+	free(input_str);
+	if (!temp)
+	{
+		g_exit_status = 1;
+		return (NULL);
+	}
+	return (temp);
+}
+
+static char	*build_prompt(char *user, char *cwd)
+{
+	char	*input_str;
+	char	*temp;
+
+	temp = ft_strjoin(GREEN, user);
+	if (!temp)
+	{
+		g_exit_status = 1;
+		return (free(cwd), NULL);
+	}
+	input_str = ft_strjoin(temp, WHITE "@");
+	(free(temp), free(user));
+	if (!input_str)
+	{
+		g_exit_status = 1;
+		return (free(cwd), NULL);
+	}
+	temp = ft_strjoin(input_str, BLUE "soysal&&halusminishell ");
+	free(input_str);
+	if (!temp)
+	{
+		g_exit_status = 1;
+		return (free(cwd), NULL);
+	}
+	input_str = temp;
+	return (build_prompt_part2(input_str, cwd));
+}
+
 char	*mini_getinput(t_req input)
 {
 	char	*user;
 	char	*cwd;
-	char	*input_str;
-	char	*temp;
 
 	user = mini_getenv("USER", input.envp, 4);
 	if (!user)
@@ -32,31 +88,5 @@ char	*mini_getinput(t_req input)
 	}
 	if (!cwd)
 		return (free(user), g_exit_status = 1, NULL);
-	temp = ft_strjoin(GREEN, user);
-	free(user);
-	if (!temp)
-		return (free(cwd), g_exit_status = 1, NULL);
-	input_str = ft_strjoin(temp, WHITE "@");
-	free(temp);
-	if (!input_str)
-		return (free(cwd), g_exit_status = 1, NULL);
-	temp = ft_strjoin(input_str, BLUE "soysal&&halusminishell ");
-	free(input_str);
-	if (!temp)
-		return (free(cwd), g_exit_status = 1, NULL);
-	input_str = ft_strjoin(temp, CYAN);
-	free(temp);
-	if (!input_str)
-		return (free(cwd), g_exit_status = 1, NULL);
-	temp = ft_strjoin(input_str, cwd);
-	free(cwd);
-	free(input_str);
-	if (!temp)
-		return (g_exit_status = 1, NULL);
-	input_str = ft_strjoin(temp, WHITE " $ " DEFAULT);
-	free(temp);
-	if (!input_str)
-		return (g_exit_status = 1, NULL);
-	return (input_str);
+	return (build_prompt(user, cwd));
 }
-

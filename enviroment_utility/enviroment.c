@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 00:01:28 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 12:47:19 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,34 +50,43 @@ char	**mini_setenv(char *var, char *value, char **envp, int n)
 	return (envp);
 }
 
-char	**mini_unsetenv(char ***envp, const char *var)
+static char	**build_new_env(char **envp, const char *var, int len)
 {
 	int		i;
 	int		j;
-	int		len;
 	char	**new_env;
 
 	i = 0;
-	j = 0;
-	if (!envp || !*envp || !var)
-		return (NULL);
-	len = ft_strlen(var);
-	while ((*envp)[i])
+	while (envp[i])
 		i++;
 	new_env = malloc(sizeof(char *) * (i + 1));
 	if (!new_env)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while ((*envp)[i])
+	while (envp[i])
 	{
-		if (!ft_strncmp((*envp)[i], var, len) && (*envp)[i][len] == '=')
-			free((*envp)[i]);
+		if (!ft_strncmp(envp[i], var, len) && envp[i][len] == '=')
+			free(envp[i]);
 		else
-			new_env[j++] = (*envp)[i];
+			new_env[j++] = envp[i];
 		i++;
 	}
 	new_env[j] = NULL;
+	return (new_env);
+}
+
+char	**mini_unsetenv(char ***envp, const char *var)
+{
+	int		len;
+	char	**new_env;
+
+	if (!envp || !*envp || !var)
+		return (NULL);
+	len = ft_strlen(var);
+	new_env = build_new_env(*envp, var, len);
+	if (!new_env)
+		return (NULL);
 	free(*envp);
 	*envp = new_env;
 	return (new_env);
@@ -102,4 +111,3 @@ char	*mini_getenv(char *var, char **envp, int n)
 	}
 	return (NULL);
 }
-

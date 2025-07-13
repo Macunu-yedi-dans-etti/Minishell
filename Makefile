@@ -7,7 +7,8 @@ SRCS = minishell.c \
 	   src/parser/parser.c\
 	   src/executor/executor.c\
 	   src/builtin/builtin_check.c\
-	   src/builtin/builtin_cd.c\
+	   src/builtin/cd/builtin_cd.c\
+	   src/builtin/cd/cd_utils.c\
 	   src/builtin/builtin_echo.c\
 	   src/builtin/builtin_env.c\
 	   src/builtin/builtin_exit.c\
@@ -24,8 +25,6 @@ SRCS = minishell.c \
 	   general_utility/resolve_path.c\
        enviroment_utility/enviroment.c\
 	   enviroment_utility/mini_setenv_line.c\
-       Get_Next_Line/get_next_line.c \
-       Get_Next_Line/get_next_line_utils.c
 
 OBJS = $(SRCS:.c=.o)
 

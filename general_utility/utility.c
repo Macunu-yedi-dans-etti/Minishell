@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 02:45:47 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/13 12:54:02 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,34 +51,6 @@ char	**ft_double_extension(char **matrix, char *new_str)
 	return (new_matrix);
 }
 
-char	**ft_double_copy(char **envp)
-{
-	int		i;
-	char	**copy;
-
-	if (!envp)
-		return (NULL);
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	if (!copy)
-		return (NULL);
-	i = 0;
-	while (envp[i])
-	{
-		copy[i] = ft_strdup(envp[i]);
-		if (!copy[i])
-		{
-			ft_double_free(&copy);
-			return (NULL);
-		}
-		i++;
-	}
-	copy[i] = NULL;
-	return (copy);
-}
-
 t_list	*ft_lstnew(void *content)
 {
 	t_list	*node;
@@ -111,6 +83,7 @@ void	ft_lstadd_back(t_list **lst, t_list *new_node)
 void	strip_newline(char *s)
 {
 	size_t	len;
+
 	if (!s)
 		return ;
 	len = ft_strlen(s);

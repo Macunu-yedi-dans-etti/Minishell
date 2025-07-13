@@ -34,7 +34,7 @@ static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	// fprintf(stderr, "CHILD: in_fd=%d, out_fd=%d\n", in_fd, out_fd);
 	// ------------------------------------------------------------------------
 
-	set_cmd_signals(); // Set signals for child processes
+	reset_signals(); // Set signals for child processes
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);

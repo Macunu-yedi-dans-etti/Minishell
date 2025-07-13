@@ -6,16 +6,15 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 10:57:51 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/13 13:58:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-
-int open_redirect_file(char *filename, t_redirect_type type)
+static int	open_redirect_file(char *filename, t_redirect_type type)
 {
-	int fd;
+	int	fd;
 
 	fd = -1;
 	if (!filename)
@@ -41,65 +40,53 @@ int open_redirect_file(char *filename, t_redirect_type type)
 	return (fd);
 }
 
-int apply_redirects(t_shell *cmd)
+static int	handle_input_redirect(t_redirect *redir, int *last_in)
 {
-	t_redirect *redir = cmd->redirects;
-	int last_in = -1, last_out = -1;
-	int fd;
-	int error = 0;
+	int	fd;
 
-	// Open all redirects in order
+	fd = open_redirect_file(redir->filename, R_IN);
+	if (fd < 0)
+		return (1);
+	if (*last_in != -1 && *last_in != STDIN_FILENO)
+		close(*last_in);
+	*last_in = fd;
+	return (0);
+}
+
+static int	handle_output_redirect(t_redirect *redir, int *last_out)
+{
+	int	fd;
+
+	fd = open_redirect_file(redir->filename, redir->type);
+	if (fd < 0)
+		return (1);
+	if (*last_out != -1 && *last_out != STDOUT_FILENO)
+		close(*last_out);
+	*last_out = fd;
+	return (0);
+}
+
+int	apply_redirects(t_shell *cmd)
+{
+	t_redirect	*redir;
+	int			last_in;
+	int			last_out;
+
+	redir = cmd->redirects;
+	last_in = -1;
+	last_out = -1;
 	while (redir)
 	{
-		if (redir->type == R_IN)
-		{
-			fd = open_redirect_file(redir->filename, R_IN);
-			if (fd < 0)
-			{
-				error = 1;
-				break;
-			}
-			if (last_in != -1 && last_in != STDIN_FILENO)
-				close(last_in);
-			last_in = fd;
-		}
-		else if (redir->type == R_OUT)
-		{
-			fd = open_redirect_file(redir->filename, R_OUT);
-			if (fd < 0)
-			{
-				error = 1;
-				break;
-			}
-			if (last_out != -1 && last_out != STDOUT_FILENO)
-				close(last_out);
-			last_out = fd;
-		}
-		else if (redir->type == R_APPEND)
-		{
-			fd = open_redirect_file(redir->filename, R_APPEND);
-			if (fd < 0)
-			{
-				error = 1;
-				break;
-			}
-			if (last_out != -1 && last_out != STDOUT_FILENO)
-				close(last_out);
-			last_out = fd;
-		}
+		if (redir->type == R_IN && handle_input_redirect(redir, &last_in))
+			return (1);
+		if ((redir->type == R_OUT || redir->type == R_APPEND)
+			&& handle_output_redirect(redir, &last_out))
+			return (1);
 		redir = redir->next;
-	}
-	if (error)
-	{
-		if (last_in != -1 && last_in != STDIN_FILENO)
-			close(last_in);
-		if (last_out != -1 && last_out != STDOUT_FILENO)
-			close(last_out);
-		return 1;
 	}
 	if (last_in != -1)
 		cmd->infile = last_in;
 	if (last_out != -1)
 		cmd->outfile = last_out;
-	return 0;
+	return (0);
 }
