@@ -62,7 +62,7 @@ static t_token *get_word_token(const char *input, int *i)
 	int quote_type = 0;
 	char *result;
 	int len = 0;
-	int capacity = 32; // Initial capacity
+	int capacity = 32;
 
 	result = malloc(capacity);
 	if (!result)
@@ -90,7 +90,6 @@ static t_token *get_word_token(const char *input, int *i)
 					return NULL;
 				}
 				int substr_len = j - *i - 1;
-				// Check if we need to expand the buffer
 				if (len + substr_len >= capacity - 1)
 				{
 					while (len + substr_len >= capacity - 1)
@@ -112,7 +111,6 @@ static t_token *get_word_token(const char *input, int *i)
 			}
 			else
 			{
-				// unmatched quote, treat as literal
 				if (len >= capacity - 1)
 				{
 					capacity *= 2;
@@ -173,7 +171,7 @@ t_token **tokenize_input(const char *input)
 
 	i = 0;
 	count = 0;
-	capacity = 16; // Initial capacity
+	capacity = 16;
 	tokens = malloc(sizeof(t_token *) * capacity);
 	if (!tokens)
 		return (NULL);
@@ -188,7 +186,6 @@ t_token **tokenize_input(const char *input)
 		}
 		if (token && token->str && token->str[0] != '\0')
 		{
-			// Check if we need to expand the array
 			if (count >= capacity - 1)
 			{
 				capacity *= 2;

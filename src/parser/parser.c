@@ -29,7 +29,6 @@ static t_shell *init_cmd(void)
 	return (cmd);
 }
 
-// Helper to add a redirect to the list
 static void add_redirect(t_shell *cmd, t_redirect_type type, char *filename)
 {
 	t_redirect *redir = malloc(sizeof(t_redirect));
@@ -58,7 +57,7 @@ static int handle_redir(t_shell *cmd, char *redir, char *file)
 	else if (!ft_strncmp(redir, ">>", 3))
 		add_redirect(cmd, R_APPEND, file);
 	else if (!ft_strncmp(redir, "<<", 3))
-		cmd->infile = handle_heredoc(file); // heredoc özel
+		cmd->infile = handle_heredoc(file);
 	return 0;
 }
 

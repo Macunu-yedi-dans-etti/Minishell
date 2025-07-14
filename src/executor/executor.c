@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/14 13:47:24 by haloztur          #+#    #+#             */
+/*   Updated: 2025/07/14 13:47:24 by haloztur         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 #include <unistd.h>
 #include <fcntl.h>
@@ -16,7 +28,7 @@ static void set_fd(int fd_from, int fd_to)
 
 static void close_extra_fds(int keep1, int keep2)
 {
-	int fd_limit = 1024; // makul bir üst sınır
+	int fd_limit = 1024;
 	for (int fd = 3; fd < fd_limit; fd++)
 	{
 		if (fd != keep1 && fd != keep2)
@@ -28,13 +40,8 @@ static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {
 	int devnull;
 
-	// --- Ekstra: Tüm gereksiz fd'leri kapat ---
 	close_extra_fds(in_fd, out_fd);
-	// Debug: Açık kalan fd'leri göster
-	// fprintf(stderr, "CHILD: in_fd=%d, out_fd=%d\n", in_fd, out_fd);
-	// ------------------------------------------------------------------------
-
-	reset_signals(); // Set signals for child processes
+	reset_signals();
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
@@ -45,12 +52,10 @@ static void setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 	set_fd(cmd->infile != STDIN_FILENO ? cmd->infile : in_fd, STDIN_FILENO);
 	set_fd(cmd->outfile != STDOUT_FILENO ? cmd->outfile : out_fd, STDOUT_FILENO);
 
-	// --- CRITICAL: Close original pipe fds after dup2 to prevent pipe hang ---
 	if (in_fd != STDIN_FILENO)
 		close(in_fd);
 	if (out_fd != STDOUT_FILENO)
 		close(out_fd);
-	// ------------------------------------------------------------------------
 
 	if (is_builtin(cmd->full_cmd[0]))
 	{
@@ -158,11 +163,16 @@ static void exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
 	restore_io(&backup_in, &backup_out);
 }
 
-static int handle_exec(t_shell *cmd, t_req *req,
-					   int *input_fd, pid_t *pid, int has_next)
+static int	handle_exec(
+		t_shell *cmd,
+		t_req *req,
+		int *input_fd,
+		pid_t *pid,
+		int has_next)
 {
-	int pipe_fd[2];
-	int out_fd;
+	int	pipe_fd[2];
+	int	out_fd;
+	int	real_in;
 
 	out_fd = STDOUT_FILENO;
 	if (has_next)
@@ -171,21 +181,23 @@ static int handle_exec(t_shell *cmd, t_req *req,
 			return (perror("pipe"), 1);
 		out_fd = pipe_fd[1];
 	}
-	*pid = exec_external_cmd(cmd, req, *input_fd, out_fd);
-	if (*input_fd != STDIN_FILENO)
-		close(*input_fd);
+	real_in = *input_fd;
+	if (cmd->infile != STDIN_FILENO)
+	{
+		if (*input_fd != STDIN_FILENO)
+			close(*input_fd);
+		real_in = cmd->infile;
+	}
+	*pid = exec_external_cmd(cmd, req, real_in, out_fd);
+	if (real_in != STDIN_FILENO)
+		close(real_in);
 	if (has_next)
 	{
-		// Close write end in parent after child starts
 		close(pipe_fd[1]);
 		*input_fd = pipe_fd[0];
 	}
-	else
-	{
-		// Last command - no need to keep any pipe open
-		if (*input_fd != STDIN_FILENO)
-			close(*input_fd);
-	}
+	else if (*input_fd != STDIN_FILENO)
+		close(*input_fd);
 	return (0);
 }
 
