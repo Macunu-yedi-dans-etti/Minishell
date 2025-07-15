@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 10:57:51 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/15 16:18:08 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,34 @@ static t_token *get_word_token(const char *input, int *i)
 	free(result);
 	return token;
 }
+static t_token	*get_quoted_token(const char *input, int *i)
+{
+	t_token	*token;
+	char	*substr;
+	char	quote;
+	int		start;
+	int		quote_type;
+
+	quote = input[*i];
+	(*i)++;
+	start = *i;
+	while (input[*i] && input[*i] != quote)
+		(*i)++;
+	if (!input[*i])
+		return (ms_error(ERR_QUOTE, NULL, 2), NULL);
+	substr = ft_substr(input, start, *i - start);
+	(*i)++;
+	if (!substr)
+		return (NULL);
+	if (quote == '\'')
+		quote_type = 1;
+	else
+		quote_type = 2;
+	token = create_token(substr, quote_type);
+	free(substr);
+	return (token);
+}
+
 
 static t_token *get_token(const char *input, int *i)
 {
@@ -154,10 +182,13 @@ static t_token *get_token(const char *input, int *i)
 		(*i)++;
 	if (!input[*i])
 		return (NULL);
+	if (input[*i] == '\'' || input[*i] == '"')
+		return (get_quoted_token(input, i));
 	if (is_operator(input[*i]))
 		return (get_operator_token(input, i));
 	return (get_word_token(input, i));
 }
+
 
 t_token **tokenize_input(const char *input)
 {

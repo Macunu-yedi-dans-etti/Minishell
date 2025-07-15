@@ -128,7 +128,6 @@ void print_cd_error(char *arg, char *msg);
 char *get_cd_target(t_shell *cmd, t_req *req, int *need_free);
 
 // redirect
-int open_redirect_file(char *filename, t_redirect_type type);
 int apply_redirects(t_shell *cmd);
 
 // heredoc
