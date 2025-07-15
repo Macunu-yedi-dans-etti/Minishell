@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/13 11:17:15 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/15 14:06:08 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,6 @@ static int	is_numeric(const char *str)
 
 int	builtin_exit(char **args)
 {
-	int	exit_code;
-
-	exit_code = 0;
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (args[1])
 	{
@@ -51,8 +48,8 @@ int	builtin_exit(char **args)
 			g_exit_status = 1;
 			return (1);
 		}
-		exit_code = ft_atoi(args[1]);
+		g_exit_status = ft_atoi(args[1]);
 	}
-	g_exit_status = exit_code;
-	exit(exit_code);
+	exit(g_exit_status);
 }
+
