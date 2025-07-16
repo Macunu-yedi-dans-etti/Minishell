@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/12 23:40:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/15 16:56:11 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ int main(int ac, char **av, char **env)
 				old = tokens[i]->str;
 				tokens[i]->str = expand_str(old, res.envp, tokens[i]->quote);
 				free(old);
-				if (!tokens[i]->str || tokens[i]->str[0] == '\0')
+				if (!tokens[i]->str || (tokens[i]->str[0] == '\0' && tokens[i]->quote == QUOTE_NONE))
 				{
 					remove_token(tokens, i);
 					continue;

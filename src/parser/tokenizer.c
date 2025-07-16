@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/15 16:18:08 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:59:18 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,9 @@ static t_token *get_operator_token(const char *input, int *i)
 
 static t_token *get_word_token(const char *input, int *i)
 {
-	int quote_type = 0;
+	int has_single = 0;
+	int has_double = 0;
+	int has_unquoted = 0;
 	char *result;
 	int len = 0;
 	int capacity = 32;
@@ -75,9 +77,9 @@ static t_token *get_word_token(const char *input, int *i)
 			char q = input[*i];
 			int qtype = (q == '\'') ? 1 : 2;
 			if (qtype == 1)
-				quote_type = 1;
-			if (qtype == 2 && quote_type == 0)
-				quote_type = 2;
+				has_single = 1;
+			else
+				has_double = 1;
 			int j = *i + 1;
 			while (input[j] && input[j] != q)
 				j++;
@@ -111,23 +113,14 @@ static t_token *get_word_token(const char *input, int *i)
 			}
 			else
 			{
-				if (len >= capacity - 1)
-				{
-					capacity *= 2;
-					char *new_result = realloc(result, capacity);
-					if (!new_result)
-					{
-						free(result);
-						return NULL;
-					}
-					result = new_result;
-				}
-				result[len++] = input[(*i)++];
-				result[len] = '\0';
+				free(result);
+				ms_error(ERR_QUOTE, NULL, 2);
+				return NULL;
 			}
 		}
 		else
 		{
+			has_unquoted = 1;
 			if (len >= capacity - 1)
 			{
 				capacity *= 2;
@@ -143,50 +136,26 @@ static t_token *get_word_token(const char *input, int *i)
 			result[len] = '\0';
 		}
 	}
-	t_token *token = create_token(result, quote_type);
+	int final_quote = 0;
+	if (has_unquoted || has_double)
+		final_quote = 2;
+	else if (has_single)
+		final_quote = 1;
+	t_token *token = create_token(result, final_quote);
 	free(result);
 	return token;
 }
-static t_token	*get_quoted_token(const char *input, int *i)
-{
-	t_token	*token;
-	char	*substr;
-	char	quote;
-	int		start;
-	int		quote_type;
-
-	quote = input[*i];
-	(*i)++;
-	start = *i;
-	while (input[*i] && input[*i] != quote)
-		(*i)++;
-	if (!input[*i])
-		return (ms_error(ERR_QUOTE, NULL, 2), NULL);
-	substr = ft_substr(input, start, *i - start);
-	(*i)++;
-	if (!substr)
-		return (NULL);
-	if (quote == '\'')
-		quote_type = 1;
-	else
-		quote_type = 2;
-	token = create_token(substr, quote_type);
-	free(substr);
-	return (token);
-}
-
 
 static t_token *get_token(const char *input, int *i)
 {
-	while (input[*i] && is_separator(input[*i]))
-		(*i)++;
-	if (!input[*i])
-		return (NULL);
-	if (input[*i] == '\'' || input[*i] == '"')
-		return (get_quoted_token(input, i));
-	if (is_operator(input[*i]))
-		return (get_operator_token(input, i));
-	return (get_word_token(input, i));
+    while (input[*i] && is_separator(input[*i]))
+        (*i)++;
+    if (!input[*i])
+        return (NULL);
+    if (is_operator(input[*i]))
+        return (get_operator_token(input, i));
+    // Treat any non-operator, including quotes, as part of a word
+    return (get_word_token(input, i));
 }
 
 
@@ -215,7 +184,7 @@ t_token **tokenize_input(const char *input)
 			free_tokens(tokens);
 			return (NULL);
 		}
-		if (token && token->str && token->str[0] != '\0')
+		if (token && token->str && (token->str[0] != '\0' || token->quote != QUOTE_NONE))
 		{
 			if (count >= capacity - 1)
 			{

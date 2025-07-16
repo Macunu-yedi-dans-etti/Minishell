@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 00:34:08 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/15 16:48:18 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ t_list *parse_tokens(t_token **tokens, t_req *req)
 					return (free(current), free_cmds(cmds), NULL);
 				continue;
 			}
-			else if (tokens[i]->str && tokens[i]->str[0] != '\0')
+			else if (tokens[i]->str && (tokens[i]->str[0] != '\0'  || tokens[i]->quote != QUOTE_NONE))
 			{
 				expanded = ft_strdup(tokens[i]->str);
 				if (!expanded)

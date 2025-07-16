@@ -53,5 +53,9 @@ fclean: clean
 
 re: fclean all
 
+leak:
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp ./minishell
+	
+
 .PHONY: all clean fclean re
 
