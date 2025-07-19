@@ -152,9 +152,6 @@ t_list *parse_tokens(t_token **tokens, t_req *req)
                                 current->full_cmd[0] = trimmed;
                         }
 			current->full_path = resolve_path(current->full_cmd[0], req->envp);
-			if (!current->full_path)
-				return (ms_error(ERR_NO_CMD, current->full_cmd[0], 127, req),
-						free(current), free_cmds(cmds), NULL);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 		if (tokens[i] && tokens[i]->str && !ft_strncmp(tokens[i]->str, "|", 2))
