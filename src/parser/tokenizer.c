@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 20:17:51 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 21:19:52 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,15 @@ static t_token *get_word_token(const char *input, int *i)
 				{
 					while (len + substr_len >= capacity - 1)
 						capacity *= 2;
-					char *new_result = realloc(result, capacity);
+					char *new_result = malloc(capacity);
 					if (!new_result)
 					{
 						free(substr);
 						free(result);
 						return NULL;
 					}
+					memcpy(new_result, result, len + 1);
+					free(result);
 					result = new_result;
 				}
 				memcpy(result + len, substr, substr_len);
@@ -124,12 +126,14 @@ static t_token *get_word_token(const char *input, int *i)
 			if (len >= capacity - 1)
 			{
 				capacity *= 2;
-				char *new_result = realloc(result, capacity);
+				char *new_result = malloc(capacity);
 				if (!new_result)
 				{
 					free(result);
 					return NULL;
 				}
+				memcpy(new_result, result, len + 1);
+				free(result);
 				result = new_result;
 			}
 			result[len++] = input[(*i)++];
