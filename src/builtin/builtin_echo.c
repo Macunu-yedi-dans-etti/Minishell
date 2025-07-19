@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:23 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:11 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 20:17:33 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int	builtin_echo(t_shell *cmd, t_req *req)
 	}
 	while (cmd->full_cmd[i])
 	{
-		ft_putstr_fd(cmd->full_cmd[i], STDOUT_FILENO);
+		if (cmd->full_cmd[i])
+			ft_putstr_fd(cmd->full_cmd[i], STDOUT_FILENO);
 		if (cmd->full_cmd[i + 1])
 			write(STDOUT_FILENO, " ", 1);
 		i++;

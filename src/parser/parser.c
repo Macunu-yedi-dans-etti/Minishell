@@ -6,24 +6,11 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:21:34 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 20:17:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-static int is_whitespace_only(const char *str)
-{
-	if (!str)
-		return (1);
-	while (*str)
-	{
-		if (*str != ' ' && *str != '\t')
-			return (0);
-		str++;
-	}
-	return (1);
-}
 
 static t_shell *init_cmd(t_req *req)
 {
@@ -130,8 +117,8 @@ t_list *parse_tokens(t_token **tokens, t_req *req)
 					return (free(current), free_cmds(cmds), NULL);
 				continue;
 			}
-			else if (tokens[i]->str && tokens[i]->str[0] != '\0' && 
-					 (tokens[i]->quote != QUOTE_NONE || !is_whitespace_only(tokens[i]->str)))
+			else if (tokens[i]->str && 
+					 (tokens[i]->str[0] != '\0' || tokens[i]->quote != QUOTE_NONE))
 			{
 				expanded = ft_strdup(tokens[i]->str);
 				if (!expanded)

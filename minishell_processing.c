@@ -12,22 +12,6 @@
 
 #include "minishell.h"
 
-static int	expand_tokens(t_token **tokens, t_req *res)
-{
-	char	*old;
-	int		i;
-
-	i = 0;
-	while (tokens && tokens[i])
-	{
-		old = tokens[i]->str;
-		tokens[i]->str = expand_str(old, res->envp, tokens[i]->quote, res);
-		free(old);
-		i++;
-	}
-	return (i);
-}
-
 static int	check_valid_tokens(t_token **tokens)
 {
 	int	has_valid_tokens;
@@ -48,9 +32,56 @@ static int	check_valid_tokens(t_token **tokens)
 	return (has_valid_tokens);
 }
 
+static t_token	**expand_tokens(t_token **tokens, t_req *res)
+{
+	char	*old;
+	int		i;
+
+	i = 0;
+	while (tokens && tokens[i])
+	{
+		old = tokens[i]->str;
+		tokens[i]->str = expand_str(old, res->envp, tokens[i]->quote, res);
+		free(old);
+		i++;
+	}
+	return (tokens);
+}
+
+static int	needs_retokenization(char *str)
+{
+	int		i;
+	int		in_quotes;
+	char	quote_char;
+
+	i = 0;
+	in_quotes = 0;
+	quote_char = 0;
+	while (str[i])
+	{
+		if (!in_quotes && (str[i] == '\'' || str[i] == '"'))
+		{
+			in_quotes = 1;
+			quote_char = str[i];
+		}
+		else if (in_quotes && str[i] == quote_char)
+		{
+			in_quotes = 0;
+			quote_char = 0;
+		}
+		else if (!in_quotes && str[i] == '$')
+		{
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 t_token	**process_input(char *output, t_req *res)
 {
 	char		*trimmed_output;
+	char		*expanded_input;
 	t_token		**tokens;
 
 	trimmed_output = ft_strtrim(output, " \t");
@@ -62,11 +93,22 @@ t_token	**process_input(char *output, t_req *res)
 	}
 	add_history(output);
 	append_history_file(".minishell_history", output);
-	tokens = tokenize_input(trimmed_output);
-	free(trimmed_output);
+	if (needs_retokenization(trimmed_output))
+	{
+		expanded_input = expand_str(trimmed_output, res->envp, QUOTE_NONE, res);
+		free(trimmed_output);
+		tokens = tokenize_input(expanded_input);
+		free(expanded_input);
+	}
+	else
+	{
+		tokens = tokenize_input(trimmed_output);
+		free(trimmed_output);
+		if (tokens)
+			tokens = expand_tokens(tokens, res);
+	}
 	if (!tokens)
 		return (NULL);
-	expand_tokens(tokens, res);
 	if (!check_valid_tokens(tokens))
 	{
 		free_tokens(tokens);
