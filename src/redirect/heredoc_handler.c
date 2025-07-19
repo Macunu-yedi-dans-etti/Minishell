@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:21:42 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 22:16:45 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,5 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
-	close(pipe_fd[1]);
-	return (pipe_fd[0]);
+	return (close(pipe_fd[1]), pipe_fd[0]);
 }

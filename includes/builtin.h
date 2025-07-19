@@ -28,5 +28,9 @@ int				builtin_unset(char **args, t_req *req);
 int				builtin_exit(char **args, t_req *req);
 void			print_cd_error(char *arg, char *msg);
 char			*get_cd_target(t_shell *cmd, t_req *req, int *need_free);
+int				cd_free_and_home_error(char *oldpwd, t_req *req);
+int				cd_free_and_oldpwd_error(char *oldpwd, t_req *req);
+int				cd_free_and_chdir_error(char *oldpwd, char *target,
+					int need_free, t_req *req);
 
 #endif

@@ -32,7 +32,7 @@ static void	execute_single_cmd(t_list *node, t_shell *cmd,
 		{
 			data->real_in = setup_pipe_input(cmd, data->input_fd);
 			pids[data->i] = exec_external_cmd(cmd, req, data->real_in,
-				data->output_fd);
+					data->output_fd);
 			handle_pipe_cleanup(data->real_in, data->input_fd,
 				data->output_fd, node);
 			if (node->next && data->output_fd != STDOUT_FILENO)

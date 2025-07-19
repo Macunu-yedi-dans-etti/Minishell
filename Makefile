@@ -18,6 +18,7 @@ SRCS = main/minishell.c \
 	   src/builtin/builtin_check.c\
 	   src/builtin/cd/builtin_cd.c\
 	   src/builtin/cd/cd_utils.c\
+	   src/builtin/cd/cd_error.c\
 	   src/builtin/builtin_echo.c\
 	   src/builtin/builtin_env.c\
 	   src/builtin/builtin_exit.c\
@@ -54,15 +55,15 @@ $(NAME): $(OBJS) $(LIBFT)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) -o $(NAME)
 
 $(LIBFT):
-	@make -C $(LIBFT_DIR)
+	@make -s -C $(LIBFT_DIR)
 
 clean:
 	@rm -f $(OBJS)
-	@make clean -C $(LIBFT_DIR)
+	@make -s clean -C $(LIBFT_DIR)
 
 fclean: clean
 	@rm -f $(NAME)
-	@make fclean -C $(LIBFT_DIR)
+	@make -s fclean -C $(LIBFT_DIR)
 
 re: fclean all
 

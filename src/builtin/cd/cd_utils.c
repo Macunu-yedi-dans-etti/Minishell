@@ -12,17 +12,6 @@
 
 #include "../../../minishell.h"
 
-void	print_cd_error(char *arg, char *msg)
-{
-	ft_putstr_fd("minishell: cd: ", 2);
-	if (arg)
-	{
-		ft_putstr_fd(arg, 2);
-		ft_putstr_fd(": ", 2);
-	}
-	ft_putendl_fd(msg, 2);
-}
-
 static char	*try_expand_tilde(char *arg, t_req *req)
 {
 	char	*home;

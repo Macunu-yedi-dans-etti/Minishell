@@ -70,9 +70,7 @@ static int	needs_retokenization(char *str)
 			quote_char = 0;
 		}
 		else if (!in_quotes && str[i] == '$')
-		{
 			return (1);
-		}
 		i++;
 	}
 	return (0);
