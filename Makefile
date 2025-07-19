@@ -1,9 +1,9 @@
 NAME = minishell
 
-SRCS = minishell.c \
-       minishell_setup.c \
-       minishell_history.c \
-       minishell_processing.c \
+SRCS = main/minishell.c \
+       main/minishell_setup.c \
+       main/minishell_history.c \
+       main/minishell_processing.c \
        src/signal.c \
 	   src/input_message.c\
 	   src/parser/tokenizer.c\
