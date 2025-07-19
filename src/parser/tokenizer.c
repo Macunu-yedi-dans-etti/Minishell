@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:42:20 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/16 15:59:18 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:26:45 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ static t_token *get_word_token(const char *input, int *i)
 			else
 			{
 				free(result);
-				ms_error(ERR_QUOTE, NULL, 2);
+				ms_error(ERR_QUOTE, NULL, 2, NULL);
 				return NULL;
 			}
 		}
@@ -154,7 +154,6 @@ static t_token *get_token(const char *input, int *i)
         return (NULL);
     if (is_operator(input[*i]))
         return (get_operator_token(input, i));
-    // Treat any non-operator, including quotes, as part of a word
     return (get_word_token(input, i));
 }
 

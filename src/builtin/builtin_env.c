@@ -3,23 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:46 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 02:49:51 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:15 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	builtin_env(char **envp)
+int	builtin_env(char **envp, t_req *req)
 {
 	int	i;
 
 	if (!envp)
 	{
 		ft_putendl_fd("minishell: env: environment is null", STDERR_FILENO);
-		g_exit_status = 1;
+		if (req)
+			req->exit_stat = 1;
 		return (1);
 	}
 	i = 0;
@@ -29,6 +30,7 @@ int	builtin_env(char **envp)
 			ft_putendl_fd(envp[i], STDOUT_FILENO);
 		i++;
 	}
-	g_exit_status = 0;
+	if (req)
+		req->exit_stat = 0;
 	return (0);
 }

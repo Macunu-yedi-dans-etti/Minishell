@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:22:13 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 03:50:00 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:23 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,6 @@ int	builtin_unset(char **args, t_req *req)
 			mini_unsetenv(&req->envp, args[i]);
 		i++;
 	}
-	g_exit_status = exit_code;
+	req->exit_stat = exit_code;
 	return (exit_code);
 }

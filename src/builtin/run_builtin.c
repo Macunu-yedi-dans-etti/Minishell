@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:23:04 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 12:02:26 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 static int	handle_builtin(t_shell *cmd, t_req *req)
 {
 	if (!ft_strncmp(cmd->full_cmd[0], "echo", 5))
-		return (builtin_echo(cmd));
+		return (builtin_echo(cmd, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "pwd", 4))
-		return (builtin_pwd());
+		return (builtin_pwd(req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "env", 4))
-		return (builtin_env(req->envp));
+		return (builtin_env(req->envp, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "cd", 3))
 		return (builtin_cd(cmd, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "export", 7))
@@ -27,7 +27,7 @@ static int	handle_builtin(t_shell *cmd, t_req *req)
 	else if (!ft_strncmp(cmd->full_cmd[0], "unset", 6))
 		return (builtin_unset(cmd->full_cmd, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "exit", 5))
-		return (builtin_exit(cmd->full_cmd));
+		return (builtin_exit(cmd->full_cmd, req));
 	else
 		return (-1);
 }
@@ -38,16 +38,16 @@ int	run_builtin(t_shell *cmd, t_req *req)
 
 	if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0])
 	{
-		g_exit_status = 1;
+		req->exit_stat = 1;
 		return (1);
 	}
 	ret = handle_builtin(cmd, req);
 	if (ret == -1)
 	{
-		ms_error(ERR_NO_CMD, cmd->full_cmd[0], 1);
-		g_exit_status = 127;
+		ms_error(ERR_NO_CMD, cmd->full_cmd[0], 1, req);
+		req->exit_stat = 127;
 		return (127);
 	}
-	g_exit_status = ret;
+	req->exit_stat = ret;
 	return (ret);
 }

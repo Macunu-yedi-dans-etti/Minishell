@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_error.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:03:04 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/15 17:11:26 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:21:49 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ static void	print_error_message_detail(const char *detail)
 	}
 }
 
-void	*ms_error(t_error_type type, const char *detail, int code)
+void	*ms_error(t_error_type type, const char *detail, int code, t_req *req)
 {
-	g_exit_status = code;
+	if (req)
+		req->exit_stat = code;
 	print_error_message_prefix(type);
 	print_error_message_detail(detail);
 	return (NULL);

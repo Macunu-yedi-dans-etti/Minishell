@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 08:38:57 by haloztur          #+#    #+#             */
-/*   Updated: 2024/11/10 08:38:57 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:33:09 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,9 @@ char	*ft_strtrim(char const *s1, char const *set)
 	size_t	i;
 	size_t	j;
 
-	if (!set)
+	if (!s1 || !set)
 		return (NULL);
 	i = 0;
-	if (ft_strlen(s1) < ft_strlen(set))
-		return (ft_strdup(""));
 	while (s1[i] && ft_strchr(set, s1[i]))
 		i++;
 	j = ft_strlen(s1);

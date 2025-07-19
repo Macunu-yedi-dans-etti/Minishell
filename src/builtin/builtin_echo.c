@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:23 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 02:40:07 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:11 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	is_valid_n_flag(char *arg)
 	return (1);
 }
 
-int	builtin_echo(t_shell *cmd)
+int	builtin_echo(t_shell *cmd, t_req *req)
 {
 	int	i;
 	int	newline;
@@ -49,6 +49,7 @@ int	builtin_echo(t_shell *cmd)
 	}
 	if (newline)
 		write(STDOUT_FILENO, "\n", 1);
-	g_exit_status = 0;
+	if (req)
+		req->exit_stat = 0;
 	return (0);
 }

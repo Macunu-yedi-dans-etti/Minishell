@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   mini_setenv_line.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:40:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 01:05:18 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:24:04 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	**mini_setenv_line(char ***envp, const char *line)
+char	**mini_setenv_line(char ***envp, const char *line, t_req *req)
 {
 	char	*var;
 	char	*value;
@@ -27,7 +27,8 @@ char	**mini_setenv_line(char ***envp, const char *line)
 	{
 		free(var);
 		free(value);
-		g_exit_status = 1;
+		if (req)
+			req->exit_stat = 1;
 		return (*envp);
 	}
 	*envp = mini_setenv(var, value, *envp, -1);

@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/06 16:00:49 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:19 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	builtin_export(char **args, t_req *req)
 	i = 1;
 	exit_code = 0;
 	if (!args[1])
-		return (g_exit_status = builtin_env(req->envp), g_exit_status);
+		return (req->exit_stat = builtin_env(req->envp, req), req->exit_stat);
 	while (args[i])
 	{
 		var_name = get_variable_name(args[i]);
@@ -80,10 +80,10 @@ int	builtin_export(char **args, t_req *req)
 			exit_code = 1;
 		}
 		else if (ft_strchr(args[i], '='))
-			mini_setenv_line(&req->envp, args[i]);
+			mini_setenv_line(&req->envp, args[i], req);
 		free(var_name);
 		i++;
 	}
-	g_exit_status = exit_code;
+	req->exit_stat = exit_code;
 	return (exit_code);
 }

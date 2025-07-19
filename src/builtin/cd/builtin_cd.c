@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:28:32 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 14:34:50 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:20:28 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../minishell.h"
 
-static int	check_arg_count(t_shell *cmd)
+static int	check_arg_count(t_shell *cmd, t_req *req)
 {
 	int	count;
 
@@ -21,22 +21,22 @@ static int	check_arg_count(t_shell *cmd)
 		count++;
 	if (count > 2)
 	{
-		g_exit_status = 1;
+		req->exit_stat = 1;
 		ms_error(ERR_NO_CMD,
-			"too many arguments", 1);
+			"too many arguments", 1, req);
 		return (1);
 	}
 	return (0);
 }
 
 static int	free_and_error(char *oldpwd, char *target, int need_free,
-		char *msg)
+		char *msg, t_req *req)
 {
 	print_cd_error(target, msg);
 	free(oldpwd);
 	if (need_free)
 		free(target);
-	g_exit_status = 1;
+	req->exit_stat = 1;
 	return (1);
 }
 
@@ -53,11 +53,11 @@ static int	change_directory(t_shell *cmd, t_req *req,
 	{
 		if (!cmd->full_cmd[1] || (cmd->full_cmd[1][0] == '~'
 			&& !mini_getenv("HOME", req->envp, 4)))
-			return (free_and_error(*oldpwd, NULL, 0, "HOME not set"));
-		return (free_and_error(*oldpwd, NULL, 0, "OLDPWD not set"));
+			return (free_and_error(*oldpwd, NULL, 0, "HOME not set", req));
+		return (free_and_error(*oldpwd, NULL, 0, "OLDPWD not set", req));
 	}
 	if (chdir(target) != 0)
-		return (free_and_error(*oldpwd, target, *need_free, strerror(errno)));
+		return (free_and_error(*oldpwd, target, *need_free, strerror(errno), req));
 	return (0);
 }
 
@@ -75,7 +75,7 @@ static void	update_env_after_cd(t_req *req, char *oldpwd, int need_free,
 	free(oldpwd);
 	if (need_free)
 		free(target);
-	g_exit_status = 0;
+	req->exit_stat = 0;
 }
 
 int	builtin_cd(t_shell *cmd, t_req *req)
@@ -83,7 +83,7 @@ int	builtin_cd(t_shell *cmd, t_req *req)
 	char	*oldpwd;
 	int		need_free;
 
-	if (check_arg_count(cmd))
+	if (check_arg_count(cmd, req))
 		return (1);
 	if (change_directory(cmd, req, &oldpwd, &need_free))
 		return (1);

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/06 05:45:33 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:21:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	handle_heredoc(const char *delimiter)
+int	handle_heredoc(const char *delimiter, t_req *req)
 {
 	char	*line;
 	int		pipe_fd[2];
@@ -20,7 +20,8 @@ int	handle_heredoc(const char *delimiter)
 	if (pipe(pipe_fd) == -1)
 	{
 		perror("minishell: pipe");
-		g_exit_status = 1;
+		if (req)
+			req->exit_stat = 1;
 		return (-1);
 	}
 	while (1)

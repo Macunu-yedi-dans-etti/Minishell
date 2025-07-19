@@ -3,16 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   input_message.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:46:35 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 13:36:50 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:21:47 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*build_prompt_part2(char *input_str, char *cwd)
+static char	*join_cwd_and_finalize(char *input_str, char *cwd, t_req *req)
+{
+	char	*temp;
+
+	temp = ft_strjoin(input_str, cwd);
+	free(cwd);
+	if (!temp)
+	{
+		if (req)
+			req->exit_stat = 1;
+		return (NULL);
+	}
+	input_str = ft_strjoin(temp, WHITE " $ " DEFAULT);
+	free(temp);
+	if (!input_str)
+	{
+		if (req)
+			req->exit_stat = 1;
+		return (NULL);
+	}
+	return (input_str);
+}
+
+static char	*build_prompt_part2(char *input_str, char *cwd, t_req *req)
 {
 	char	*temp;
 
@@ -20,54 +43,54 @@ static char	*build_prompt_part2(char *input_str, char *cwd)
 	free(input_str);
 	if (!temp)
 	{
-		g_exit_status = 1;
+		if (req)
+			req->exit_stat = 1;
 		return (free(cwd), NULL);
 	}
-	input_str = ft_strjoin(temp, cwd);
-	free(cwd);
-	free(temp);
-	if (!input_str)
-	{
-		g_exit_status = 1;
-		return (NULL);
-	}
-	temp = ft_strjoin(input_str, WHITE " $ " DEFAULT);
-	free(input_str);
-	if (!temp)
-	{
-		g_exit_status = 1;
-		return (NULL);
-	}
-	return (temp);
+	return (join_cwd_and_finalize(temp, cwd, req));
 }
 
-static char	*build_prompt(char *user, char *cwd)
+static char	*create_user_prefix(char *user, t_req *req)
 {
-	char	*input_str;
 	char	*temp;
+	char	*input_str;
 
 	temp = ft_strjoin(GREEN, user);
 	if (!temp)
 	{
-		g_exit_status = 1;
-		return (free(cwd), NULL);
+		if (req)
+			req->exit_stat = 1;
+		return (NULL);
 	}
 	input_str = ft_strjoin(temp, WHITE "@");
-	(free(temp), free(user));
+	free(temp);
+	free(user);
 	if (!input_str)
 	{
-		g_exit_status = 1;
-		return (free(cwd), NULL);
+		if (req)
+			req->exit_stat = 1;
+		return (NULL);
 	}
+	return (input_str);
+}
+
+static char	*build_prompt(char *user, char *cwd, t_req *req)
+{
+	char	*input_str;
+	char	*temp;
+
+	input_str = create_user_prefix(user, req);
+	if (!input_str)
+		return (free(cwd), NULL);
 	temp = ft_strjoin(input_str, BLUE "soysal&&halusminishell ");
 	free(input_str);
 	if (!temp)
 	{
-		g_exit_status = 1;
+		if (req)
+			req->exit_stat = 1;
 		return (free(cwd), NULL);
 	}
-	input_str = temp;
-	return (build_prompt_part2(input_str, cwd));
+	return (build_prompt_part2(temp, cwd, req));
 }
 
 char	*mini_getinput(t_req input)
@@ -79,14 +102,21 @@ char	*mini_getinput(t_req input)
 	if (!user)
 		user = ft_strdup("guest");
 	if (!user)
-		return (g_exit_status = 1, NULL);
+	{
+		input.exit_stat = 1;
+		return (NULL);
+	}
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
 		cwd = ft_strdup("∅");
-		g_exit_status = 1;
+		input.exit_stat = 1;
 	}
 	if (!cwd)
-		return (free(user), g_exit_status = 1, NULL);
-	return (build_prompt(user, cwd));
+	{
+		free(user);
+		input.exit_stat = 1;
+		return (NULL);
+	}
+	return (build_prompt(user, cwd, &input));
 }
