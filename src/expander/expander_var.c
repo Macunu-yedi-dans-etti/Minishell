@@ -27,6 +27,7 @@ static char	*handle_var_expansion(const char *input, int *i,
 	int		var_len;
 	char	*var_name;
 	char	*value;
+	char	*result;
 
 	var_len = get_var_len(&input[*i]);
 	if (var_len == 0)
@@ -43,7 +44,9 @@ static char	*handle_var_expansion(const char *input, int *i,
 	free(var_name);
 	if (!value)
 		return (ft_strdup(""));
-	return (ft_strdup(value));
+	result = ft_strdup(value);
+	free(value);
+	return (result);
 }
 
 char	*expand_var(const char *input, int *i, char **envp, t_req *req)

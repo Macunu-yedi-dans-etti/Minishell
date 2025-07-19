@@ -17,6 +17,7 @@ static char	*join_cwd_and_finalize(char *input_str, char *cwd, t_req *req)
 	char	*temp;
 
 	temp = ft_strjoin(input_str, cwd);
+	free(input_str);
 	free(cwd);
 	if (!temp)
 	{
