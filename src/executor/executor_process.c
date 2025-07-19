@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 {

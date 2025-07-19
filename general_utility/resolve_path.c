@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   resolve_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:49:15 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 12:53:35 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/07/19 21:25:30 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../minishell.h"
 
 static char     *join_path(const char *dir, const char *cmd)

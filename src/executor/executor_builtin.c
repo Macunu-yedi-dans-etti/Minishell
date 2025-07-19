@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 static void	setup_builtin_io(t_shell *cmd, int input_fd, int *backup_in,
 							int *backup_out)

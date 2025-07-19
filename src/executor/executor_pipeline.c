@@ -50,6 +50,10 @@ static void	execute_loop(t_list *cmds, pid_t *pids, int count, t_req *req)
 	data.input_fd = STDIN_FILENO;
 	data.i = 0;
 	data.pids = pids;
+	data.pipe_fd[0] = -1;
+	data.pipe_fd[1] = -1;
+	data.output_fd = -1;
+	data.real_in = -1;
 	node = cmds;
 	while (node)
 	{

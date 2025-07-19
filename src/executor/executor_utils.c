@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 void	set_fd(int fd_from, int fd_to)
 {

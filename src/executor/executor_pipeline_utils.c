@@ -17,7 +17,7 @@ int	init_execution(t_list *cmds, pid_t **pids, t_req *req)
 	int	count;
 
 	count = ft_lstsize(cmds);
-	*pids = malloc(sizeof(pid_t) * count);
+	*pids = ft_calloc(count, sizeof(pid_t));
 	if (!*pids)
 	{
 		perror("malloc");

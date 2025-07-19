@@ -6,14 +6,12 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:23:15 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 19:23:18 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 21:24:41 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_ERROR_H
 #define MINI_ERROR_H
-
-#include "libft/libft.h"
 
 typedef struct s_request t_req;
 

@@ -6,12 +6,11 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:47:29 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:21:51 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 21:23:16 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <readline/readline.h>
 
 static t_req	*g_req_ptr = NULL;
 

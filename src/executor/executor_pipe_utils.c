@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 int	handle_exec(t_shell *cmd, t_req *req, int *input_fd, pid_t *pid)
 {

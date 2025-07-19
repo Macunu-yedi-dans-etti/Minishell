@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 void	handle_builtin_execution(t_shell *cmd, t_req *req)
 {

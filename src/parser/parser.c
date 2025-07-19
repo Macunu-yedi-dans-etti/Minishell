@@ -6,11 +6,12 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 21:19:46 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/19 21:29:51 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include "../../includes/utilities.h"
 
 static t_shell *init_cmd(t_req *req)
 {
@@ -146,11 +147,14 @@ t_list *parse_tokens(t_token **tokens, t_req *req)
 		}
 		if (!current->full_path && current->full_cmd && !is_builtin(current->full_cmd[0]))
 		{
-                        char *trimmed = ft_strtrim(current->full_cmd[0], " \t");
-                        if (trimmed) {
-                                free(current->full_cmd[0]);
-                                current->full_cmd[0] = trimmed;
-                        }
+			char	*trimmed;
+
+			trimmed = ft_strtrim(current->full_cmd[0], " \t");
+			if (trimmed)
+			{
+				free(current->full_cmd[0]);
+				current->full_cmd[0] = trimmed;
+			}
 			current->full_path = resolve_path(current->full_cmd[0], req->envp);
 		}
 		ft_lstadd_back(&cmds, ft_lstnew(current));
