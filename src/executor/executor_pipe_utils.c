@@ -64,6 +64,8 @@ void	wait_for_processes(pid_t *pids, int count, t_req *req)
 	int	i;
 	int	status;
 
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	i = 0;
 	while (i < count)
 	{
@@ -77,4 +79,5 @@ void	wait_for_processes(pid_t *pids, int count, t_req *req)
 		}
 		i++;
 	}
+	setup_signals();
 }
