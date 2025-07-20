@@ -4,10 +4,17 @@ SRCS = main/minishell.c \
        main/minishell_setup.c \
        main/minishell_history.c \
        main/minishell_processing.c \
+       main/minishell_token_utils.c \
        src/signal.c \
 	   src/input_message.c\
-	   src/parser/tokenizer.c\
+	   src/tokenizer/tokenizer_utils.c\
+	   src/tokenizer/tokenizer_core.c\
+	   src/tokenizer/tokenizer_core2.c\
+	   src/tokenizer/tokenizer_core3.c\
 	   src/parser/parser.c\
+	   src/parser/parser_utils.c\
+	   src/parser/parser_utils2.c\
+	   src/parser/parser_utils3.c\
 	   src/executor/executor_utils.c\
 	   src/executor/executor_exec.c\
 	   src/executor/executor_process.c\

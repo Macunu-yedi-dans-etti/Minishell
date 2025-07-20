@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-static int	check_valid_tokens(t_token **tokens)
+int	check_valid_tokens(t_token **tokens)
 {
 	int	has_valid_tokens;
 	int	i;
@@ -32,7 +32,7 @@ static int	check_valid_tokens(t_token **tokens)
 	return (has_valid_tokens);
 }
 
-static t_token	**expand_tokens(t_token **tokens, t_req *res)
+t_token	**expand_tokens(t_token **tokens, t_req *res)
 {
 	char	*old;
 	int		i;
@@ -48,7 +48,7 @@ static t_token	**expand_tokens(t_token **tokens, t_req *res)
 	return (tokens);
 }
 
-static int	needs_retokenization(char *str)
+int	needs_retokenization(char *str)
 {
 	int		i;
 	int		in_quotes;
@@ -79,8 +79,6 @@ static int	needs_retokenization(char *str)
 t_token	**process_input(char *output, t_req *res)
 {
 	char		*trimmed_output;
-	char		*expanded_input;
-	t_token		**tokens;
 
 	trimmed_output = ft_strtrim(output, " \t");
 	if (!trimmed_output || !trimmed_output[0])
@@ -91,28 +89,7 @@ t_token	**process_input(char *output, t_req *res)
 	}
 	add_history(output);
 	append_history_file(".minishell_history", output);
-	if (needs_retokenization(trimmed_output))
-	{
-		expanded_input = expand_str(trimmed_output, res->envp, QUOTE_NONE, res);
-		free(trimmed_output);
-		tokens = tokenize_input(expanded_input);
-		free(expanded_input);
-	}
-	else
-	{
-		tokens = tokenize_input(trimmed_output);
-		free(trimmed_output);
-		if (tokens)
-			tokens = expand_tokens(tokens, res);
-	}
-	if (!tokens)
-		return (NULL);
-	if (!check_valid_tokens(tokens))
-	{
-		free_tokens(tokens);
-		return (NULL);
-	}
-	return (tokens);
+	return (tokenize_and_validate(trimmed_output, res));
 }
 
 int	execute_pipeline(t_token **tokens, t_req *res)
