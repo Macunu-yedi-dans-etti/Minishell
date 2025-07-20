@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:19:12 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:18:54 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ static int	process_main_loop(t_req *res)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
+		rl_clear_history();
+		free_all(res);
 		return (0);
 	}
 	if (output[0])
@@ -58,10 +60,9 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	res = setup(av, env);
-	if (read_history_file(".minishell_history") == 0)
-		read_history(".minishell_history");
 	while (process_main_loop(&res))
 		;
+	rl_clear_history();
 	free_all(&res);
 	exit(res.exit_stat);
 }

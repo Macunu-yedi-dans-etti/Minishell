@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:17 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:18:54 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ int	builtin_exit(char **args, t_req *req)
 	{
 		if (!is_numeric(args[1]))
 		{
+			rl_clear_history();
+			if (req)
+				free_all(req);
 			ms_error(ERR_NO_CMD, "exit: numeric argument required", 2, req);
 			exit(2);
 		}
@@ -52,8 +55,12 @@ int	builtin_exit(char **args, t_req *req)
 		if (req)
 			req->exit_stat = ft_atoi(args[1]);
 	}
+	rl_clear_history();
 	if (req)
+	{
+		free_all(req);
 		exit(req->exit_stat);
+	}
 	else
 		exit(0);
 }

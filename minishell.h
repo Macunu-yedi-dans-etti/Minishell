@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 14:56:46 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:03:37 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,6 @@ typedef struct s_shell
 /* Core functions */
 char			*mini_getinput(t_req input);
 t_req			setup(char **av, char **env);
-int				read_history_file(const char *filename);
-void			append_history_file(const char *filename, const char *line);
 int				execute_pipeline(t_token **tokens, t_req *res);
 void			free_redirects(t_redirect *redir);
 

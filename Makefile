@@ -2,7 +2,6 @@ NAME = minishell
 
 SRCS = main/minishell.c \
        main/minishell_setup.c \
-       main/minishell_history.c \
        main/minishell_processing.c \
        main/minishell_token_utils.c \
        src/signal.c \

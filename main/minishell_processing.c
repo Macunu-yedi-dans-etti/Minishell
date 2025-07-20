@@ -88,7 +88,6 @@ t_token	**process_input(char *output, t_req *res)
 		return (NULL);
 	}
 	add_history(output);
-	append_history_file(".minishell_history", output);
 	return (tokenize_and_validate(trimmed_output, res));
 }
 
@@ -99,7 +98,9 @@ int	execute_pipeline(t_token **tokens, t_req *res)
 	cmds = parse_tokens(tokens, res);
 	if (!cmds)
 		return (0);
+	res->cmds = cmds;
 	execute_cmds(cmds, res);
 	free_cmds(cmds);
+	res->cmds = NULL;
 	return (1);
 }

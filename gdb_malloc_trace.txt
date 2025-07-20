@@ -1,0 +1,16 @@
+set pagination off
+set logging file malloc_trace.txt
+set logging on
+break malloc
+commands
+  printf "MALLOC: %p size=%d from %s\n", $rdi, (int)$rdi, (char*)$rsi
+  bt 3
+  continue
+end
+break free
+commands
+  printf "FREE: %p\n", $rdi
+  continue
+end
+run
+quit
