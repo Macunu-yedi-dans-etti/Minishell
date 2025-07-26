@@ -80,7 +80,7 @@ t_req	setup(char **av, char **env)
 	res.cmds = NULL;
 	res.envp = ft_double_copy(env);
 	res.exit_stat = 0;
-	res.exit_stat = 0;
+	res.should_exit = 0;
 	tier_pid(&res);
 	res = init_variable(res, NULL, av);
 	return (res);

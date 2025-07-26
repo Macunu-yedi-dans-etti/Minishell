@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 20:18:54 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:13:21 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,13 @@ int	builtin_exit(char **args, t_req *req)
 	{
 		if (!is_numeric(args[1]))
 		{
-			rl_clear_history();
-			if (req)
-				free_all(req);
 			ms_error(ERR_NO_CMD, "exit: numeric argument required", 2, req);
-			exit(2);
+			if (req)
+			{
+				req->exit_stat = 2;
+				req->should_exit = 1;
+			}
+			return (2);
 		}
 		if (args[2])
 		{
@@ -53,14 +55,11 @@ int	builtin_exit(char **args, t_req *req)
 			return (1);
 		}
 		if (req)
-			req->exit_stat = ft_atoi(args[1]);
+			req->exit_stat = ft_atoi(args[1]) & 255;
 	}
-	rl_clear_history();
+	else if (req)
+		req->exit_stat = 0;
 	if (req)
-	{
-		free_all(req);
-		exit(req->exit_stat);
-	}
-	else
-		exit(0);
+		req->should_exit = 1;
+	return (req ? req->exit_stat : 0);
 }

@@ -42,6 +42,7 @@ typedef struct s_request
 	char		**envp;
 	pid_t		pid;
 	int			exit_stat;
+	int			should_exit;
 }				t_req;
 
 typedef struct s_redirect

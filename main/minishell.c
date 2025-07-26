@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/20 20:18:54 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:13:21 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static int	process_main_loop(t_req *res)
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
 		rl_clear_history();
-		free_all(res);
 		return (0);
 	}
 	if (output[0])
@@ -51,6 +50,8 @@ static int	process_main_loop(t_req *res)
 		}
 	}
 	free(output);
+	if (res->should_exit)
+		return (0);
 	return (1);
 }
 
@@ -64,5 +65,5 @@ int	main(int ac, char **av, char **env)
 		;
 	rl_clear_history();
 	free_all(&res);
-	exit(res.exit_stat);
+	return (res.exit_stat);
 }
