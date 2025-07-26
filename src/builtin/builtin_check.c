@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:12 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:14 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 20:20:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int	is_builtin(char *cmd)
 	if (!ft_strncmp(cmd, "export", 7))
 		return (1);
 	if (!ft_strncmp(cmd, "unset", 6))
-		return (1);
-	if (!ft_strncmp(cmd, "env", 4))
 		return (1);
 	if (!ft_strncmp(cmd, "exit", 5))
 		return (1);

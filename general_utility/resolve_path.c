@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:49:15 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 22:20:28 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:38:15 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,25 +71,6 @@ char	**ft_double_copy(char **envp)
 	return (copy);
 }
 
-static char	**get_default_paths(void)
-{
-	char	**paths;
-
-	paths = malloc(sizeof(char *) * 4);
-	if (!paths)
-		return (NULL);
-	paths[0] = ft_strdup("/bin");
-	paths[1] = ft_strdup("/usr/bin");
-	paths[2] = ft_strdup("/usr/local/bin");
-	paths[3] = NULL;
-	if (!paths[0] || !paths[1] || !paths[2])
-	{
-		ft_double_free(&paths);
-		return (NULL);
-	}
-	return (paths);
-}
-
 char	*resolve_path(char *cmd, char **envp)
 {
 	char	*path_value;
@@ -101,15 +82,10 @@ char	*resolve_path(char *cmd, char **envp)
 	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
 	path_value = mini_getenv("PATH", envp, 4);
-	if (path_value)
-	{
-		paths = ft_split(path_value, ':');
-		free(path_value);
-	}
-	else
-	{
-		paths = get_default_paths();
-	}
+	if (!path_value)
+		return (NULL);
+	paths = ft_split(path_value, ':');
+	free(path_value);
 	if (!paths)
 		return (NULL);
 	full_path = try_resolve_in_paths(cmd, paths);

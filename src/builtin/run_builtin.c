@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:23:04 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:25 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 20:20:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ static int	handle_builtin(t_shell *cmd, t_req *req)
 		return (builtin_echo(cmd, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "pwd", 4))
 		return (builtin_pwd(req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "env", 4))
-		return (builtin_env(req->envp, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "cd", 3))
 		return (builtin_cd(cmd, req));
 	else if (!ft_strncmp(cmd->full_cmd[0], "export", 7))
