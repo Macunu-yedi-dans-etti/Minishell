@@ -22,13 +22,6 @@
 # include <sys/ioctl.h>
 # include <errno.h>
 
-/* Forward declarations */
-typedef struct s_request		t_req;
-typedef struct s_shell			t_shell;
-typedef struct s_redirect		t_redirect;
-typedef struct s_token			t_token;
-
-/* Enum definitions */
 typedef enum e_redirect_type
 {
 	R_IN,
@@ -43,7 +36,6 @@ typedef enum e_quote_type
 	QUOTE_DOUBLE
 }				t_quote_type;
 
-/* Main structures */
 typedef struct s_request
 {
 	t_list		*cmds;
