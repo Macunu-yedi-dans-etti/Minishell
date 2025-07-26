@@ -13,9 +13,7 @@
 #ifndef UTILITIES_H
 # define UTILITIES_H
 
-# include "libft/libft.h"
-
-typedef struct s_request	t_req;
+# include "types.h"
 
 /* Environment utilities */
 char			**mini_setenv(char *var, char *value, char **envp, int n);

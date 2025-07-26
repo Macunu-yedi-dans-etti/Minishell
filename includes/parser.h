@@ -13,24 +13,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "libft/libft.h"
-
-typedef struct s_request	t_req;
-typedef enum e_redirect_type	t_redirect_type;
-typedef struct s_redirect	t_redirect;
-
-typedef enum e_quote_type
-{
-	QUOTE_NONE,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE
-}				t_quote_type;
-
-typedef struct s_token
-{
-	char			*str;
-	t_quote_type	quote;
-}				t_token;
+# include "types.h"
 
 typedef struct s_token_state
 {

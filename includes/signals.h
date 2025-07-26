@@ -13,7 +13,7 @@
 #ifndef SIGNALS_H
 # define SIGNALS_H
 
-# include <signal.h>
+# include "types.h"
 
 typedef struct s_request	t_req;
 

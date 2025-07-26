@@ -6,14 +6,14 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:23:15 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 22:12:17 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:05:30 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_ERROR_H
 # define MINI_ERROR_H
 
-typedef struct s_request	t_req;
+# include "types.h"
 
 typedef enum e_error_type
 {

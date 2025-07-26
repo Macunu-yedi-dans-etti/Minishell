@@ -13,9 +13,7 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-typedef struct s_shell		t_shell;
-typedef struct s_request	t_req;
-typedef struct s_list		t_list;
+# include "types.h"
 
 typedef struct s_pipeline_data
 {

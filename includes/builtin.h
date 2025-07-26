@@ -13,8 +13,7 @@
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-typedef struct s_shell		t_shell;
-typedef struct s_request	t_req;
+# include "types.h"
 
 /* Builtin functions */
 int				run_builtin(t_shell *cmd, t_req *req);

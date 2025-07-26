@@ -13,7 +13,7 @@
 #ifndef EXPANDER_H
 # define EXPANDER_H
 
-typedef struct s_request	t_req;
+# include "types.h"
 
 typedef struct s_process_data
 {
