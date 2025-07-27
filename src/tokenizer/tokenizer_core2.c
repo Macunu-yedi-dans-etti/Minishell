@@ -12,9 +12,6 @@
 
 #include "../../minishell.h"
 
-static int	process_token(t_token ***tokens, t_token *token, int *count,
-		int *capacity);
-
 static t_token	*get_token(const char *input, int *i)
 {
 	while (input[*i] && is_separator(input[*i]))
@@ -37,6 +34,23 @@ static int	add_token_to_array(t_token ***tokens, t_token *token, int *count,
 	return (1);
 }
 
+static int	process_token(t_token ***tokens, t_token *token, int *count,
+	int *capacity)
+{
+	if (token && token->str && (token->str[0] != '\0'
+			|| token->quote != QUOTE_NONE))
+	{
+		if (!add_token_to_array(tokens, token, count, capacity))
+			return (0);
+	}
+	else if (token)
+	{
+		free(token->str);
+		free(token);
+	}
+	return (1);
+}
+
 t_token	**tokenize_input(const char *input)
 {
 	t_token	**tokens;
@@ -56,34 +70,11 @@ t_token	**tokenize_input(const char *input)
 	{
 		token = get_token(input, &i);
 		if (!token)
-		{
-			free_tokens(tokens);
-			return (NULL);
-		}
+			return (free_tokens(tokens), NULL);
 		if (!process_token(&tokens, token, &count, &capacity))
-		{
-			free_tokens(tokens);
-			return (NULL);
-		}
+			return (free_tokens(tokens), NULL);
 	}
 	return (tokens);
-}
-
-static int	process_token(t_token ***tokens, t_token *token, int *count,
-		int *capacity)
-{
-	if (token && token->str && (token->str[0] != '\0'
-			|| token->quote != QUOTE_NONE))
-	{
-		if (!add_token_to_array(tokens, token, count, capacity))
-			return (0);
-	}
-	else if (token)
-	{
-		free(token->str);
-		free(token);
-	}
-	return (1);
 }
 
 int	resize_token_array(t_token ***tokens, int *capacity, int count)

@@ -14,9 +14,10 @@
 
 int	determine_quote_type(int has_single, int has_double, int has_unquoted)
 {
-	if (has_unquoted || has_double)
-		return (QUOTE_DOUBLE);
-	else if (has_single)
+	if (has_single && !has_double && !has_unquoted)
 		return (QUOTE_SINGLE);
-	return (QUOTE_NONE);
+	else if (has_double && !has_single && !has_unquoted)
+		return (QUOTE_DOUBLE);
+	else
+		return (QUOTE_NONE);
 }
