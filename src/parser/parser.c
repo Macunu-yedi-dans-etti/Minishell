@@ -85,6 +85,15 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 		}
 		set_command_path(current, req);
 		ft_lstadd_back(&cmds, ft_lstnew(current));
+
+		// PIPE SONRASI KONTROL: Eğer bir sonraki token pipe ise ve ardından komut yoksa veya tekrar pipe geliyorsa syntax error ver
+		if (tokens[i] && !ft_strncmp(tokens[i]->str, "|", 2))
+		{
+			// Sonraki token yoksa veya tekrar pipe ise hata
+			if (!tokens[i + 1] || !ft_strncmp(tokens[i + 1]->str, "|", 2))
+				return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
+		}
+
 		if (process_pipe_case(tokens, &i, &cmds, req))
 			return (NULL);
 	}

@@ -1,8 +1,52 @@
-# minishell
+# 🐚 Minishell - 42 School Projesi
 
-## Tanım
+## 📖 Proje Tanımı
 
 Bu proje, Bash'e benzer bir kabuk (shell) oluşturmayı amaçlar. Kullanıcıdan komut alır, bu komutları işler ve işletim sistemi üzerinden yürütür. Program, çeşitli yerleşik (built-in) komutları ve sistem çağrılarını desteklemelidir.
+
+## 📋 Hızlı Başlangıç
+
+### 🚀 Derleme ve Çalıştırma
+```bash
+# Projeyi derle
+make
+
+# Minishell'i başlat
+./minishell
+
+# İlk komutunu dene
+guest@minishell $ echo "Merhaba Dünya!"
+```
+
+### 📚 Dokümantasyon
+Bu proje kapsamlı Türkçe dokümantasyona sahiptir:
+
+- **🇹🇷 [Ana Türkçe Dokümantasyon](TURKCE_DOKUMANTASYON.md)** - Görsel diyagramlarla detaylı açıklama
+- **🧪 [Görsel Test Senaryoları](GORSEL_TEST_SENARYOLARI.md)** - Test örnekleri ve diyagramlar
+- **🚀 [Hızlı Kurulum Rehberi](HIZLI_KURULUM_REHBERI.md)** - Adım adım kurulum
+- **📊 [Teknik Analiz](TECHNICAL_ANALYSIS.md)** - İngilizce teknik detaylar
+- **📄 [PDF Alternatifleri](PDF_ALTERNATIFLERI.md)** - PDF oluşturma yöntemleri
+
+### 📄 PDF Oluşturma
+
+#### 🐧 Linux/macOS:
+```bash
+# Pandoc ile (önerilen)
+./generate_pdf.sh
+
+# VS Code ile (alternatif)
+./vscode_pdf.sh
+```
+
+#### 🪟 Windows:
+```powershell
+# PowerShell ile
+.\generate_pdf.ps1
+
+# Veya VS Code Markdown PDF extension kullanın
+```
+
+**Pandoc kurulu değilse:** [PDF Alternatifleri](PDF_ALTERNATIFLERI.md) dosyasını okuyun.
 
 ---
 

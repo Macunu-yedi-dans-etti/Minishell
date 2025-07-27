@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_handler.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 22:19:42 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:45:56 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
