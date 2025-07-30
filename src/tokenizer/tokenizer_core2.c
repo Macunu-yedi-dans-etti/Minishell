@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_core2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 21:19:52 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 21:19:52 by haloztur         ###   ########.fr       */
+/*   Created: 2025/07/19 21:19:52 by musoysal          #+#    #+#             */
+/*   Updated: 2025/07/28 21:26:53 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ static t_token	*get_token(const char *input, int *i)
 }
 
 static int	add_token_to_array(t_token ***tokens, t_token *token, int *count,
-		int *capacity)
+				  int *capacity)
 {
-	if (*count >= *capacity - 1 && !resize_token_array(tokens, capacity,
-			*count))
+	if (*count >= *capacity - 1
+		&& !resize_token_array(tokens, capacity, *count))
 		return (0);
 	(*tokens)[(*count)++] = token;
 	(*tokens)[*count] = NULL;
@@ -35,10 +35,10 @@ static int	add_token_to_array(t_token ***tokens, t_token *token, int *count,
 }
 
 static int	process_token(t_token ***tokens, t_token *token, int *count,
-	int *capacity)
+			 int *capacity)
 {
-	if (token && token->str && (token->str[0] != '\0'
-			|| token->quote != QUOTE_NONE))
+	if (token && token->str &&
+	(token->str[0] != '\0' || token->quote != QUOTE_NONE))
 	{
 		if (!add_token_to_array(tokens, token, count, capacity))
 			return (0);
@@ -51,7 +51,7 @@ static int	process_token(t_token ***tokens, t_token *token, int *count,
 	return (1);
 }
 
-t_token	**tokenize_input(const char *input)
+t_token	**tokenize_input(const char *input, t_req *req)
 {
 	t_token	**tokens;
 	t_token	*token;
@@ -64,15 +64,17 @@ t_token	**tokenize_input(const char *input)
 	capacity = 16;
 	tokens = malloc(sizeof(t_token *) * capacity);
 	if (!tokens)
-		return (NULL);
+	return (NULL);
 	tokens[0] = NULL;
-	while (input[i])
-	{
-		token = get_token(input, &i);
-		if (!token)
-			return (free_tokens(tokens), NULL);
-		if (!process_token(&tokens, token, &count, &capacity))
-			return (free_tokens(tokens), NULL);
+	while (input[i]) {
+	token = get_token(input, &i);
+	if (!token) {
+		free_tokens(tokens);
+		ms_error(ERR_QUOTE, NULL, 2, req);
+		return NULL;
+	}
+	if (!process_token(&tokens, token, &count, &capacity))
+		return (free_tokens(tokens), NULL);
 	}
 	return (tokens);
 }

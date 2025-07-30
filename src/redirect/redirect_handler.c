@@ -6,11 +6,12 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 12:45:56 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:26:38 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include <string.h>
 
 static int	open_redirect_file(char *filename, t_redirect_type type, t_req *req)
 {

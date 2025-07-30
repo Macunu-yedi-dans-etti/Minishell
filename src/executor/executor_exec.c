@@ -55,6 +55,7 @@ void	handle_external_execution(t_shell *cmd, t_req *req)
 			ft_putendl_fd(cmd->full_cmd[0], 2);
 		else
 			ft_putendl_fd("(null)", 2);
+		free_all(req);
 		exit(127);
 	}
 	execve(cmd->full_path, cmd->full_cmd, req->envp);

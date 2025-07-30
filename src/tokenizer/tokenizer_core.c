@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_core.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/20 14:40:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 14:40:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/07/20 14:40:00 by musoysal          #+#    #+#             */
+/*   Updated: 2025/07/28 21:26:50 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_token	*get_operator_token(const char *input, int *i)
+t_token*get_operator_token(const char *input, int *i)
 {
 	char	op[3];
 
@@ -32,95 +32,30 @@ t_token	*get_operator_token(const char *input, int *i)
 	return (create_token(op, QUOTE_NONE));
 }
 
-static char	*reallocate_result(char *result, int *capacity)
-{
-	char	*new_result;
-	int		new_capacity;
-
-	new_capacity = (*capacity) * 2;
-	new_result = malloc(new_capacity);
-	if (!new_result)
-	{
-		free(result);
-		return (NULL);
-	}
-	ft_strlcpy(new_result, result, *capacity);
-	free(result);
-	*capacity = new_capacity;
-	return (new_result);
-}
-
-static int	append_char_to_result(char **result, int *len, int *capacity,
-		char c)
-{
-	if (*len >= *capacity - 1)
-	{
-		*result = reallocate_result(*result, capacity);
-		if (!*result)
-			return (0);
-	}
-	(*result)[*len] = c;
-	(*len)++;
-	(*result)[*len] = '\0';
-	return (1);
-}
-
-static int	handle_quoted_section(const char *input, int *i, char **result,
-		t_token_state *state)
-{
-	char	quote_char;
-
-	quote_char = input[*i];
-	(*i)++;
-	while (input[*i] && input[*i] != quote_char)
-	{
-		if (!append_char_to_result(result, &state->len, &state->capacity,
-				input[*i]))
-			return (0);
-		(*i)++;
-	}
-	if (input[*i] == quote_char)
-		(*i)++;
-	return (1);
-}
-
 t_token	*get_word_token(const char *input, int *i)
 {
-	int				has_single;
-	int				has_double;
-	int				has_unquoted;
-	char			*result;
-	t_token_state	state;
-
-	has_single = 0;
-	has_double = 0;
-	has_unquoted = 0;
-	state.len = 0;
-	state.capacity = 32;
-	result = malloc(state.capacity);
-	if (!result)
-		return (NULL);
-	result[0] = '\0';
-	while (input[*i] && !is_separator(input[*i]) && !is_operator(input[*i]))
+	char quote_char = input[*i];
+	if (input[*i] == '\'' || input[*i] == '"')
 	{
-		if (input[*i] == '\'' || input[*i] == '"')
-		{
-			if (input[*i] == '\'')
-				has_single = 1;
-			else
-				has_double = 1;
-			if (!handle_quoted_section(input, i, &result, &state))
-				return (free(result), NULL);
-		}
-		else
-		{
-			has_unquoted = 1;
-			if (!append_char_to_result(&result, &state.len, &state.capacity,
-					input[*i]))
-				return (free(result), NULL);
+		int start = ++(*i);
+		while (input[*i] && input[*i] != quote_char)
 			(*i)++;
-		}
+		if (!input[*i]) // Kapanmayan tırnak
+			return NULL;
+		int len = *i - start;
+		char *str = ft_substr(input, start, len);
+		(*i)++; // Kapanan tırnağı atla
+		return create_token(str,
+					quote_char == '\'' ? QUOTE_SINGLE : QUOTE_DOUBLE);
 	}
-	return (create_token_and_free(result, determine_quote_type(has_single, has_double,
-				has_unquoted)));
+	else
+	{
+		int start = *i;
+		while (input[*i] && !is_separator(input[*i]) &&
+		   !is_operator(input[*i]) && input[*i] != '\'' && input[*i] != '"')
+			(*i)++;
+	int len = *i - start;
+	char *str = ft_substr(input, start, len);
+	return create_token(str, QUOTE_NONE);
+	}
 }

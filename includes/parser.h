@@ -11,28 +11,27 @@
 /* ************************************************************************** */
 
 #ifndef PARSER_H
-# define PARSER_H
+#define PARSER_H
 
-# include "types.h"
+#include "types.h"
 
-typedef struct s_token_state
-{
-	int				len;
-	int				capacity;
-}				t_token_state;
+typedef struct s_token_state {
+    int len;
+    int capacity;
+} t_token_state;
 
 /* Parser functions */
-t_token			**tokenize_input(const char *input);
-t_list			*parse_tokens(t_token **tokens, t_req *req);
-t_token			**process_input(char *output, t_req *res);
-t_token			**tokenize_and_validate(char *trimmed_output, t_req *res);
-int				needs_retokenization(char *str);
-int				check_valid_tokens(t_token **tokens);
-t_token			**expand_tokens(t_token **tokens, t_req *res);
-void			free_tokens(t_token **tokens);
-t_shell			*init_cmd(t_req *req);
-void			add_redirect(t_shell *cmd, t_redirect_type type, char *filename);
-int				is_redirect(const char *token);
-void			free_redirects(t_redirect *redir);
+t_token **tokenize_input(const char *input, t_req *req);
+t_list *parse_tokens(t_token **tokens, t_req *req);
+t_token **process_input(char *output, t_req *res);
+t_token **tokenize_and_validate(char *trimmed_output, t_req *res);
+int needs_retokenization(char *str);
+int check_valid_tokens(t_token **tokens);
+t_token **expand_tokens(t_token **tokens, t_req *res);
+void free_tokens(t_token **tokens);
+t_shell *init_cmd(t_req *req);
+void add_redirect(t_shell *cmd, t_redirect_type type, char *filename);
+int is_redirect(const char *token);
+void free_redirects(t_redirect *redir);
 
 #endif

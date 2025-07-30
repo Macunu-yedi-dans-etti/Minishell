@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 13:44:17 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/07/29 23:56:50 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ static void heredoc_sigint_handler(int sig)
 	_exit(130);
 }
 
-static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
+static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_quote_type quote, char **envp, t_req *req)
 {
 	char *line;
+	char *expanded = NULL;
 
 	signal(SIGINT, heredoc_sigint_handler);
 	close(pipe_fd[0]);
-
 	while (1)
 	{
 		line = readline("> ");
@@ -39,7 +39,19 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
 			free(line);
 			break;
 		}
-		write(pipe_fd[1], line, ft_strlen(line));
+		if (quote == QUOTE_NONE)
+		{
+			expanded = expand_str(line, envp, quote, req);
+			if (expanded)
+			{
+				write(pipe_fd[1], expanded, ft_strlen(expanded));
+				free(expanded);
+			}
+		}
+		else
+		{
+			write(pipe_fd[1], line, ft_strlen(line));
+		}
 		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
@@ -47,7 +59,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
 	exit(0);
 }
 
-int handle_heredoc(const char *delimiter, t_req *req)
+int handle_heredoc(const char *delimiter, t_req *req, t_quote_type quote)
 {
 	int pipe_fd[2];
 	pid_t pid;
@@ -63,7 +75,6 @@ int handle_heredoc(const char *delimiter, t_req *req)
 		signal(SIGINT, old_sigint);
 		return -1;
 	}
-
 	pid = fork();
 	if (pid == -1)
 	{
@@ -75,11 +86,10 @@ int handle_heredoc(const char *delimiter, t_req *req)
 		signal(SIGINT, old_sigint);
 		return -1;
 	}
-
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		do_heredoc_child(delimiter, pipe_fd);
+		do_heredoc_child(delimiter, pipe_fd, quote, req ? req->envp : NULL, req);
 	}
 
 	close(pipe_fd[1]);
