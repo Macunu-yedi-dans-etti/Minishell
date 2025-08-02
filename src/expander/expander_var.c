@@ -29,11 +29,11 @@ static char	*handle_var_expansion(const char *input, int *i,
 	char	*value;
 	char	*result;
 
-	var_len = get_var_len(&input[*i]);
+	var_len = get_var_len(&input[*i]); // "echo $USER world" var_name = "USER" dolardan sonraki kelimenin uzunluğunu alır
 	if (var_len == 0)
 		return (ft_strdup("$"));
-	var_name = ft_substr(input, *i, var_len);
-	*i += var_len;
+	var_name = ft_substr(input, *i, var_len); // dolardan sonraki kelimeyi alır USER
+	*i += var_len; // *i = 6, var_len = 4, input = "echo $USER world", var_name = "USER"
 	if (!var_name)
 	{
 		if (req)
@@ -44,15 +44,15 @@ static char	*handle_var_expansion(const char *input, int *i,
 	free(var_name);
 	if (!value)
 		return (ft_strdup(""));
-	result = ft_strdup(value);
+	result = ft_strdup(value);// İSTENİLEN DEĞERİ ALDIK
 	free(value);
-	return (result);
+	return (result); // result = "haloztur" gibi
 }
 
 char	*expand_var(const char *input, int *i, char **envp, t_req *req)
 {
 	(*i)++;
 	if (input[*i] == '?')
-		return (handle_exit_status(i, req));
-	return (handle_var_expansion(input, i, envp, req));
+		return (handle_exit_status(i, req)); // $? durumunu kontrol eder ve exit statüsünü alır
+	return (handle_var_expansion(input, i, envp, req)); // "echo $USER world" gibi bir input varsa USER'ı alır
 }

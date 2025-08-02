@@ -38,7 +38,7 @@ static void	copy_to_new_str(char *new_str, char *dst, const char *src, int len)
 	ft_memcpy(new_str + len - 1, src, src_len + 1);
 }
 
-char	*append_str(char *dst, const char *src, int *len)
+char	*append_str(char *dst, const char *src, int *len) // expansion sırasında string'i parça parça büyütmek için kullanılıyor
 {
 	int		src_len;
 	char	*new_str;
@@ -46,7 +46,10 @@ char	*append_str(char *dst, const char *src, int *len)
 	src_len = ft_strlen(src);
 	new_str = malloc(*len + src_len);
 	if (!new_str)
+	{
+		//free(dst);
 		return (NULL);
+	}
 	copy_to_new_str(new_str, dst, src, *len);
 	free(dst);
 	*len += src_len;
