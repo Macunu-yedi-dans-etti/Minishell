@@ -78,6 +78,7 @@ t_req	setup(char **av, char **env)
 
 	res.cmds = NULL;
 	res.envp = ft_double_copy(env);
+	res.export_list = NULL;
 	res.exit_stat = 0;
 	res.should_exit = 0; // shelin çıkıp çıkmayacağını belirler
 	tier_pid(&res);

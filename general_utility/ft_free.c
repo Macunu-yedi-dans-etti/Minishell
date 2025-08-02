@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 12:49:08 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/02 15:19:14 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ void	free_all(t_req *req)
 {
 	if (req->envp)
 		ft_double_free(&req->envp);
+	if (req->export_list)
+		ft_double_free(&req->export_list);
 	if (req->cmds)
 		free_cmds(req->cmds);
 }
