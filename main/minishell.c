@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 12:00:33 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:25:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	process_main_loop(t_req *res)
 		tokens = process_input(output, res);
 		if (tokens)
 		{
-			execute_pipeline(tokens, res);
+			execute_pipeline(tokens, res); // execute_pipeline(tokens, res); burası
 			free_tokens(tokens);
 		}
 	}
