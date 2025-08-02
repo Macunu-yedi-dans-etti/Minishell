@@ -40,6 +40,7 @@ typedef struct s_request
 {
 	t_list		*cmds;
 	char		**envp;
+	char		**export_list;
 	pid_t		pid;
 	int			exit_stat;
 	int			should_exit;

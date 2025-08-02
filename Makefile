@@ -28,7 +28,7 @@ SRCS = main/minishell.c \
 	   src/builtin/builtin_echo.c\
 	   src/builtin/builtin_env.c\
 	   src/builtin/builtin_exit.c\
-	   src/builtin/builtin_export.c\
+	   src/builtin/export/builtin_export.c\
 	   src/builtin/builtin_unset.c\
 	   src/builtin/builtin_pwd.c\
 	   src/builtin/run_builtin.c\
@@ -75,7 +75,7 @@ re: fclean all
 
 leak:
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp ./minishell
-	
+
 
 .PHONY: all clean fclean re
 
