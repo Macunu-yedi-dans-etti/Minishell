@@ -55,6 +55,7 @@ static void	set_command_path(t_shell *cmd, t_req *req)
 		trimmed = ft_strtrim(cmd->full_cmd[0], " \t");
 		if (trimmed)
 		{
+			//free_all(req);
 			free(cmd->full_cmd[0]);
 			cmd->full_cmd[0] = trimmed;
 		}

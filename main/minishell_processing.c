@@ -80,15 +80,15 @@ t_token	**process_input(char *output, t_req *res)
 {
 	char		*trimmed_output;
 
-	trimmed_output = ft_strtrim(output, " \t");
+	trimmed_output = ft_strtrim(output, " \t"); // prompttaki  baştaki ve sondaki boşluklar ile tabları temizler
 	if (!trimmed_output || !trimmed_output[0])
 	{
 		if (trimmed_output)
 			free(trimmed_output);
 		return (NULL);
 	}
-	add_history(output);
-	return (tokenize_and_validate(trimmed_output, res));
+	add_history(output); // aşağı yukarı tuşlarıyla geçmiş
+	return (tokenize_and_validate(trimmed_output, res)); //tokenizera gider
 }
 
 int	execute_pipeline(t_token **tokens, t_req *res)
@@ -100,6 +100,16 @@ int	execute_pipeline(t_token **tokens, t_req *res)
 		return (0);
 	res->cmds = cmds;
 	execute_cmds(cmds, res);
+	if (!check_valid_tokens(tokens))
+	{
+		free_cmds(cmds);
+		res->cmds = NULL;
+		return (0);
+	}
+	if (tokens && tokens[0] && tokens[0]->str) // son çalışan bilgisi için güncelleme
+		res->envp = mini_setenv("_", tokens[0]->str, res->envp, 1);
+	
+	//free_tokens(tokens); segmentation fault veriyor 
 	free_cmds(cmds);
 	res->cmds = NULL;
 	return (1);

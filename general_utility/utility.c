@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/13 12:54:02 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/02 11:34:56 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ int	ft_find_chr(const char *s, char c)
 	return (i);
 }
 
-char	**ft_double_extension(char **matrix, char *new_str)
+char	**ft_double_extension(char **matrix, char *new_str) // envp = ft_double_extension(envp, new_entry);
 {
 	int		i;
 	int		size;
 	char	**new_matrix;
 
 	i = 0;
-	while (matrix && matrix[i])
+	while (matrix && matrix[i]) // matrix saysını tutar mesela : "SHELL=/bin/bash", = matrix[0] &&  "PWD=/home/user",     = matrix[1] ve matrix[2] ise NULL olur gibi
 		i++;
 	size = i + 1;
 	if (new_str)
@@ -44,7 +44,7 @@ char	**ft_double_extension(char **matrix, char *new_str)
 		i++;
 	}
 	if (new_str)
-		new_matrix[i++] = ft_strdup(new_str);
+		new_matrix[i++] = ft_strdup(new_str); // new_entry burada aslında matrixin sonuna eklenecek veriyi temsil ediyor
 	new_matrix[i] = NULL;
 	if (matrix)
 		ft_free(matrix);

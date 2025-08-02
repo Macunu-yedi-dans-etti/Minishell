@@ -76,7 +76,7 @@ void	execute_cmds(t_list *cmds, t_req *req)
 	int		count;
 
 	count = init_execution(cmds, &pids, req);
-	if (count == -1)
+	if (count == -1 || !pids)
 		return ;
 	execute_loop(cmds, pids, count, req);
 	free(pids);

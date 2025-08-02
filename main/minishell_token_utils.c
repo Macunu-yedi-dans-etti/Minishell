@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-t_token	**tokenize_and_validate(char *trimmed_output, t_req *res)
+t_token	**tokenize_and_validate(char *trimmed_output, t_req *res) // temizlenmiş input aslında ve yanına ek structını yolluyor içinde envsi vs. var
 {
 	char		*expanded_input;
 	t_token		**tokens;

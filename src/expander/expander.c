@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 17:30:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 19:26:57 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/02 16:45:45 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ int	should_escape_char(const char *input, int i, int quote)
 			|| input[i + 1] == '\\'));
 }
 
-char	*expand_str(const char *input, char **envp, int quote, t_req *req)
+char	*expand_str(const char *input, char **envp, int quote, t_req *req)// expand_str(trimmed_output, res->envp, QUOTE_NONE, res);
 {
 	if (!input)
 		return (NULL);
-	if (quote == 1)
+	if (quote == 1)//tek tırnak olsaydı expanda gerek yok
 		return (ft_strdup(input));
 	return (process_input_loop(input, envp, req));
 }

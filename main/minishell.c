@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 13:20:27 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:00:33 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,17 @@ int	main(int ac, char **av, char **env)
 {
 	t_req	res;
 
-	(void)ac;
-	res = setup(av, env);
+	if (ac != 1)
+	{
+		fprintf(stderr, "Usage: %s\n", av[0]);
+		return (1);
+	}
+	res = setup(av, env); // setup fonksiyonu env ve diğer değişkenleri ayarlar
+	if (!res.envp)
+	{
+		fprintf(stderr, "Error: Environment setup failed.\n");
+		return (1);
+	}
 	while (process_main_loop(&res))
 		;
 	rl_clear_history();
