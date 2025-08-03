@@ -55,6 +55,7 @@ typedef struct s_request
 	pid_t		pid;
 	int			exit_stat;
 	int			should_exit;
+	int			heredoc_interrupted;
 }				t_req;
 
 #endif

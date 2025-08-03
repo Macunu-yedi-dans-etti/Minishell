@@ -81,6 +81,7 @@ t_req	setup(char **av, char **env)
 	res.export_list = NULL;
 	res.exit_stat = 0;
 	res.should_exit = 0; // shelin çıkıp çıkmayacağını belirler
+	res.heredoc_interrupted = 0; // heredoc interrupt flag'ini sıfırla
 	tier_pid(&res);
 	res = init_variable(res, NULL, av);
 	return (res);

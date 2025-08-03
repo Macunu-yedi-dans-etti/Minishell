@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 13:44:17 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:59:18 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static void heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
 	_exit(130);
 }
 
@@ -23,7 +25,6 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
 {
 	char *line;
 
-	signal(SIGINT, heredoc_sigint_handler);
 	close(pipe_fd[0]);
 
 	while (1)
@@ -54,6 +55,10 @@ int handle_heredoc(const char *delimiter, t_req *req)
 	int status;
 	void (*old_sigint)(int);
 
+	// Eğer daha önce heredoc interrupt edilmişse, direkt çık
+	if (req && req->heredoc_interrupted)
+		return -1;
+
 	old_sigint = signal(SIGINT, SIG_IGN);
 	if (pipe(pipe_fd) == -1)
 	{
@@ -78,7 +83,7 @@ int handle_heredoc(const char *delimiter, t_req *req)
 
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
+		signal(SIGINT, heredoc_sigint_handler); // Custom handler kullan
 		do_heredoc_child(delimiter, pipe_fd);
 	}
 
@@ -89,7 +94,20 @@ int handle_heredoc(const char *delimiter, t_req *req)
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		if (req)
+		{
 			req->exit_stat = 130;
+			req->heredoc_interrupted = 1;
+		}
+		close(pipe_fd[0]);
+		return -1;
+	}
+	else if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
+	{
+		if (req)
+		{
+			req->exit_stat = 130;
+			req->heredoc_interrupted = 1;
+		}
 		close(pipe_fd[0]);
 		return -1;
 	}

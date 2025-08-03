@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/03 16:28:14 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:59:18 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static int	process_main_loop(t_req *res)
 	char		*output;
 	char		**tokens;
 
+	res->heredoc_interrupted = 0; // Her döngü başında sıfırla
 	setup_signals();
 	output = get_input_prompt(res);
 	if (!output)

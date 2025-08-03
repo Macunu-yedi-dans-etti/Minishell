@@ -27,7 +27,13 @@ static int	handle_redir(t_cmd *cmd, char *redir, char *file, t_req *req)
 	else if (!ft_strncmp(redir, ">>", 3))
 		add_redirect(cmd, R_APPEND, file);
 	else if (!ft_strncmp(redir, "<<", 3))
+	{
+		if (req && req->heredoc_interrupted)
+			return (1);
 		cmd->infile = handle_heredoc(file, req);
+		if (req && req->heredoc_interrupted)
+			return (1);
+	}
 	return (0);
 }
 

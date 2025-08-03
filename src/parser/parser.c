@@ -26,6 +26,10 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 	while (tokens[*i] && (ft_strncmp(tokens[*i], "|", 2)
 			))
 	{
+		// Heredoc interrupt kontrolü
+		if (req && req->heredoc_interrupted)
+			return (free(cmd), NULL);
+			
 		result = handle_token_processing(cmd, tokens, i, req);
 		if (result == 1)
 			return (free(cmd), NULL);
@@ -77,6 +81,10 @@ t_list	*parse_tokens(char **tokens, t_req *req)
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
 	while (tokens[i])
 	{
+		// Heredoc interrupt kontrolü
+		if (req && req->heredoc_interrupted)
+			return (NULL);
+			
 		current = process_command_tokens(tokens, &i, req);
 		if (!current)
 		{
