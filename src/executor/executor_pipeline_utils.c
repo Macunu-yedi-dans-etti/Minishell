@@ -17,9 +17,15 @@ int	init_execution(t_list *cmds, pid_t **pids, t_req *req)
 	int	count;
 
 	count = ft_lstsize(cmds);
+	if (count <= 0 || count > 1024) // Reasonable limit
+	{
+		req->exit_stat = 1;
+		return (-1);
+	}
 	*pids = ft_calloc(count, sizeof(pid_t));
 	if (!*pids)
 	{
+		*pids = NULL;
 		perror("malloc");
 		req->exit_stat = 1;
 		return (-1);

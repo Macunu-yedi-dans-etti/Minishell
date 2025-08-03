@@ -72,12 +72,21 @@ static void	execute_loop(t_list *cmds, pid_t *pids, int count, t_req *req)
 
 void	execute_cmds(t_list *cmds, t_req *req)
 {
+	pid_t	pids_stack[1024];  // Stack array - no malloc needed!
 	pid_t	*pids;
 	int		count;
 
-	count = init_execution(cmds, &pids, req);
-	if (count == -1 || !pids)
+	count = ft_lstsize(cmds);
+	if (count <= 0 || count > 1024)
+	{
+		req->exit_stat = 1;
 		return ;
+	}
+	// Use stack array instead of heap
+	pids = pids_stack;
+	memset(pids, 0, sizeof(pid_t) * count);
 	execute_loop(cmds, pids, count, req);
-	free(pids);
+	// No need to free stack array - it's automatic!
+	// Just clear the values for good measure
+	memset(pids, 0, sizeof(pid_t) * count);
 }
