@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/03 15:34:09 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:20:10 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,172 +20,102 @@ void	free_string_array(char **array)
 		return ;
 	i = 0;
 	while (array[i])
-	{
-		free(array[i]);
-		i++;
-	}
+		free(array[i++]);
 	free(array);
 }
 
-int	has_quotes_or_variables(char *str)
+// Basit variable expansion
+static char	*expand_token_var(char *str, int *i, t_req *res)
 {
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '"' || str[i] == '$')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-char	*get_var_name(char *str, int *i)
-{
-	int		start;
-	int		len;
-	char	*name;
-
-	start = *i;
-	if (str[*i] == '?')
-	{
-		(*i)++;
-		return (ft_strdup("?"));
-	}
-	if (str[*i] == '_')
-	{
-		(*i)++;
-		return (ft_strdup("_"));
-	}
-	if (!ft_isalnum(str[*i]) && str[*i] != '_')
-		return (NULL); // Geçersiz variable name
-		
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	len = *i - start;
-	if (len == 0)
-		return (NULL);
-	name = malloc(len + 1);
-	if (!name)
-		return (NULL);
-	ft_strlcpy(name, str + start, len + 1);
-	return (name);
-}
-
-char	*expand_variable(char *str, int *i, t_req *res)
-{
-	char	*var_name;
-	char	*value;
+	int		start = ++(*i); // $ karakterini geç
+	char	*name, *value;
 	
-	(*i)++; // $ karakterini geç
-	
-	// Eğer string sonu ise $ döndür
 	if (!str[*i])
 		return (ft_strdup("$"));
-	
-	// Geçersiz karakter kontrolü
-	if (!ft_isalnum(str[*i]) && str[*i] != '_' && str[*i] != '?')
+	if (str[*i] == '?')
+		return ((*i)++, ft_itoa(res->exit_stat));
+	if (str[*i] == '_')
+		return ((*i)++, ft_strdup("minishell"));
+	if (!ft_isalnum(str[*i]) && str[*i] != '_')
 		return (ft_strdup("$"));
 	
-	var_name = get_var_name(str, i);
-	if (!var_name)
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
+	
+	if (start == *i)
 		return (ft_strdup("$"));
 	
-	if (ft_strncmp(var_name, "?", 2) == 0)
-	{
-		free(var_name);
-		return (ft_itoa(res->exit_stat));
-	}
-	if (ft_strncmp(var_name, "_", 2) == 0)
-	{
-		free(var_name);
-		return (ft_strdup("minishell"));
-	}
-	
-	value = mini_getenv(var_name, res->envp, 1);
-	free(var_name);
-	return (value ? ft_strdup(value) : ft_strdup(""));
+	name = ft_substr(str, start, *i - start);
+	value = mini_getenv(name, res->envp, 1);
+	free(name);
+	return (value ? value : ft_strdup(""));  // mini_getenv zaten ft_strdup döndürüyor!
 }
 
-// Basit quote ve variable expansion
+// Ana işleme fonksiyonu - çok daha basit
 char	*process_quotes_and_expand(char *input, t_req *res)
 {
-	char	*result;
-	int		i;
-	int		len;
+	char	*result = ft_strdup("");
+	char	*temp, *expanded;
+	int		i = 0;
 	
-	if (!input || !*input)
-		return (ft_strdup(""));
+	if (!input)
+		return (result);
 	
-	len = ft_strlen(input);
-	result = malloc(len * 10 + 1000); // Daha büyük buffer
-	if (!result)
-		return (NULL);
-	result[0] = '\0';
-	
-	i = 0;
 	while (input[i])
 	{
-		if (input[i] == '\'')
+		if (input[i] == '\'') // Tek tırnak - literal
 		{
-			// Tek tırnak - literal
-			i++; // Açan tırnağı geç
+			int start = ++i;
 			while (input[i] && input[i] != '\'')
+				i++;
+			if (input[i])
 			{
-				int rlen = ft_strlen(result);
-				result[rlen] = input[i];
-				result[rlen + 1] = '\0';
+				temp = ft_substr(input, start, i - start);
+				expanded = ft_strjoin(result, temp);
+				free(result);
+				free(temp);
+				result = expanded;
 				i++;
 			}
-			if (input[i] == '\'')
-				i++; // Kapatan tırnağı geç
 		}
-		else if (input[i] == '"')
+		else if (input[i] == '"') // Çift tırnak - variable expansion
 		{
-			// Çift tırnak - variable expansion
-			i++; // Açan tırnağı geç
+			i++;
 			while (input[i] && input[i] != '"')
 			{
 				if (input[i] == '$')
 				{
-					char *expanded = expand_variable(input, &i, res);
-					if (expanded)
-					{
-						ft_strlcat(result, expanded, len * 10 + 1000);
-						free(expanded);
-					}
+					temp = expand_token_var(input, &i, res);
+					expanded = ft_strjoin(result, temp);
+					free(result);
+					free(temp);
+					result = expanded;
 				}
 				else
 				{
-					int rlen = ft_strlen(result);
-					result[rlen] = input[i];
-					result[rlen + 1] = '\0';
-					i++;
+					char c[2] = {input[i++], '\0'};
+					temp = ft_strjoin(result, c);
+					free(result);
+					result = temp;
 				}
 			}
 			if (input[i] == '"')
-				i++; // Kapatan tırnağı geç
+				i++;
 		}
-		else if (input[i] == '$')
+		else if (input[i] == '$') // Tırnak dışı variable
 		{
-			// Tırnak dışında variable
-			char *expanded = expand_variable(input, &i, res);
-			if (expanded)
-			{
-				ft_strlcat(result, expanded, len * 10 + 1000);
-				free(expanded);
-			}
+			temp = expand_token_var(input, &i, res);
+			expanded = ft_strjoin(result, temp);
+			free(result);
+			free(temp);
+			result = expanded;
 		}
-		else
+		else // Normal karakter
 		{
-			// Normal karakter
-			int rlen = ft_strlen(result);
-			result[rlen] = input[i];
-			result[rlen + 1] = '\0';
-			i++;
+			char c[2] = {input[i++], '\0'};
+			temp = ft_strjoin(result, c);
+			free(result);
+			result = temp;
 		}
 	}
 	
@@ -201,9 +131,9 @@ int	check_valid_tokens(char **tokens)
 	i = 0;
 	while (tokens[i])
 	{
-		if (tokens[i][0] != '\0') // Boş olmayan token varsa
+		if (tokens[i][0] != '\0')
 			return (1);
 		i++;
 	}
-	return (0); // Hepsi boş
+	return (0);
 }

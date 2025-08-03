@@ -12,6 +12,22 @@
 
 #include "../minishell.h"
 
+static int	check_valid_tokens(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return (0);
+	i = 0;
+	while (tokens[i])
+	{
+		if (tokens[i][0] != '\0')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	needs_retokenization(char *str)
 {
 	int		i;
@@ -43,6 +59,7 @@ int	needs_retokenization(char *str)
 char	**process_input(char *output, t_req *res)//trimm input
 {
 	char		*trimmed_output;
+	char		**result;
 
 	trimmed_output = ft_strtrim(output, " \t"); // prompttaki  baştaki ve sondaki boşluklar ile tabları temizler
 	if (!trimmed_output || !trimmed_output[0])
@@ -51,8 +68,11 @@ char	**process_input(char *output, t_req *res)//trimm input
 			free(trimmed_output);
 		return (NULL);
 	}
-	add_history(output); // aşağı yukarı tuşlarıyla geçmiş
-	return (tokenize_and_validate(trimmed_output, res)); //tokenizera gider
+	add_history(output); // aşağı yukarı tuşlarıyla geçmiş - kullanıcının girdiği RAW komut
+	result = tokenize_and_validate(trimmed_output, res); //tokenizera gider
+	free(trimmed_output); // Memory leak fix!
+	//free(output); // inputu temizle
+	return (result);
 }
 
 int	execute_pipeline(char **tokens, t_req *res)

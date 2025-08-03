@@ -12,6 +12,22 @@
 
 #include "../minishell.h"
 
+static int	has_quotes_or_variables(char *str)
+{
+	int	i;
+
+	if (!str)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"' || str[i] == '$')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 char	**quote_control_and_expand(char **tokens, t_req *res)
 {
 	int i;
@@ -50,8 +66,11 @@ char	**tokenize_and_validate(char *trimmed_output, t_req *res)
 	// 2. Quote control ve expansion
 	tokens = quote_control_and_expand(tokens, res);
 	if (!tokens)
-		return (NULL);
+	{
 		
+		return (NULL);
+	
+	}
 	// 3. res'e token'ları kaydet
 	res->tokens = tokens;
 	

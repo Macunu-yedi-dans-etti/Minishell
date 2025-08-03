@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/03 15:34:09 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:03:27 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,7 @@ char			**tokenize_and_validate(char *trimmed_output, t_req *res);
 char			**quote_control_and_expand(char **tokens, t_req *res);
 int				resize_string_array(char ***tokens, int *capacity, int count);
 void			free_string_array(char **array);
-int				has_quotes_or_variables(char *str);
 char			*process_quotes_and_expand(char *str, t_req *res);
 char			*expand_variable(char *str, int *i, t_req *res);
-int				check_valid_tokens(char **tokens);
 
 #endif
