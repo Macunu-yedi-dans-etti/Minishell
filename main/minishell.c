@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/03 17:59:18 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:33:35 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ static int	process_main_loop(t_req *res)
 		{
 			execute_pipeline(tokens, res);
 			free_string_array(tokens);
+			res->tokens = NULL;
 		}
 	}
 	// free(tokens);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 15:19:14 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:33:31 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	free_tokens(char **tokens)
 	while (tokens[i])
 	{
 		free(tokens[i]);
-		free(tokens[i]);
 		i++;
 	}
 	free(tokens);
@@ -82,4 +81,6 @@ void	free_all(t_req *req)
 		ft_double_free(&req->export_list);
 	if (req->cmds)
 		free_cmds(req->cmds);
+	if (req->tokens)
+		free_string_array(req->tokens);
 }

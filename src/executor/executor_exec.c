@@ -23,6 +23,7 @@ void	handle_builtin_execution(t_cmd *cmd, t_req *req)
 		close(devnull);
 	}
 	run_builtin(cmd, req);
+	free_all(req);
 	exit(req->exit_stat);
 }
 
@@ -44,6 +45,7 @@ static void	handle_execve_error(t_cmd *cmd, t_req *req)
 		perror("execve");
 		req->exit_stat = 1;
 	}
+	free_all(req);
 }
 
 void	handle_external_execution(t_cmd *cmd, t_req *req)
@@ -54,10 +56,10 @@ void	handle_external_execution(t_cmd *cmd, t_req *req)
 		if (cmd->full_cmd && cmd->full_cmd[0])
 		{
 			ft_putendl_fd(cmd->full_cmd[0], 2);
-			free_all(req);
 		}
 		else
 			ft_putendl_fd("(null)", 2);
+		free_all(req);
 		exit(127);
 	}
 	execve(cmd->full_path, cmd->full_cmd, req->envp);
