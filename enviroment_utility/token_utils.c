@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/03 16:20:10 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:35:50 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,40 @@ static char	*expand_token_var(char *str, int *i, t_req *res)
 	return (value ? value : ft_strdup(""));  // mini_getenv zaten ft_strdup döndürüyor!
 }
 
+// Quote validation fonksiyonu
+int	validate_quotes(char *str)
+{
+	int		i;
+	int		single_count;
+	int		double_count;
+	int		in_single;
+	int		in_double;
+
+	i = 0;
+	single_count = 0;
+	double_count = 0;
+	in_single = 0;
+	in_double = 0;
+	
+	while (str[i])
+	{
+		if (str[i] == '\'' && !in_double)
+		{
+			single_count++;
+			in_single = !in_single;
+		}
+		else if (str[i] == '"' && !in_single)
+		{
+			double_count++;
+			in_double = !in_double;
+		}
+		i++;
+	}
+	
+	// Çift sayıda olmalı (açılan her tırnak kapatılmalı)
+	return (single_count % 2 == 0 && double_count % 2 == 0);
+}
+
 // Ana işleme fonksiyonu - çok daha basit
 char	*process_quotes_and_expand(char *input, t_req *res)
 {
@@ -60,6 +94,13 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 	
 	if (!input)
 		return (result);
+	
+	// Quote validation
+	if (!validate_quotes(input))
+	{
+		free(result);
+		return (NULL); // Quote error
+	}
 	
 	while (input[i])
 	{

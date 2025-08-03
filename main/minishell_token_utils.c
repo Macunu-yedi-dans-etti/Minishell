@@ -42,8 +42,8 @@ char	**quote_control_and_expand(char **tokens, t_req *res)
 			expanded = process_quotes_and_expand(tokens[i], res);
 			if (!expanded)
 			{
-				// Quote error - hata mesajı yazdır
-				printf("minishell: quote error: unmatched quotes in '%s'\n", tokens[i]);
+				// Quote error - ms_error kullanarak standardize edilmiş hata
+				ms_error(ERR_QUOTE, NULL, 258, res);
 				return (free_string_array(tokens), NULL);
 			}
 			free(tokens[i]);
@@ -67,7 +67,7 @@ char	**tokenize_and_validate(char *trimmed_output, t_req *res)
 	tokens = quote_control_and_expand(tokens, res);
 	if (!tokens)
 	{
-		
+
 		return (NULL);
 	
 	}
