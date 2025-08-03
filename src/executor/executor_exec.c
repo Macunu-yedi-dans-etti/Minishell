@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-void	handle_builtin_execution(t_shell *cmd, t_req *req)
+void	handle_builtin_execution(t_cmd *cmd, t_req *req)
 {
 	int	devnull;
 
@@ -26,7 +26,7 @@ void	handle_builtin_execution(t_shell *cmd, t_req *req)
 	exit(req->exit_stat);
 }
 
-static void	handle_execve_error(t_shell *cmd, t_req *req)
+static void	handle_execve_error(t_cmd *cmd, t_req *req)
 {
 	if (errno == EISDIR)
 		ms_error(ERR_IS_DIR, cmd->full_path, 126, req);
@@ -46,7 +46,7 @@ static void	handle_execve_error(t_shell *cmd, t_req *req)
 	}
 }
 
-void	handle_external_execution(t_shell *cmd, t_req *req)
+void	handle_external_execution(t_cmd *cmd, t_req *req)
 {
 	if (!cmd->full_path)
 	{

@@ -13,7 +13,7 @@
 #include "../../minishell.h"
 #include "../../includes/utilities.h"
 
-static int	handle_redir(t_shell *cmd, char *redir, char *file, t_req *req)
+static int	handle_redir(t_cmd *cmd, char *redir, char *file, t_req *req)
 {
 	if (!file)
 	{
@@ -31,27 +31,27 @@ static int	handle_redir(t_shell *cmd, char *redir, char *file, t_req *req)
 	return (0);
 }
 
-int	set_redirection(t_shell *cmd, t_token **tokens, int *i, t_req *req)
+int	set_redirection(t_cmd *cmd, char **tokens, int *i, t_req *req)
 {
 	char	*redir;
 
-	redir = tokens[*i]->str;
+	redir = tokens[*i];
 	(*i)++;
 	if (!tokens[*i])
 		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
-	if (!ft_strncmp(tokens[*i]->str, "|", 2))
+	if (!ft_strncmp(tokens[*i], "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), 1);
-	if (handle_redir(cmd, redir, tokens[*i]->str, req))
+	if (handle_redir(cmd, redir, tokens[*i], req))
 		return (1);
 	(*i)++;
 	return (0);
 }
 
-static int	process_token_expand(t_shell *cmd, t_token *token, t_req *req)
+static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 {
 	char	*expanded;
 
-	expanded = ft_strdup(token->str);
+	expanded = ft_strdup(token);
 	if (!expanded)
 	{
 		ms_error(ERR_ALLOC, "expanded", 1, req);
@@ -67,17 +67,17 @@ static int	process_token_expand(t_shell *cmd, t_token *token, t_req *req)
 	return (0);
 }
 
-int	handle_token_processing(t_shell *cmd, t_token **tokens, int *i,
+int	handle_token_processing(t_cmd *cmd, char **tokens, int *i,
 		t_req *req)
 {
-	if (is_redirect(tokens[*i]->str))
+	if (is_redirect(tokens[*i]))
 	{
 		if (set_redirection(cmd, tokens, i, req))
 			return (1);
 		return (3);
 	}
-	else if (tokens[*i]->str && (tokens[*i]->str[0] != '\0'
-			|| tokens[*i]->quote != QUOTE_NONE))
+	else if (tokens[*i] && (tokens[*i][0] != '\0'
+			))
 	{
 		if (process_token_expand(cmd, tokens[*i], req))
 			return (1);

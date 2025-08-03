@@ -13,13 +13,13 @@
 #include "../../minishell.h"
 #include "../../includes/utilities.h"
 
-t_shell	*init_cmd(t_req *req)
+t_cmd	*init_cmd(t_req *req)
 {
-	t_shell	*cmd;
+	t_cmd	*cmd;
 
-	cmd = malloc(sizeof(t_shell));
+	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
-		return (ms_error(ERR_ALLOC, "t_shell", 1, req), NULL);
+		return (ms_error(ERR_ALLOC, "t_cmd", 1, req), NULL);
 	cmd->full_cmd = NULL;
 	cmd->full_path = NULL;
 	cmd->infile = STDIN_FILENO;
@@ -28,7 +28,7 @@ t_shell	*init_cmd(t_req *req)
 	return (cmd);
 }
 
-void	add_redirect(t_shell *cmd, t_redirect_type type, char *filename)
+void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 {
 	t_redirect	*new_redir;
 	t_redirect	*current;

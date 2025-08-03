@@ -68,7 +68,7 @@ static int	handle_output_redirect(t_redirect *redir, int *last_out, t_req *req)
 	return (0);
 }
 
-int	apply_redirects(t_shell *cmd, t_req *req)
+int	apply_redirects(t_cmd *cmd, t_req *req)
 {
 	t_redirect	*redir;
 	int			last_in;

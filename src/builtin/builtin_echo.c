@@ -28,7 +28,7 @@ static int	is_valid_n_flag(char *arg)
 	return (1);
 }
 
-int	builtin_echo(t_shell *cmd, t_req *req)
+int	builtin_echo(t_cmd *cmd, t_req *req)
 {
 	int	i;
 	int	newline;

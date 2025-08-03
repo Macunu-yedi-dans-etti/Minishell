@@ -12,24 +12,24 @@
 
 #include "../../minishell.h"
 
-t_token	*get_operator_token(const char *input, int *i)
+char	*get_operator_string(const char *input, int *i)
 {
 	char	op[3];
 
-	if ((input[*i] == '<' || input[*i] == '>') && input[*i] == input[*i + 1])
+	if ((input[*i] == '<' || input[*i] == '>') && input[*i] == input[*i + 1]) // heredoc veya append redirection
 	{
 		op[0] = input[*i];
 		op[1] = input[*i];
 		op[2] = '\0';
 		*i += 2;
 	}
-	else
+	else // normal redirection veya pipe
 	{
 		op[0] = input[*i];
 		op[1] = '\0';
 		(*i)++;
 	}
-	return (create_token(op, QUOTE_NONE));
+	return (ft_strdup(op));
 }
 
 static char	*reallocate_result(char *result, int *capacity)
@@ -71,6 +71,8 @@ static int	handle_quoted_section(const char *input, int *i, char **result,
 	char	quote_char;
 
 	quote_char = input[*i];
+	if (!append_char_to_result(result, &state->len, &state->capacity, quote_char))
+		return (0);
 	(*i)++;
 	while (input[*i] && input[*i] != quote_char)
 	{
@@ -80,21 +82,19 @@ static int	handle_quoted_section(const char *input, int *i, char **result,
 		(*i)++;
 	}
 	if (input[*i] == quote_char)
+	{
+		if (!append_char_to_result(result, &state->len, &state->capacity, quote_char))
+			return (0);
 		(*i)++;
+	}
 	return (1);
 }
 
-t_token	*get_word_token(const char *input, int *i)
+char	*get_word_string(const char *input, int *i)
 {
-	int				has_single;
-	int				has_double;
-	int				has_unquoted;
 	char			*result;
 	t_token_state	state;
 
-	has_single = 0;
-	has_double = 0;
-	has_unquoted = 0;
 	state.len = 0;
 	state.capacity = 32;
 	result = malloc(state.capacity);
@@ -105,22 +105,36 @@ t_token	*get_word_token(const char *input, int *i)
 	{
 		if (input[*i] == '\'' || input[*i] == '"')
 		{
-			if (input[*i] == '\'')
-				has_single = 1;
-			else
-				has_double = 1;
 			if (!handle_quoted_section(input, i, &result, &state))
 				return (free(result), NULL);
 		}
 		else
 		{
-			has_unquoted = 1;
 			if (!append_char_to_result(&result, &state.len, &state.capacity,
 					input[*i]))
 				return (free(result), NULL);
 			(*i)++;
 		}
 	}
-	return (create_token_and_free(result, determine_quote_type(has_single, has_double,
-				has_unquoted)));
+	return (result);
 }
+/*
+input(prompt) :echo "$USER"'$USER'
+ilk işlem tokenize
+tokens[0] =  echo
+tokens[1] = ""$USER"'$USER'"
+tokens[2] = NULL
+
+quote kontrol
+tokens[0] =  echo için tırnak yoksa ve $ yoksa diğerine geç
+tokens[1] = "$USER"'$USER'" için tırnak var ve $ var ozaman işleme geç fakat önce qoate türü doğru kullanılmşmı kontrol et
+tokens[1] = "$USER"'$USER'" için tırnak türü doğru kullanılmışsa ve $ var ise expanda et doğru değilse fail quote
+tokens[1] = "haloztur$USER" doğru olduğu için bu şekilde olucak 
+tokens[2] = NULL
+
+daha sonra tokenleri tek tek redirin redir out veya heredoc olup olmadığını veya pipe olup olmadığını denetleyecek
+bir fonksiyon yazılacak
+
+daha sonra execute_pipeline fonksiyonuna gönderilecek
+
+*/

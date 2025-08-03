@@ -18,7 +18,7 @@ static void	handle_single_builtin(t_list *cmds, t_req *req, pid_t *pids, int i)
 	pids[i] = -1;
 }
 
-static void	execute_single_cmd(t_list *node, t_shell *cmd,
+static void	execute_single_cmd(t_list *node, t_cmd *cmd,
 	t_pipeline_data *data, t_req *req)
 {
 	pid_t	*pids;
@@ -44,7 +44,7 @@ static void	execute_single_cmd(t_list *node, t_shell *cmd,
 static void	execute_loop(t_list *cmds, pid_t *pids, int count, t_req *req)
 {
 	t_list			*node;
-	t_shell			*cmd;
+	t_cmd			*cmd;
 	t_pipeline_data	data;
 
 	data.input_fd = STDIN_FILENO;
@@ -53,7 +53,7 @@ static void	execute_loop(t_list *cmds, pid_t *pids, int count, t_req *req)
 	node = cmds;
 	while (node)
 	{
-		cmd = (t_shell *)node->content;
+		cmd = (t_cmd *)node->content;
 		if (count == 1 && cmd->full_cmd && is_builtin(cmd->full_cmd[0]))
 			handle_single_builtin(cmds, req, pids, data.i);
 		else

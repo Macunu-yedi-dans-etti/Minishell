@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
+static void	setup_and_exec(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 {
 	close_extra_fds(in_fd, out_fd);
 	reset_signals();
@@ -41,7 +41,7 @@ static void	setup_and_exec(t_shell *cmd, t_req *req, int in_fd, int out_fd)
 		handle_external_execution(cmd, req);
 }
 
-pid_t	exec_external_cmd(t_shell *cmd, t_req *req, int in_fd, int out_fd)
+pid_t	exec_external_cmd(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 {
 	pid_t	pid;
 

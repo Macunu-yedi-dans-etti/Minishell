@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-static int	handle_builtin(t_shell *cmd, t_req *req)
+static int	handle_builtin(t_cmd *cmd, t_req *req)
 {
 	if (!ft_strncmp(cmd->full_cmd[0], "echo", 5))
 		return (builtin_echo(cmd, req));
@@ -30,7 +30,7 @@ static int	handle_builtin(t_shell *cmd, t_req *req)
 		return (-1);
 }
 
-int	run_builtin(t_shell *cmd, t_req *req)
+int	run_builtin(t_cmd *cmd, t_req *req)
 {
 	int	ret;
 

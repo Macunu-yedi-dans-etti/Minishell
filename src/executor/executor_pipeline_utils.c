@@ -27,7 +27,7 @@ int	init_execution(t_list *cmds, pid_t **pids, t_req *req)
 	return (count);
 }
 
-int	setup_pipe_output(t_list *node, t_shell *cmd, int *pipe_fd)
+int	setup_pipe_output(t_list *node, t_cmd *cmd, int *pipe_fd)
 {
 	int	output_fd;
 
@@ -46,7 +46,7 @@ int	setup_pipe_output(t_list *node, t_shell *cmd, int *pipe_fd)
 	return (output_fd);
 }
 
-int	setup_pipe_input(t_shell *cmd, int input_fd)
+int	setup_pipe_input(t_cmd *cmd, int input_fd)
 {
 	int	real_in;
 

@@ -12,42 +12,6 @@
 
 #include "../minishell.h"
 
-int	check_valid_tokens(t_token **tokens)
-{
-	int	has_valid_tokens;
-	int	i;
-
-	has_valid_tokens = 0;
-	i = 0;
-	while (tokens && tokens[i])
-	{
-		if (tokens[i]->str && (tokens[i]->str[0] != '\0'
-				|| tokens[i]->quote != QUOTE_NONE))
-		{
-			has_valid_tokens = 1;
-			break ;
-		}
-		i++;
-	}
-	return (has_valid_tokens);
-}
-
-t_token	**expand_tokens(t_token **tokens, t_req *res)
-{
-	char	*old;
-	int		i;
-
-	i = 0;
-	while (tokens && tokens[i])
-	{
-		old = tokens[i]->str;
-		tokens[i]->str = expand_str(old, res->envp, tokens[i]->quote, res);
-		free(old);
-		i++;
-	}
-	return (tokens);
-}
-
 int	needs_retokenization(char *str)
 {
 	int		i;
@@ -76,7 +40,7 @@ int	needs_retokenization(char *str)
 	return (0);
 }
 
-t_token	**process_input(char *output, t_req *res)
+char	**process_input(char *output, t_req *res)//trimm input
 {
 	char		*trimmed_output;
 
@@ -91,7 +55,7 @@ t_token	**process_input(char *output, t_req *res)
 	return (tokenize_and_validate(trimmed_output, res)); //tokenizera gider
 }
 
-int	execute_pipeline(t_token **tokens, t_req *res)
+int	execute_pipeline(char **tokens, t_req *res)
 {
 	t_list	*cmds;
 
@@ -106,10 +70,9 @@ int	execute_pipeline(t_token **tokens, t_req *res)
 		res->cmds = NULL;
 		return (0);
 	}
-	if (tokens && tokens[0] && tokens[0]->str) // son çalışan bilgisi için güncelleme
-		res->envp = mini_setenv("_", tokens[0]->str, res->envp, 1);
+	if (tokens && tokens[0]) // son çalışan bilgisi için güncelleme
+		res->envp = mini_setenv("_", tokens[0], res->envp, 1);
 	
-	//free_tokens(tokens); segmentation fault veriyor 
 	free_cmds(cmds);
 	res->cmds = NULL;
 	return (1);

@@ -12,7 +12,7 @@
 
 #include "../../../minishell.h"
 
-static int	check_arg_count(t_shell *cmd, t_req *req)
+static int	check_arg_count(t_cmd *cmd, t_req *req)
 {
 	int	count;
 
@@ -29,7 +29,7 @@ static int	check_arg_count(t_shell *cmd, t_req *req)
 	return (0);
 }
 
-static int	change_directory(t_shell *cmd, t_req *req,
+static int	change_directory(t_cmd *cmd, t_req *req,
 		char **oldpwd, int *need_free)
 {
 	char	*target;
@@ -66,7 +66,7 @@ static void	update_env_after_cd(t_req *req, char *oldpwd)
 	req->exit_stat = 0;
 }
 
-int	builtin_cd(t_shell *cmd, t_req *req)
+int	builtin_cd(t_cmd *cmd, t_req *req)
 {
 	char	*oldpwd;
 	int		need_free;

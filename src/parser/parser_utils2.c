@@ -13,11 +13,11 @@
 #include "../../minishell.h"
 #include "../../includes/utilities.h"
 
-static int	handle_empty_command(t_token **tokens, int *i, t_list **cmds,
+static int	handle_empty_command(char **tokens, int *i, t_list **cmds,
 		t_req *req)
 {
-	if (tokens[*i] && tokens[*i]->str
-		&& !ft_strncmp(tokens[*i]->str, "|", 2))
+	if (tokens[*i] && tokens[*i]
+		&& !ft_strncmp(tokens[*i], "|", 2))
 	{
 		(*i)++;
 		if (!tokens[*i])
@@ -30,10 +30,10 @@ static int	handle_empty_command(t_token **tokens, int *i, t_list **cmds,
 	return (0);
 }
 
-static int	handle_pipe_transition(t_token **tokens, int *i, t_list **cmds,
+static int	handle_pipe_transition(char **tokens, int *i, t_list **cmds,
 		t_req *req)
 {
-	if (tokens[*i] && tokens[*i]->str && !ft_strncmp(tokens[*i]->str, "|", 2))
+	if (tokens[*i] && tokens[*i] && !ft_strncmp(tokens[*i], "|", 2))
 	{
 		(*i)++;
 		if (!tokens[*i])
@@ -46,12 +46,12 @@ static int	handle_pipe_transition(t_token **tokens, int *i, t_list **cmds,
 	return (0);
 }
 
-int	process_empty_cmd_case(t_token **tokens, int *i, t_list **cmds, t_req *req)
+int	process_empty_cmd_case(char **tokens, int *i, t_list **cmds, t_req *req)
 {
 	return (handle_empty_command(tokens, i, cmds, req));
 }
 
-int	process_pipe_case(t_token **tokens, int *i, t_list **cmds, t_req *req)
+int	process_pipe_case(char **tokens, int *i, t_list **cmds, t_req *req)
 {
 	return (handle_pipe_transition(tokens, i, cmds, req));
 }

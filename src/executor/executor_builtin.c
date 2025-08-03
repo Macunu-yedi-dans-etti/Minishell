@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-static void	setup_builtin_io(t_shell *cmd, int input_fd, int *backup_in,
+static void	setup_builtin_io(t_cmd *cmd, int input_fd, int *backup_in,
 							int *backup_out)
 {
 	if (cmd->infile == STDIN_FILENO && input_fd != STDIN_FILENO)
@@ -33,7 +33,7 @@ static void	setup_builtin_io(t_shell *cmd, int input_fd, int *backup_in,
 	}
 }
 
-void	exec_single_builtin(t_shell *cmd, t_req *req, int input_fd)
+void	exec_single_builtin(t_cmd *cmd, t_req *req, int input_fd)
 {
 	int	backup_out;
 	int	backup_in;

@@ -9,7 +9,6 @@ SRCS = main/minishell.c \
 	   src/tokenizer/tokenizer_utils.c\
 	   src/tokenizer/tokenizer_core.c\
 	   src/tokenizer/tokenizer_core2.c\
-	   src/tokenizer/tokenizer_core3.c\
 	   src/parser/parser.c\
 	   src/parser/parser_utils.c\
 	   src/parser/parser_utils2.c\
@@ -45,6 +44,7 @@ SRCS = main/minishell.c \
 	   general_utility/resolve_path.c\
        enviroment_utility/enviroment.c\
 	   enviroment_utility/mini_setenv_line.c\
+	   enviroment_utility/token_utils.c\
 
 OBJS = $(SRCS:.c=.o)
 

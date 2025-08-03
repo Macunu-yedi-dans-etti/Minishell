@@ -26,25 +26,9 @@ typedef enum e_redirect_type
 {
 	R_IN,
 	R_OUT,
-	R_APPEND
+	R_APPEND,
+	R_HEREDOC
 }				t_redirect_type;
-
-typedef enum e_quote_type
-{
-	QUOTE_NONE,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE
-}				t_quote_type;
-
-typedef struct s_request
-{
-	t_list		*cmds;
-	char		**envp;
-	char		**export_list;
-	pid_t		pid;
-	int			exit_stat;
-	int			should_exit;
-}				t_req;
 
 typedef struct s_redirect
 {
@@ -53,22 +37,24 @@ typedef struct s_redirect
 	struct s_redirect		*next;
 }				t_redirect;
 
-typedef struct s_shell
+typedef struct s_cmd
 {
 	char		**full_cmd;
 	char		*full_path;
 	int			infile;
 	int			outfile;
-	char		*infile_path;
-	char		*outfile_path;
-	int			append_out;
 	t_redirect	*redirects;
-}				t_shell;
+}				t_cmd;
 
-typedef struct s_token
+typedef struct s_request
 {
-	char			*str;
-	t_quote_type	quote;
-}				t_token;
+	t_list		*cmds;
+	char		**envp;
+	char		**export_list;
+	char		**tokens;
+	pid_t		pid;
+	int			exit_stat;
+	int			should_exit;
+}				t_req;
 
 #endif

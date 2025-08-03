@@ -12,64 +12,48 @@
 
 #include "../minishell.h"
 
-t_token	**tokenize_and_validate(char *trimmed_output, t_req *res) // temizlenmiş input aslında ve yanına ek structını yolluyor içinde envsi vs. var
+char	**quote_control_and_expand(char **tokens, t_req *res)
 {
-	char		*expanded_input;
-	t_token		**tokens;
-
-	if (needs_retokenization(trimmed_output))
+	int i;
+	char *expanded;
+	
+	i = 0;
+	while (tokens[i])
 	{
-		expanded_input = expand_str(trimmed_output, res->envp, QUOTE_NONE, res);
-		free(trimmed_output);
-		tokens = tokenize_input(expanded_input);
-		free(expanded_input);
-	}
-	else
-	{
-		tokens = tokenize_input(trimmed_output);
-		free(trimmed_output);
-		if (tokens)
-			tokens = expand_tokens(tokens, res);
-	}
-	if (!tokens)
-		return (NULL);
-	if (!check_valid_tokens(tokens)) // Geçerli token yoksa boş array döner
-	{
-		free_tokens(tokens);
-		return (NULL);
+		// Quote kontrolü ve expansion
+		if (has_quotes_or_variables(tokens[i]))
+		{
+			expanded = process_quotes_and_expand(tokens[i], res);
+			if (!expanded)
+			{
+				// Quote error - hata mesajı yazdır
+				printf("minishell: quote error: unmatched quotes in '%s'\n", tokens[i]);
+				return (free_string_array(tokens), NULL);
+			}
+			free(tokens[i]);
+			tokens[i] = expanded;
+		}
+		i++;
 	}
 	return (tokens);
 }
 
-/*
-tokenize input
-
-Step-by-step tokenization:
-
-i=0: "ls -la | grep txt"
-     ^^
-get_token() → token = {str: "ls", quote: QUOTE_NONE}
-process_token() → tokens[0] = "ls", count = 1
-
-i=3: "ls -la | grep txt"
-        ^^^
-get_token() → token = {str: "-la", quote: QUOTE_NONE}  
-process_token() → tokens[1] = "-la", count = 2
-
-i=7: "ls -la | grep txt"
-           ^
-get_token() → token = {str: "|", quote: QUOTE_NONE}
-process_token() → tokens[2] = "|", count = 3
-
-i=9: "ls -la | grep txt"
-             ^^^^
-get_token() → token = {str: "grep", quote: QUOTE_NONE}
-process_token() → tokens[3] = "grep", count = 4
-
-i=14: "ls -la | grep txt"
-                   ^^^
-get_token() → token = {str: "txt", quote: QUOTE_NONE}
-process_token() → tokens[4] = "txt", count = 5
-
-Final: ["ls", "-la", "|", "grep", "txt", NULL]
-*/
+char	**tokenize_and_validate(char *trimmed_output, t_req *res)
+{
+	char **tokens;
+	
+	// 1. İlk tokenization - sadece ayır
+	tokens = tokenize_input(trimmed_output);
+	if (!tokens)
+		return (NULL);
+	
+	// 2. Quote control ve expansion
+	tokens = quote_control_and_expand(tokens, res);
+	if (!tokens)
+		return (NULL);
+		
+	// 3. res'e token'ları kaydet
+	res->tokens = tokens;
+	
+	return (tokens);
+}

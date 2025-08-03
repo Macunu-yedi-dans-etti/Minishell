@@ -32,7 +32,7 @@ static char	*try_expand_tilde(char *arg, t_req *req)
 	return (result);
 }
 
-static char	*get_cd_target_from_env(t_shell *cmd, t_req *req, int *need_free)
+static char	*get_cd_target_from_env(t_cmd *cmd, t_req *req, int *need_free)
 {
 	char	*target;
 
@@ -56,7 +56,7 @@ static char	*get_cd_target_from_env(t_shell *cmd, t_req *req, int *need_free)
 	return (NULL);
 }
 
-char	*get_cd_target(t_shell *cmd, t_req *req, int *need_free)
+char	*get_cd_target(t_cmd *cmd, t_req *req, int *need_free)
 {
 	char	*target;
 	char	*expanded;

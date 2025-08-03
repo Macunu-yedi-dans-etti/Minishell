@@ -40,12 +40,12 @@ void	ft_double_free(char ***ptr)
 void	free_cmds(t_list *cmds)
 {
 	t_list	*tmp;
-	t_shell	*cmd;
+	t_cmd	*cmd;
 
 	while (cmds)
 	{
 		tmp = cmds->next;
-		cmd = (t_shell *)cmds->content;
+		cmd = (t_cmd *)cmds->content;
 		if (cmd)
 		{
 			ft_double_free(&cmd->full_cmd);
@@ -58,7 +58,7 @@ void	free_cmds(t_list *cmds)
 	}
 }
 
-void	free_tokens(t_token **tokens)
+void	free_tokens(char **tokens)
 {
 	int	i;
 
@@ -67,7 +67,7 @@ void	free_tokens(t_token **tokens)
 	i = 0;
 	while (tokens[i])
 	{
-		free(tokens[i]->str);
+		free(tokens[i]);
 		free(tokens[i]);
 		i++;
 	}

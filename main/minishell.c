@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 22:25:42 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:35:06 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static char	*get_input_prompt(t_req *res)
 static int	process_main_loop(t_req *res)
 {
 	char		*output;
-	t_token		**tokens;
+	char		**tokens;
 
 	setup_signals();
 	output = get_input_prompt(res);
@@ -45,8 +45,8 @@ static int	process_main_loop(t_req *res)
 		tokens = process_input(output, res);
 		if (tokens)
 		{
-			execute_pipeline(tokens, res); // execute_pipeline(tokens, res); burası
-			free_tokens(tokens);
+			execute_pipeline(tokens, res);
+			free_string_array(tokens);
 		}
 	}
 	free(output);

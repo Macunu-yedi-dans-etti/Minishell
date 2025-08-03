@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-int	handle_exec(t_shell *cmd, t_req *req, int *input_fd, pid_t *pid)
+int	handle_exec(t_cmd *cmd, t_req *req, int *input_fd, pid_t *pid)
 {
 	int	real_in;
 
@@ -31,7 +31,7 @@ int	handle_exec(t_shell *cmd, t_req *req, int *input_fd, pid_t *pid)
 	return (0);
 }
 
-void	handle_empty_commands(t_shell *cmd, t_req *req, pid_t *pids, int i)
+void	handle_empty_commands(t_cmd *cmd, t_req *req, pid_t *pids, int i)
 {
 	if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0])
 	{
@@ -49,9 +49,9 @@ void	handle_empty_commands(t_shell *cmd, t_req *req, pid_t *pids, int i)
 
 void	process_single_command(t_list *cmds, t_req *req, int input_fd)
 {
-	t_shell	*cmd;
+	t_cmd	*cmd;
 
-	cmd = (t_shell *)cmds->content;
+	cmd = (t_cmd *)cmds->content;
 	if (is_builtin(cmd->full_cmd[0]))
 		exec_single_builtin(cmd, req, input_fd);
 }

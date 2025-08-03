@@ -12,49 +12,34 @@
 
 #include "../../minishell.h"
 
-static t_token	*get_token(const char *input, int *i)
+static char	*gechar_string(const char *input, int *i)
 {
 	while (input[*i] && is_separator(input[*i]))
 		(*i)++;
 	if (!input[*i])
 		return (NULL);
 	if (is_operator(input[*i]))
-		return (get_operator_token(input, i));
-	return (get_word_token(input, i));
+		return (get_operator_string(input, i));
+	return (get_word_string(input, i));
 }
 
-static int	add_token_to_array(t_token ***tokens, t_token *token, int *count,
+static int	add_string_to_array(char ***tokens, char *token_str, int *count,
 		int *capacity)
 {
-	if (*count >= *capacity - 1 && !resize_token_array(tokens, capacity,
+	if (*count >= *capacity - 1 && !resize_string_array(tokens, capacity,
 			*count))
 		return (0);
-	(*tokens)[(*count)++] = token;
+	(*tokens)[(*count)++] = token_str;
 	(*tokens)[*count] = NULL;
 	return (1);
 }
 
-static int	process_token(t_token ***tokens, t_token *token, int *count,
-	int *capacity)
-{
-	if (token && token->str && (token->str[0] != '\0'
-			|| token->quote != QUOTE_NONE))
-	{
-		if (!add_token_to_array(tokens, token, count, capacity))
-			return (0);
-	}
-	else if (token)
-	{
-		free(token->str);
-		free(token);
-	}
-	return (1);
-}
 
-t_token	**tokenize_input(const char *input)
+
+char	**tokenize_input(const char *input)
 {
-	t_token	**tokens;
-	t_token	*token;
+	char	**tokens;
+	char	*token_str;
 	int		i;
 	int		count;
 	int		capacity;
@@ -62,28 +47,28 @@ t_token	**tokenize_input(const char *input)
 	i = 0;
 	count = 0;
 	capacity = 16;
-	tokens = malloc(sizeof(t_token *) * capacity);
+	tokens = malloc(sizeof(char *) * capacity);
 	if (!tokens)
 		return (NULL);
 	tokens[0] = NULL;
 	while (input[i])
 	{
-		token = get_token(input, &i);
-		if (!token)
-			return (free_tokens(tokens), NULL);
-		if (!process_token(&tokens, token, &count, &capacity))
-			return (free_tokens(tokens), NULL);
+		token_str = gechar_string(input, &i);
+		if (!token_str)
+			return (free_string_array(tokens), NULL);
+		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
+			return (free_string_array(tokens), NULL);
 	}
 	return (tokens);
 }
 
-int	resize_token_array(t_token ***tokens, int *capacity, int count)
+int	resize_string_array(char ***tokens, int *capacity, int count)
 {
-	t_token	**tmp;
+	char	**tmp;
 	int		j;
 
 	*capacity *= 2;
-	tmp = malloc(sizeof(t_token *) * (*capacity));
+	tmp = malloc(sizeof(char *) * (*capacity));
 	if (!tmp)
 		return (0);
 	j = -1;

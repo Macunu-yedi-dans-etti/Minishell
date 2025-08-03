@@ -13,9 +13,9 @@
 #include "../../minishell.h"
 #include "../../includes/utilities.h"
 
-static t_shell	*process_command_tokens(t_token **tokens, int *i, t_req *req)
+static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 {
-	t_shell	*cmd;
+	t_cmd	*cmd;
 	int		has_cmd;
 	int		result;
 
@@ -23,8 +23,8 @@ static t_shell	*process_command_tokens(t_token **tokens, int *i, t_req *req)
 	if (!cmd)
 		return (NULL);
 	has_cmd = 0;
-	while (tokens[*i] && (ft_strncmp(tokens[*i]->str, "|", 2)
-			|| tokens[*i]->quote != QUOTE_NONE))
+	while (tokens[*i] && (ft_strncmp(tokens[*i], "|", 2)
+			))
 	{
 		result = handle_token_processing(cmd, tokens, i, req);
 		if (result == 1)
@@ -46,7 +46,7 @@ static t_shell	*process_command_tokens(t_token **tokens, int *i, t_req *req)
 	return (cmd);
 }
 
-static void	set_command_path(t_shell *cmd, t_req *req)
+static void	set_command_path(t_cmd *cmd, t_req *req)
 {
 	char	*trimmed;
 
@@ -63,17 +63,17 @@ static void	set_command_path(t_shell *cmd, t_req *req)
 	}
 }
 
-t_list	*parse_tokens(t_token **tokens, t_req *req)
+t_list	*parse_tokens(char **tokens, t_req *req)
 {
 	t_list	*cmds;
-	t_shell	*current;
+	t_cmd	*current;
 	int		i;
 
 	cmds = NULL;
 	i = 0;
 	if (!tokens || !tokens[0])
 		return (NULL);
-	if (!ft_strncmp(tokens[0]->str, "|", 2))
+	if (!ft_strncmp(tokens[0], "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
 	while (tokens[i])
 	{
@@ -88,10 +88,10 @@ t_list	*parse_tokens(t_token **tokens, t_req *req)
 		ft_lstadd_back(&cmds, ft_lstnew(current));
 
 		// PIPE SONRASI KONTROL: Eğer bir sonraki token pipe ise ve ardından komut yoksa veya tekrar pipe geliyorsa syntax error ver
-		if (tokens[i] && !ft_strncmp(tokens[i]->str, "|", 2))
+		if (tokens[i] && !ft_strncmp(tokens[i], "|", 2))
 		{
 			// Sonraki token yoksa veya tekrar pipe ise hata
-			if (!tokens[i + 1] || !ft_strncmp(tokens[i + 1]->str, "|", 2))
+			if (!tokens[i + 1] || !ft_strncmp(tokens[i + 1], "|", 2))
 				return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
 		}
 
