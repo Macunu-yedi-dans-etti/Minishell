@@ -57,6 +57,10 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 {
 	char	*expanded;
 
+	// Eğer komut henüz belirlenmemişse ve token boş string ise atla
+	if (!cmd->full_cmd && token[0] == '\0')
+		return (0);
+		
 	expanded = ft_strdup(token);
 	if (!expanded)
 	{
@@ -82,11 +86,13 @@ int	handle_token_processing(t_cmd *cmd, char **tokens, int *i,
 			return (1);
 		return (3);
 	}
-	else if (tokens[*i] && (tokens[*i][0] != '\0'
-			))
+	else if (tokens[*i])
 	{
 		if (process_token_expand(cmd, tokens[*i], req))
 			return (1);
+		// Eğer komut henüz belirlenmemişse ve token boş string ise has_cmd set etme
+		if (!cmd->full_cmd && tokens[*i][0] == '\0')
+			return (0);
 		return (2);
 	}
 	return (0);
