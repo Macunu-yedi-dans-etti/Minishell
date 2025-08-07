@@ -28,11 +28,23 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 	{
 		// Heredoc interrupt kontrolü
 		if (req && req->heredoc_interrupted)
-			return (free(cmd), NULL);
+		{
+			ft_double_free(&cmd->full_cmd);
+			free(cmd->full_path);
+			free_redirects(cmd->redirects);
+			free(cmd);
+			return (NULL);
+		}
 			
 		result = handle_token_processing(cmd, tokens, i, req);
 		if (result == 1)
-			return (free(cmd), NULL);
+		{
+			ft_double_free(&cmd->full_cmd);
+			free(cmd->full_path);
+			free_redirects(cmd->redirects);
+			free(cmd);
+			return (NULL);
+		}
 		else if (result == 2)
 		{
 			has_cmd = 1;
@@ -46,7 +58,13 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 			(*i)++;
 	}
 	if (!has_cmd)
-		return (free(cmd), NULL);
+	{
+		ft_double_free(&cmd->full_cmd);
+		free(cmd->full_path);
+		free_redirects(cmd->redirects);
+		free(cmd);
+		return (NULL);
+	}
 	return (cmd);
 }
 
@@ -83,11 +101,18 @@ t_list	*parse_tokens(char **tokens, t_req *req)
 	{
 		// Heredoc interrupt kontrolü
 		if (req && req->heredoc_interrupted)
+		{
+			free_cmds(cmds);
 			return (NULL);
-			
+		}
 		current = process_command_tokens(tokens, &i, req);
 		if (!current)
 		{
+			if (req && req->heredoc_interrupted)
+			{
+				free_cmds(cmds);
+				return (NULL);
+			}
 			if (process_empty_cmd_case(tokens, &i, &cmds, req))
 				return (NULL);
 			continue;

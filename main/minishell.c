@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/03 23:33:35 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 21:37:45 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static int	process_main_loop(t_req *res)
 	char		*output;
 	char		**tokens;
 
-	res->heredoc_interrupted = 0; // Her döngü başında sıfırla
 	setup_signals();
 	output = get_input_prompt(res);
 	if (!output)
@@ -50,6 +49,16 @@ static int	process_main_loop(t_req *res)
 			free_string_array(tokens);
 			res->tokens = NULL;
 		}
+	}
+	// Interrupt sonrası cleanup
+	if (res->heredoc_interrupted)
+	{
+		if (res->cmds)
+		{
+			free_cmds(res->cmds);
+			res->cmds = NULL;
+		}
+		res->heredoc_interrupted = 0;
 	}
 	// free(tokens);
 	free(output);
