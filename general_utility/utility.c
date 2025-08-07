@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 11:34:56 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:13:33 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,28 @@ char	**ft_double_extension(char **matrix, char *new_str) // envp = ft_double_ext
 	while (matrix && matrix[i])
 	{
 		new_matrix[i] = ft_strdup(matrix[i]);
+		if (!new_matrix[i])
+		{
+			// Cleanup on allocation failure
+			while (i > 0)
+				free(new_matrix[--i]);
+			free(new_matrix);
+			return (NULL);
+		}
 		i++;
 	}
 	if (new_str)
+	{
 		new_matrix[i++] = ft_strdup(new_str); // new_entry burada aslında matrixin sonuna eklenecek veriyi temsil ediyor
+		if (!new_matrix[i - 1])
+		{
+			// Cleanup on allocation failure
+			while (i > 0)
+				free(new_matrix[--i]);
+			free(new_matrix);
+			return (NULL);
+		}
+	}
 	new_matrix[i] = NULL;
 	if (matrix)
 		ft_free(matrix);

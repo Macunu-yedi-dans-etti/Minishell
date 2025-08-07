@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/03 23:33:31 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:13:33 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,9 @@ void	free_all(t_req *req)
 		free_cmds(req->cmds);
 	if (req->tokens)
 		free_string_array(req->tokens);
+	// Ensure all pointers are set to NULL after freeing
+	req->envp = NULL;
+	req->export_list = NULL;
+	req->cmds = NULL;
+	req->tokens = NULL;
 }

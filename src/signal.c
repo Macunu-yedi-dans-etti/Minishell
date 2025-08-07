@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:47:29 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 13:04:26 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:13:35 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,22 @@ void	handle_sigint(int sig)
 	if (sig == SIGINT)
 	{
 		if (g_req_ptr)
+		{
 			g_req_ptr->exit_stat = EXIT_SIGINT;
+			// Set a flag to trigger immediate cleanup
+			g_req_ptr->should_exit = 1;
+			// Cleanup any allocated memory when interrupted
+			if (g_req_ptr->tokens)
+			{
+				free_string_array(g_req_ptr->tokens);
+				g_req_ptr->tokens = NULL;
+			}
+			if (g_req_ptr->cmds)
+			{
+				free_cmds(g_req_ptr->cmds);
+				g_req_ptr->cmds = NULL;
+			}
+		}
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();

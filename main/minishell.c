@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/07 21:37:45 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:13:33 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,24 @@ static int	process_main_loop(t_req *res)
 		}
 		res->heredoc_interrupted = 0;
 	}
-	// free(tokens);
+	// Cleanup any remaining tokens if interrupted
+	if (res->tokens)
+	{
+		free_string_array(res->tokens);
+		res->tokens = NULL;
+	}
+	// Additional cleanup for any remaining commands
+	if (res->cmds)
+	{
+		free_cmds(res->cmds);
+		res->cmds = NULL;
+	}
+	// Check if we were interrupted and need to exit
+	if (res->exit_stat == 130) // SIGINT exit code
+	{
+		free(output);
+		return (0);
+	}
 	free(output);
 	if (res->should_exit)
 		return (0);
@@ -82,6 +99,7 @@ int	main(int ac, char **av, char **env)
 		fprintf(stderr, "Error: Environment setup failed.\n");
 		return (1);
 	}
+	set_signal_req(&res); // Set signal handler to access res for cleanup
 	while (process_main_loop(&res))
 		;
 	rl_clear_history();

@@ -18,13 +18,21 @@ static t_req	init_variable_continue(t_req prompt, char **av) // init_variable_co
 
 	str = mini_getenv("PATH", prompt.envp, 4);
 	if (!str) // yoksa oluştur işte 
+	{
 		prompt.envp = mini_setenv("PATH",
 				"/usr/local/sbin:/usr/local/bin:/usr/bin:/bin",
 				prompt.envp, 4);
+		if (!prompt.envp)
+			return (prompt); // Return early if allocation failed
+	}
 	free(str);
 	str = mini_getenv("_", prompt.envp, 1); // son çalışan bilgisi
 	if (!str && av[0]) // strnin varlığı aslında env yi temsil ediyor çünkü path yok demek env yok demek
+	{
 		prompt.envp = mini_setenv("_", av[0], prompt.envp, 1);
+		if (!prompt.envp)
+			return (prompt); // Return early if allocation failed
+	}
 	free(str);
 	return (prompt);
 }
@@ -59,6 +67,11 @@ static t_req	init_variable(t_req prompt, char *str, char **av) // av önemli gid
 	if (str)
 	{
 		prompt.envp = mini_setenv("PWD", str, prompt.envp, 3);
+		if (!prompt.envp)
+		{
+			free(str);
+			return (prompt); // Return early if allocation failed
+		}
 		free(str);
 	}
 	shlvl = mini_getenv("SHLVL", prompt.envp, 5);
@@ -67,7 +80,14 @@ static t_req	init_variable(t_req prompt, char *str, char **av) // av önemli gid
 	else
 		num = ft_itoa(ft_atoi(shlvl) + 1);
 	free(shlvl);
+	if (!num)
+		return (prompt); // Return early if allocation failed
 	prompt.envp = mini_setenv("SHLVL", num, prompt.envp, 5);
+	if (!prompt.envp)
+	{
+		free(num);
+		return (prompt); // Return early if allocation failed
+	}
 	free(num);
 	return (init_variable_continue(prompt, av));
 }

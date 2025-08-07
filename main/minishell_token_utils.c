@@ -67,9 +67,8 @@ char	**tokenize_and_validate(char *trimmed_output, t_req *res)
 	tokens = quote_control_and_expand(tokens, res);
 	if (!tokens)
 	{
-
+		// Cleanup on error
 		return (NULL);
-	
 	}
 	// 3. res'e token'ları kaydet
 	res->tokens = tokens;

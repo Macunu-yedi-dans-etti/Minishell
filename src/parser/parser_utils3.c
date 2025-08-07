@@ -56,6 +56,7 @@ int	set_redirection(t_cmd *cmd, char **tokens, int *i, t_req *req)
 static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 {
 	char	*expanded;
+	char	**old_full_cmd;
 
 	// Eğer komut henüz belirlenmemişse ve token boş string ise atla
 	if (!cmd->full_cmd && token[0] == '\0')
@@ -67,10 +68,13 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 		ms_error(ERR_ALLOC, "expanded", 1, req);
 		return (1);
 	}
+	old_full_cmd = cmd->full_cmd;
 	cmd->full_cmd = ft_double_extension(cmd->full_cmd, expanded);
 	free(expanded);
 	if (!cmd->full_cmd)
 	{
+		// Restore old state if allocation failed
+		cmd->full_cmd = old_full_cmd;
 		ms_error(ERR_ALLOC, "full_cmd", 1, req);
 		return (1);
 	}

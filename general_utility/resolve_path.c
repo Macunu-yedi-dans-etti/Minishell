@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   resolve_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:49:15 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/26 18:38:15 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:08:04 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,10 @@ char	**ft_double_copy(char **envp)
 		copy[i] = ft_strdup(envp[i]);
 		if (!copy[i])
 		{
-			ft_double_free(&copy);
+			// Cleanup on allocation failure
+			while (i > 0)
+				free(copy[--i]);
+			free(copy);
 			return (NULL);
 		}
 		i++;

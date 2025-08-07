@@ -55,9 +55,17 @@ char	**tokenize_input(const char *input)
 	{
 		token_str = gechar_string(input, &i);
 		if (!token_str)
-			return (free_string_array(tokens), NULL);
+		{
+			// Cleanup on tokenization failure
+			free_string_array(tokens);
+			return (NULL);
+		}
 		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
-			return (free_string_array(tokens), NULL);
+		{
+			// Cleanup on array expansion failure
+			free_string_array(tokens);
+			return (NULL);
+		}
 	}
 	return (tokens);
 }
