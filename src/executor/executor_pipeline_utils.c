@@ -42,7 +42,8 @@ int	setup_pipe_output(t_list *node, t_cmd *cmd, int *pipe_fd)
 	{
 		if (pipe(pipe_fd) == -1)
 		{
-			perror("pipe");
+			perror("minishell: pipe");
+			free_cmds(node);//4
 			return (-1);
 		}
 		output_fd = pipe_fd[1];

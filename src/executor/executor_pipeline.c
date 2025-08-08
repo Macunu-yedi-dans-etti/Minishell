@@ -72,7 +72,7 @@ static void	execute_loop(t_list *cmds, pid_t *pids, int count, t_req *req)
 
 void	execute_cmds(t_list *cmds, t_req *req)
 {
-	pid_t	pids_stack[1024];  // Stack array - no malloc needed!
+	pid_t	pids_stack[64];  // Stack array - no malloc needed!
 	pid_t	*pids;
 	int		count;
 

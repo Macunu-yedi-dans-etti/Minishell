@@ -42,10 +42,12 @@ void	restore_io(int *backup_in, int *backup_out)
 	{
 		dup2(*backup_out, STDOUT_FILENO);
 		close(*backup_out);
+	*backup_out = -1;
 	}
 	if (*backup_in != -1)
 	{
 		dup2(*backup_in, STDIN_FILENO);
 		close(*backup_in);
+	*backup_in = -1;
 	}
 }

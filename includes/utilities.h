@@ -38,4 +38,7 @@ void			ft_double_free(char ***freee);
 void			free_cmds(t_list *cmds);
 void			free_all(t_req *req);
 
+/* FD utilities */
+void			safe_close(int *fd);
+
 #endif

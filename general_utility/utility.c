@@ -6,11 +6,23 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 11:34:56 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:15:39 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void    safe_close(int *fd)
+{
+	if (!fd)
+		return ;
+	if (*fd >= 0 && *fd != STDIN_FILENO && *fd != STDOUT_FILENO
+		&& *fd != STDERR_FILENO)
+	{
+		close(*fd);
+		*fd = -1;
+	}
+}
 
 int	ft_find_chr(const char *s, char c)
 {

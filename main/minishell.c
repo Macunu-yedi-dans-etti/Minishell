@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/07 21:37:45 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:01:57 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,19 @@ static int	process_main_loop(t_req *res)
 	char		**tokens;
 
 	setup_signals();
+	res->tokens = NULL;
 	output = get_input_prompt(res);
 	if (!output)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
 		rl_clear_history();
+		if (res->tokens)
+		{
+			free_string_array(res->tokens);
+			res->tokens = NULL;
+			free_all(res);//2
+		}
 		return (0);
 	}
 	if (output[0])
@@ -45,8 +52,10 @@ static int	process_main_loop(t_req *res)
 		tokens = process_input(output, res);
 		if (tokens)
 		{
+			res->tokens = tokens;
 			execute_pipeline(tokens, res);
 			free_string_array(tokens);
+			tokens = NULL;
 			res->tokens = NULL;
 		}
 	}
@@ -58,12 +67,28 @@ static int	process_main_loop(t_req *res)
 			free_cmds(res->cmds);
 			res->cmds = NULL;
 		}
+		if (res->tokens)
+		{
+			free_string_array(res->tokens);
+			res->tokens = NULL;
+		}
+		// if (res->envp)
+		// {
+		// 	ft_double_free(&res->envp);
+		// 	res->envp = NULL;
+		// }
 		res->heredoc_interrupted = 0;
 	}
-	// free(tokens);
 	free(output);
 	if (res->should_exit)
+	{	
+		if (res->tokens)
+		{
+			free_string_array(res->tokens);
+			res->tokens = NULL;
+		}
 		return (0);
+	}
 	return (1);
 }
 

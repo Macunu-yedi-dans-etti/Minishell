@@ -71,6 +71,8 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 	free(expanded);
 	if (!cmd->full_cmd)
 	{
+		//free_string_array(cmd->full_cmd);
+		//free_all(req); // seg yapar sebebi handle_token_processing de kullanarak bunun dönüşünde hatalı durumu freeledik
 		ms_error(ERR_ALLOC, "full_cmd", 1, req);
 		return (1);
 	}

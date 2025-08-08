@@ -93,6 +93,12 @@ int	execute_pipeline(char **tokens, t_req *res)
 	execute_cmds(cmds, res);
 	if (!check_valid_tokens(tokens))
 	{
+		// if (res->tokens)
+		// {
+		// 	free_string_array(res->tokens);
+		// 	res->tokens = NULL;
+		// }
+		free_all(res);//3
 		free_cmds(cmds);
 		res->cmds = NULL;
 		return (0);

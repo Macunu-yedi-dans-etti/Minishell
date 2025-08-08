@@ -52,7 +52,7 @@ LIBFT_DIR = includes/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -g -O0 -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 
 all: $(NAME)
@@ -74,7 +74,7 @@ fclean: clean
 re: fclean all
 
 leak:
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp --track-origins=yes -s ./minishell
 
 
 .PHONY: all clean fclean re

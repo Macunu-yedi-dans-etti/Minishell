@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/27 12:45:56 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:15:39 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,24 @@ int	apply_redirects(t_cmd *cmd, t_req *req)
 	last_out = -1;
 	while (redir)
 	{
-		if (redir->type == R_IN && handle_input_redirect(redir, &last_in, req))
+		if (redir->type == R_IN
+			&& handle_input_redirect(redir, &last_in, req))
+		{
+			if (last_in != -1 && last_in != STDIN_FILENO)
+				close(last_in);
+			if (last_out != -1 && last_out != STDOUT_FILENO)
+				close(last_out);
 			return (1);
+		}
 		if ((redir->type == R_OUT || redir->type == R_APPEND)
 			&& handle_output_redirect(redir, &last_out, req))
+		{
+			if (last_in != -1 && last_in != STDIN_FILENO)
+				close(last_in);
+			if (last_out != -1 && last_out != STDOUT_FILENO)
+				close(last_out);
 			return (1);
+		}
 		redir = redir->next;
 	}
 	if (last_in != -1)

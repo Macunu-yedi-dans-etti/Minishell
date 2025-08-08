@@ -19,6 +19,7 @@ static void	setup_and_exec(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
+		free_all(req);//5
 		exit(0);
 	}
 	if (apply_redirects(cmd, req))
@@ -48,7 +49,8 @@ pid_t	exec_external_cmd(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("fork");
+		perror("minishell: fork");
+		free_all(req);//5
 		return (-1);
 	}
 	if (pid == 0)

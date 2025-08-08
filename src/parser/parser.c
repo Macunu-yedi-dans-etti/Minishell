@@ -43,6 +43,7 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 			free(cmd->full_path);
 			free_redirects(cmd->redirects);
 			free(cmd);
+			//free_all(req);//1 seg yapar hatalı durumda
 			return (NULL);
 		}
 		else if (result == 2)
@@ -103,7 +104,8 @@ t_list	*parse_tokens(char **tokens, t_req *req)
 		// Heredoc interrupt kontrolü
 		if (req && req->heredoc_interrupted)
 		{
-			free_cmds(cmds);
+			if (cmds)
+				free_cmds(cmds);
 			return (NULL);
 		}
 		current = process_command_tokens(tokens, &i, req);
