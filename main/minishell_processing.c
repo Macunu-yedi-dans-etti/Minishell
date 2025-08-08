@@ -61,6 +61,7 @@ char	**process_input(char *output, t_req *res)//trimm input
 	char		*trimmed_output;
 	char		**result;
 
+	add_history(output); // aşağı yukarı tuşlarıyla geçmiş - kullanıcının girdiği RAW komut
 	trimmed_output = ft_strtrim(output, " \t"); // prompttaki  baştaki ve sondaki boşluklar ile tabları temizler
 	if (!trimmed_output || !trimmed_output[0])
 	{
@@ -68,7 +69,13 @@ char	**process_input(char *output, t_req *res)//trimm input
 			free(trimmed_output);
 		return (NULL);
 	}
-	add_history(output); // aşağı yukarı tuşlarıyla geçmiş - kullanıcının girdiği RAW komut
+	if (ft_strncmp(trimmed_output, "\"\"", ft_strlen(trimmed_output)) == 0 || ft_strncmp(trimmed_output, "''", ft_strlen(trimmed_output)) == 0)
+	{
+		ms_error(ERR_NO_CMD, trimmed_output, 127, res);
+		free(trimmed_output);
+		return (NULL);
+	}
+	
 	result = tokenize_and_validate(trimmed_output, res); //tokenizera gider
 	free(trimmed_output); // Memory leak fix!
 	//free(output); // inputu temizle

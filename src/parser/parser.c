@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../../minishell.h" 
 #include "../../includes/utilities.h"
 
 static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
@@ -85,6 +85,7 @@ static void	set_command_path(t_cmd *cmd, t_req *req)
 	}
 }
 
+
 t_list	*parse_tokens(char **tokens, t_req *req)
 {
 	t_list	*cmds;
@@ -125,7 +126,11 @@ t_list	*parse_tokens(char **tokens, t_req *req)
 		{
 			// Sonraki token yoksa veya tekrar pipe ise hata
 			if (!tokens[i + 1] || !ft_strncmp(tokens[i + 1], "|", 2))
-				return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
+			{
+				ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
+				free_cmds(cmds);
+				return (NULL);
+			}
 		}
 
 		if (process_pipe_case(tokens, &i, &cmds, req))

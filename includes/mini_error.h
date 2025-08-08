@@ -28,7 +28,8 @@ typedef enum e_error_type
 	ERR_ALLOC,
 	ERR_IS_DIR,
 	ERR_NOT_DIR,
-	ERR_HEREDOC
+	ERR_HEREDOC,
+	ERR_EMPTY
 }	t_error_type;
 
 void	*ms_error(t_error_type type, const char *detail, int code, t_req *req);

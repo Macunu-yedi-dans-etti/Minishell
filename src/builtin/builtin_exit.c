@@ -39,7 +39,7 @@ int	builtin_exit(char **args, t_req *req)
 	{
 		if (!is_numeric(args[1]))
 		{
-			ms_error(ERR_NO_CMD, "exit: numeric argument required", 2, req);
+			ms_error(ERR_EMPTY, "exit: numeric argument required", 2, req);
 			if (req)
 			{
 				req->exit_stat = 2;
@@ -49,7 +49,7 @@ int	builtin_exit(char **args, t_req *req)
 		}
 		if (args[2])
 		{
-			ms_error(ERR_NO_CMD, "exit: too many arguments", 1, req);
+			ms_error(ERR_EMPTY, "exit: too many arguments", 1, req);
 			if (req)
 				req->exit_stat = 1;
 			return (1);

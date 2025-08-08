@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_error.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:03:04 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 21:19:40 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/08 17:28:29 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ static void	print_error_message_prefix(t_error_type type)
 		ft_putstr_fd("minishell: not a directory: ", 2);
 	else if (type == ERR_HEREDOC)
 		ft_putstr_fd("minishell: heredoc failed: ", 2);
+	else if (type == ERR_EMPTY)
+		ft_putstr_fd("minishell: ", 2);
 }
 
 static void	print_error_message_detail(const char *detail)

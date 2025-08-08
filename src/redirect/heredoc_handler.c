@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/03 17:59:18 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/08 16:42:03 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static void heredoc_sigint_handler(int sig)
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
-	_exit(130);
+	close(STDIN_FILENO);
 }
 
-static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
+static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 {
 	char *line;
 
@@ -33,7 +33,8 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
 		if (!line)
 		{
 			close(pipe_fd[1]);
-			_exit(130);
+			free_all(req);
+			exit(130);
 		}
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
@@ -45,6 +46,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2])
 		free(line);
 	}
 	close(pipe_fd[1]);
+	free_all(req);
 	exit(0);
 }
 
@@ -84,7 +86,7 @@ int handle_heredoc(const char *delimiter, t_req *req)
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_sigint_handler); // Custom handler kullan
-		do_heredoc_child(delimiter, pipe_fd);
+		do_heredoc_child(delimiter, pipe_fd, req);
 	}
 
 	close(pipe_fd[1]);
