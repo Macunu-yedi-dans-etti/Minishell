@@ -38,6 +38,11 @@ void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 		return ;
 	new_redir->type = type;
 	new_redir->filename = ft_strdup(filename);
+	if (!new_redir->filename)
+	{
+		free(new_redir);
+		return ;
+	}
 	new_redir->next = NULL;
 	if (!cmd->redirects)
 		cmd->redirects = new_redir;

@@ -23,7 +23,10 @@ static void	setup_and_exec(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 		exit(0);
 	}
 	if (apply_redirects(cmd, req))
+	{
+		free_all(req);
 		exit(1);
+	}
 	if (cmd->infile != STDIN_FILENO)
 		set_fd(cmd->infile, STDIN_FILENO);
 	else

@@ -57,7 +57,10 @@ char	**tokenize_input(const char *input)
 		if (!token_str)
 			return (free_string_array(tokens), NULL);
 		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
+		{
+			free(token_str);
 			return (free_string_array(tokens), NULL);
+		}
 	}
 	return (tokens);
 }

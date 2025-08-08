@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 14:33:10 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:25:33 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ int	builtin_exit(char **args, t_req *req)
 			{
 				req->exit_stat = 2;
 				req->should_exit = 1;
+				// rl_clear_history();
+				// free_all(req);
 			}
 			return (2);
 		}

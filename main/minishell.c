@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:01:57 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:33:01 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,6 @@ static int	process_main_loop(t_req *res)
 			free_string_array(res->tokens);
 			res->tokens = NULL;
 		}
-		// if (res->envp)
-		// {
-		// 	ft_double_free(&res->envp);
-		// 	res->envp = NULL;
-		// }
 		res->heredoc_interrupted = 0;
 	}
 	free(output);
@@ -105,6 +100,7 @@ int	main(int ac, char **av, char **env)
 	if (!res.envp)
 	{
 		fprintf(stderr, "Error: Environment setup failed.\n");
+		free_all(&res);
 		return (1);
 	}
 	while (process_main_loop(&res))
