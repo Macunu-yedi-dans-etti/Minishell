@@ -27,19 +27,13 @@ static t_cmd	*process_command_tokens(int *i, t_req *req)
 	{
 		if (req->heredoc_interrupted)
 		{
-			ft_double_free(&cmd->full_cmd);
-			free(cmd->full_path);
-			free_redirects(cmd->redirects);
-			free(cmd);
+			free_cmd(cmd);
 			return (NULL);
 		}
 		result = handle_token_processing(cmd, i, req);
 		if (result == 1)
 		{
-			ft_double_free(&cmd->full_cmd);
-			free(cmd->full_path);
-			free_redirects(cmd->redirects);
-			free(cmd);
+			free_cmd(cmd);
 			return (NULL);
 		}
 		else if (result == 2)
@@ -54,10 +48,7 @@ static t_cmd	*process_command_tokens(int *i, t_req *req)
 	}
 	if (!has_cmd)
 	{
-		ft_double_free(&cmd->full_cmd);
-		free(cmd->full_path);
-		free_redirects(cmd->redirects);
-		free(cmd);
+		free_cmd(cmd);
 		return (NULL);
 	}
 	return (cmd);

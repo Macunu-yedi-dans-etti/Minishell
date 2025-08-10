@@ -47,7 +47,7 @@ char	*append_str(char *dst, const char *src, int *len) // expansion sırasında 
 	new_str = malloc(*len + src_len);
 	if (!new_str)
 	{
-		//free(dst);
+		free(dst);
 		return (NULL);
 	}
 	copy_to_new_str(new_str, dst, src, *len);
@@ -62,7 +62,10 @@ char	*append_char(char *dst, char c, int *len)
 
 	new_str = malloc(*len + 1);
 	if (!new_str)
+	{
+		free(dst);
 		return (NULL);
+	}
 	ft_memcpy(new_str, dst, *len - 1);
 	new_str[*len - 1] = c;
 	new_str[*len] = '\0';

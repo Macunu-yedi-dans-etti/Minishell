@@ -24,7 +24,7 @@ void	handle_builtin_execution(t_pipeline_data *data)
 	}
 	data->input_fd = STDIN_FILENO;
 	run_builtin(data);
-	free_all(data->req);
+	free_all(data);
 	exit(data->req->exit_stat);
 }
 
@@ -46,7 +46,7 @@ static void	handle_execve_error(t_pipeline_data *data)
 		perror("execve");
 		data->req->exit_stat = 1;
 	}
-	free_all(data->req);
+	free_all(data);
 }
 
 void	handle_external_execution(t_pipeline_data *data)
@@ -60,7 +60,7 @@ void	handle_external_execution(t_pipeline_data *data)
 		}
 		else
 			ft_putendl_fd("(null)", 2);
-		free_all(data->req);
+		free_all(data);
 		exit(127);
 	}
 	execve(data->current_cmd->full_path, data->current_cmd->full_cmd, data->req->envp);

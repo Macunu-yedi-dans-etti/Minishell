@@ -15,12 +15,6 @@
 
 # include "types.h"
 
-typedef struct s_token_state
-{
-	int				len;
-	int				capacity;
-}				t_token_state;
-
 /* Parser functions */
 char			**tokenize_input(const char *input);
 void			parse_tokens(t_req *req);
@@ -29,7 +23,6 @@ int				tokenize_and_validate(t_req *res);
 char			**quote_control_and_expand(t_req *res);
 int				needs_retokenization(char *str);
 char			**expand_tokens(char **tokens, t_req *res);
-void			free_string_array(char **tokens);
 t_cmd			*init_cmd(t_req *req);
 void			add_redirect(t_cmd *cmd, t_redirect_type type, char *filename);
 int				is_redirect(const char *token);

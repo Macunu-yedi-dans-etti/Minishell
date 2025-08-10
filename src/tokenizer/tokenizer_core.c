@@ -66,24 +66,24 @@ static int	append_char_to_result(char **result, int *len, int *capacity,
 }
 
 static int	handle_quoted_section(const char *input, int *i, char **result,
-		t_token_state *state)
+		int *len, int *capacity)
 {
 	char	quote_char;
 
 	quote_char = input[*i];
-	if (!append_char_to_result(result, &state->len, &state->capacity, quote_char))
+	if (!append_char_to_result(result, len, capacity, quote_char))
 		return (0);
 	(*i)++;
 	while (input[*i] && input[*i] != quote_char)
 	{
-		if (!append_char_to_result(result, &state->len, &state->capacity,
+		if (!append_char_to_result(result, len, capacity,
 				input[*i]))
 			return (0);
 		(*i)++;
 	}
 	if (input[*i] == quote_char)
 	{
-		if (!append_char_to_result(result, &state->len, &state->capacity, quote_char))
+		if (!append_char_to_result(result, len, capacity, quote_char))
 			return (0);
 		(*i)++;
 	}
@@ -93,11 +93,12 @@ static int	handle_quoted_section(const char *input, int *i, char **result,
 char	*get_word_string(const char *input, int *i)
 {
 	char			*result;
-	t_token_state	state;
+	int				len;
+	int				capacity;
 
-	state.len = 0;
-	state.capacity = 32;
-	result = malloc(state.capacity);
+	len = 0;
+	capacity = 32;
+	result = malloc(capacity);
 	if (!result)
 		return (NULL);
 	result[0] = '\0';
@@ -105,12 +106,12 @@ char	*get_word_string(const char *input, int *i)
 	{
 		if (input[*i] == '\'' || input[*i] == '"')
 		{
-			if (!handle_quoted_section(input, i, &result, &state))
+			if (!handle_quoted_section(input, i, &result, &len, &capacity))
 				return (free(result), NULL);
 		}
 		else
 		{
-			if (!append_char_to_result(&result, &state.len, &state.capacity,
+			if (!append_char_to_result(&result, &len, &capacity,
 					input[*i]))
 				return (free(result), NULL);
 			(*i)++;

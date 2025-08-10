@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:15:39 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:17:09 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,12 @@ char	**ft_double_extension(char **matrix, char *new_str) // envp = ft_double_ext
 		new_matrix[i++] = ft_strdup(new_str); // new_entry burada aslında matrixin sonuna eklenecek veriyi temsil ediyor
 	new_matrix[i] = NULL;
 	if (matrix)
-		ft_free(matrix);
+	{
+		int j = 0;
+		while (matrix[j])
+			free(matrix[j++]);
+		free(matrix);
+	}
 	return (new_matrix);
 }
 

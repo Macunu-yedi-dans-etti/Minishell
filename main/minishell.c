@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 15:57:26 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	process_main_loop(t_req *res)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
-		return (rl_clear_history(), free_all(res), 0);
+		return (rl_clear_history(), free_req(res), 0);
 	}
 	if (output[0])
 	{
@@ -56,8 +56,7 @@ static int	process_main_loop(t_req *res)
 		}
 		if (res->tokens)
 		{
-			free_string_array(res->tokens);
-			res->tokens = NULL;
+			ft_double_free(&res->tokens);
 		}
 		res->heredoc_interrupted = 0;
 	}
@@ -66,8 +65,7 @@ static int	process_main_loop(t_req *res)
 	{
 		if (res->tokens)
 		{
-			free_string_array(res->tokens);
-			res->tokens = NULL;
+			ft_double_free(&res->tokens);
 		}
 		return (0);
 	}
@@ -87,12 +85,12 @@ int	main(int ac, char **av, char **env)
 	if (!res.envp)
 	{
 		fprintf(stderr, "Error: Environment setup failed.\n");
-		free_all(&res);
+		free_req(&res);
 		return (1);
 	}
 	while (process_main_loop(&res))
 		;
 	rl_clear_history();
-	free_all(&res);
+	free_req(&res);
 	return (res.exit_stat);
 }

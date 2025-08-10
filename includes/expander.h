@@ -15,13 +15,6 @@
 
 # include "types.h"
 
-typedef struct s_process_data
-{
-	char	**envp;
-	t_req	*req;
-	int		*len;
-}	t_process_data;
-
 int				is_env_char(char c);
 int				get_var_len(const char *s);
 char			*append_str(char *dst, const char *src, int *len);

@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/10 16:37:21 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ char			*get_word_string(const char *input, int *i);
 char			**tokenize_input(const char *input);
 char			**quote_control_and_expand(t_req *res);
 int				resize_string_array(char ***tokens, int *capacity, int count);
-void			free_string_array(char **array);
 char			*process_quotes_and_expand(char *str, t_req *res);
 char			*expand_variable(char *str, int *i, t_req *res);
 

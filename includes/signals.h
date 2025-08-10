@@ -15,8 +15,6 @@
 
 # include "types.h"
 
-typedef struct s_request	t_req;
-
 /* Signal handling */
 void			handle_sigint(int sig);
 void			handle_sigquit(int sig);

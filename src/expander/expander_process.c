@@ -33,23 +33,16 @@ static char	*process_character(char *result, const char *input, int *i,
 }
 
 static char	*handle_dollar_sign(char *result, const char *input, int *i,
-			t_process_data *data) // expand_str(trimmed_output, res->envp, QUOTE_NONE, res);
+			char **envp, t_req *req, int *len)
 {
 	char	*expanded;
 
-	expanded = process_variable(input, i, data->envp, data->req);// expand_var(input, i, data->envp, data->req);
+	expanded = process_variable(input, i, envp, req);// expand_var(input, i, data->envp, data->req);
 	if (!expanded)
 		return (free(result), NULL);
-	result = append_str(result, expanded, data->len); // result = ft_strjoin_free(result, expanded);
+	result = append_str(result, expanded, len); // result = ft_strjoin_free(result, expanded);
 	free(expanded);
 	return (result);
-}
-
-static void	setup_data(t_process_data *data, char **envp, t_req *req, int *len)
-{
-	data->envp = envp;
-	data->req = req;
-	data->len = len;
 }
 
 char	*process_input_loop(const char *input, char **envp, t_req *req)
@@ -57,11 +50,9 @@ char	*process_input_loop(const char *input, char **envp, t_req *req)
 	int				i;
 	int				len;
 	char			*result;
-	t_process_data	data;
 
 	i = 0;
 	len = 1;
-	setup_data(&data, envp, req, &len);
 	result = initialize_result();
 	if (!result)
 		return (NULL);
@@ -69,7 +60,7 @@ char	*process_input_loop(const char *input, char **envp, t_req *req)
 	{
 		if (input[i] == '$') // Eğer $ karakteri varsa, değişken genişletme işlemi yapar
 		{
-			result = handle_dollar_sign(result, input, &i, &data);
+			result = handle_dollar_sign(result, input, &i, envp, req, &len);
 			if (!result)
 				return (NULL);
 			continue ;

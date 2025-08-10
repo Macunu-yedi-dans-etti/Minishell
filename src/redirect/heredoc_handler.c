@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:00:22 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		if (!line)
 		{
 			close(pipe_fd[1]);
-			free_all(req);
+			free_req(req);
 			exit(130);
 		}
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
@@ -46,7 +46,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		free(line);
 	}
 	close(pipe_fd[1]);
-	free_all(req);
+	free_req(req);
 	exit(0);
 }
 

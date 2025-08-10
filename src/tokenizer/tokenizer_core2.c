@@ -55,11 +55,11 @@ char	**tokenize_input(const char *input)
 	{
 		token_str = gechar_string(input, &i);
 		if (!token_str)
-			return (free_string_array(tokens), NULL);
+			return (ft_double_free(&tokens), NULL);
 		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
 		{
 			free(token_str);
-			return (free_string_array(tokens), NULL);
+			return (ft_double_free(&tokens), NULL);
 		}
 	}
 	return (tokens);

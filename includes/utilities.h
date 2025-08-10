@@ -33,10 +33,11 @@ t_list			*ft_lstnew(void *content);
 void			ft_lstadd_back(t_list **lst, t_list *new_node);
 
 /* Memory utilities */
-void			ft_free(char **tab);
 void			ft_double_free(char ***freee);
-void			free_cmds(t_cmd *cmds); // updated
-void			free_all(t_req *req);
+void			free_cmds(t_cmd *cmds);
+void			free_all(t_pipeline_data *data);
+void			free_req(t_req *req);
+void			free_cmd(t_cmd *cmd);
 
 /* FD utilities */
 void			safe_close(int *fd);

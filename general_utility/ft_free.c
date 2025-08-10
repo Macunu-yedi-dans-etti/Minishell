@@ -6,23 +6,11 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 15:40:07 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:15:00 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	ft_free(char **tab)
-{
-	size_t	i;
-
-	if (!tab)
-		return ;
-	i = 0;
-	while (tab[i])
-		free(tab[i++]);
-	free(tab);
-}
 
 void	ft_double_free(char ***ptr)
 {
@@ -37,7 +25,7 @@ void	ft_double_free(char ***ptr)
 	*ptr = NULL;
 }
 
-static void	free_single_cmd(t_cmd *cmd)
+void	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
 		return ;
@@ -59,31 +47,17 @@ static void	free_single_cmd(t_cmd *cmd)
 
 void	free_cmds(t_cmd *cmds)
 {
-	// iterate over direct t_cmd linked list
+	t_cmd *next;
+
 	while (cmds)
 	{
-		t_cmd *next = cmds->next;
-		free_single_cmd(cmds);
+		next = cmds->next;
+		free_cmd(cmds);
 		cmds = next;
 	}
 }
 
-void	free_tokens(char **tokens)
-{
-	int	i;
-
-	if (!tokens)
-		return ;
-	i = 0;
-	while (tokens[i])
-	{
-		free(tokens[i]);
-		i++;
-	}
-	free(tokens);
-}
-
-void	free_all(t_req *req)
+void	free_req(t_req *req)
 {
 	if (!req)
 		return ;
@@ -91,14 +65,18 @@ void	free_all(t_req *req)
 		ft_double_free(&req->envp);
 	if (req->export_list)
 		ft_double_free(&req->export_list);
-	if (req->cmds)
-	{
-		free_cmds(req->cmds);
-		req->cmds = NULL;
-	}
 	if (req->tokens)
+		ft_double_free(&req->tokens);
+}
+
+void	free_all(t_pipeline_data *data)
+{
+	if (!data || !data->req)
+		return ;
+	free_req(data->req);
+	if (data->req->cmds)
 	{
-		free_string_array(req->tokens);
-		req->tokens = NULL;
+		free_cmds(data->req->cmds);
+		data->req->cmds = NULL;
 	}
 }

@@ -3,26 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/03 17:35:50 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	free_string_array(char **array)
-{
-	int	i;
 
-	if (!array)
-		return ;
-	i = 0;
-	while (array[i])
-		free(array[i++]);
-	free(array);
-}
 
 // Basit variable expansion
 static char	*expand_token_var(char *str, int *i, t_req *res)
