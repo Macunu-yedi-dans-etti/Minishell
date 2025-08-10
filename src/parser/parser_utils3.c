@@ -27,33 +27,35 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include "../../includes/utilities.h"
 
-static int	handle_redir(t_cmd *cmd, char *redir, char *file, t_req *req)
+static int handle_redir(char *redir, char *file, t_req *req)
 {
-	if (!file)
-	{
-		ms_error(ERR_NO_DIR, "filename is NULL", 1, req);
-		return (1);
-	}
-	if (!ft_strncmp(redir, "<", 2))
-		add_redirect(cmd, R_IN, file);
-	else if (!ft_strncmp(redir, ">", 2))
-		add_redirect(cmd, R_OUT, file);
-	else if (!ft_strncmp(redir, ">>", 3))
-		add_redirect(cmd, R_APPEND, file);
-	else if (!ft_strncmp(redir, "<<", 3))
-	{
-		if (req && req->heredoc_interrupted)
-			return (1);
-		cmd->infile = handle_heredoc(file, req);
-		if (req && req->heredoc_interrupted)
-			return (1);
-	}
-	return (0);
+    if (!file)
+    {
+        ms_error(ERR_NO_DIR, "filename is NULL", 1, req);
+        return (1);
+    }
+    if (!ft_strncmp(redir, "<", 2))
+        return add_redirect(req->cur_cmd, R_IN, file);
+    else if (!ft_strncmp(redir, ">", 2))
+        return add_redirect(req->cur_cmd, R_OUT, file);
+    else if (!ft_strncmp(redir, ">>", 3))
+        return add_redirect(req->cur_cmd, R_APPEND, file);
+    else if (!ft_strncmp(redir, "<<", 3))
+    {
+        if (req && req->heredoc_interrupted)
+            return (1);
+        req->cur_cmd->infile = handle_heredoc(file, req);
+        if (req->cur_cmd->infile == -1 || (req && req->heredoc_interrupted))
+            return (1);
+        return add_redirect(req->cur_cmd, R_HEREDOC, file);
+    }
+    return (0);
 }
 
-int	set_redirection(t_cmd *cmd, int *i, t_req *req)
+
+
+int	set_redirection(int *i, t_req *req)
 {
 	char	*redir;
 
@@ -63,7 +65,7 @@ int	set_redirection(t_cmd *cmd, int *i, t_req *req)
 		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
 	if (!ft_strncmp(req->tokens[*i], "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), 1);
-	if (handle_redir(cmd, redir, req->tokens[*i], req))
+	if (handle_redir(redir, req->tokens[*i], req))
 		return (1);
 	(*i)++;
 	return (0);
@@ -91,19 +93,19 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 	return (0);
 }
 
-int	handle_token_processing(t_cmd *cmd, int *i, t_req *req)
+int	handle_token_processing(int *i, t_req *req)
 {
 	if (is_redirect(req->tokens[*i]))
 	{
-		if (set_redirection(cmd, i, req))
+		if (set_redirection(i, req))
 			return (1);
 		return (3);
 	}
 	else if (req->tokens[*i])
 	{
-		if (process_token_expand(cmd, req->tokens[*i], req))
+		if (process_token_expand(req->cur_cmd, req->tokens[*i], req))
 			return (1);
-		if (!cmd->full_cmd && req->tokens[*i][0] == '\0')
+		if (!req->cur_cmd->full_cmd && req->tokens[*i][0] == '\0')
 			return (0);
 		return (2);
 	}

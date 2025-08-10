@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/11 00:07:19 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,13 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 	exit(0);
 }
 
-int handle_heredoc(const char *delimiter, t_req *req)
+int	handle_heredoc(const char *delimiter, t_req *req)
 {
 	int pipe_fd[2];
 	pid_t pid;
 	int status;
 	void (*old_sigint)(int);
 
-	// Eğer daha önce heredoc interrupt edilmişse, direkt çık
 	if (req && req->heredoc_interrupted)
 		return -1;
 
@@ -85,11 +84,11 @@ int handle_heredoc(const char *delimiter, t_req *req)
 
 	if (pid == 0)
 	{
-		signal(SIGINT, heredoc_sigint_handler); // Custom handler kullan
+		signal(SIGINT, heredoc_sigint_handler);
 		do_heredoc_child(delimiter, pipe_fd, req);
 	}
 
-	close(pipe_fd[1]);
+	close(pipe_fd[1]); /* parent sadece okuyacak */
 	waitpid(pid, &status, 0);
 	signal(SIGINT, old_sigint);
 
@@ -120,6 +119,6 @@ int handle_heredoc(const char *delimiter, t_req *req)
 		close(pipe_fd[0]);
 		return -1;
 	}
-	return pipe_fd[0];
+	return pipe_fd[0]; /* infile olarak kullanılacak */
 }
 

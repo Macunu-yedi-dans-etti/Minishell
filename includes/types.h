@@ -50,6 +50,7 @@ typedef struct s_cmd
 typedef struct s_request
 {
 	t_cmd		*cmds;
+	t_cmd		*cur_cmd;
 	char		**envp;
 	char		**export_list;
 	char		**tokens;

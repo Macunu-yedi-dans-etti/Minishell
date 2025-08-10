@@ -31,19 +31,19 @@ t_cmd	*init_cmd(t_req *req)
 	return (cmd);
 }
 
-void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
+int	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 {
 	t_redirect	*new_redir;
 
 	new_redir = malloc(sizeof(t_redirect));
 	if (!new_redir)
-		return ;
+		return (1);
 	new_redir->type = type;
 	new_redir->filename = ft_strdup(filename);
 	if (!new_redir->filename)
 	{
 		free(new_redir);
-		return ;
+		return (1);
 	}
 	new_redir->next = NULL;
 	if (!cmd->redirects)
@@ -55,7 +55,9 @@ void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 			current = current->next;
 		current->next = new_redir;
 	}
+	return (0);
 }
+
 
 int	is_redirect(const char *token)
 {
