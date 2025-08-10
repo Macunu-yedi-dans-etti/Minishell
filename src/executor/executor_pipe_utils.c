@@ -6,73 +6,51 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 17:30:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 17:30:00 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	handle_exec(t_cmd *cmd, t_req *req, int *input_fd, pid_t *pid)
+void	handle_empty_commands(t_pipeline_data *data)
 {
-	int	real_in;
-
-	real_in = *input_fd;
-	if (cmd->infile != STDIN_FILENO)
+	if (!data->current_cmd || !data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
 	{
-		if (*input_fd != STDIN_FILENO)
-			close(*input_fd);
-		real_in = cmd->infile;
-	}
-	*pid = exec_external_cmd(cmd, req, real_in, STDOUT_FILENO);
-	if (real_in != STDIN_FILENO)
-		close(real_in);
-	if (*input_fd != STDIN_FILENO)
-		close(*input_fd);
-	return (0);
-}
-
-void	handle_empty_commands(t_cmd *cmd, t_req *req, pid_t *pids, int i)
-{
-	if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0])
-	{
-		req->exit_stat = 0;
-		pids[i] = -1;
+		data->req->exit_stat = 0;
+		data->pids[data->i] = -1;
 		return ;
 	}
-	if (cmd->full_cmd[0][0] == '\0')
+	if (data->current_cmd->full_cmd[0][0] == '\0')
 	{
-		req->exit_stat = 0;
-		pids[i] = -1;
+		data->req->exit_stat = 0;
+		data->pids[data->i] = -1;
 		return ;
 	}
 }
 
-void	process_single_command(t_list *cmds, t_req *req, int input_fd)
+void	process_single_command(t_pipeline_data *data)
 {
-	t_cmd	*cmd;
-
-	cmd = (t_cmd *)cmds->content;
-	if (is_builtin(cmd->full_cmd[0]))
-		exec_single_builtin(cmd, req, input_fd);
+	if (data->current_cmd && data->current_cmd->full_cmd && is_builtin(data->current_cmd->full_cmd[0]))
+		exec_single_builtin(data);
 }
 
-void	wait_for_processes(pid_t *pids, int count, t_req *req)
+void	wait_for_processes(t_pipeline_data *data)
 {
-	int	i;
 	int	status;
+	int		i;
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	i = 0;
-	while (i < count)
+	while (i < data->count)
 	{
-		if (pids[i] > 0)
+		if (data->pids[i] > 0)
 		{
-			waitpid(pids[i], &status, 0);
+			waitpid(data->pids[i], &status, 0);
 			if (WIFEXITED(status))
-				req->exit_stat = WEXITSTATUS(status);
+				data->req->exit_stat = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
-				req->exit_stat = 128 + WTERMSIG(status);
+				data->req->exit_stat = 128 + WTERMSIG(status);
 		}
 		i++;
 	}

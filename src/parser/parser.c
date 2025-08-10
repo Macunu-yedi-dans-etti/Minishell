@@ -6,14 +6,14 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 21:29:51 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h" 
 #include "../../includes/utilities.h"
 
-static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
+static t_cmd	*process_command_tokens(int *i, t_req *req)
 {
 	t_cmd	*cmd;
 	int		has_cmd;
@@ -23,11 +23,9 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 	if (!cmd)
 		return (NULL);
 	has_cmd = 0;
-	while (tokens[*i] && (ft_strncmp(tokens[*i], "|", 2)
-			))
+	while (req->tokens[*i] && (ft_strncmp(req->tokens[*i], "|", 2)))
 	{
-		// Heredoc interrupt kontrolü
-		if (req && req->heredoc_interrupted)
+		if (req->heredoc_interrupted)
 		{
 			ft_double_free(&cmd->full_cmd);
 			free(cmd->full_path);
@@ -35,15 +33,13 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 			free(cmd);
 			return (NULL);
 		}
-			
-		result = handle_token_processing(cmd, tokens, i, req);
+		result = handle_token_processing(cmd, i, req);
 		if (result == 1)
 		{
 			ft_double_free(&cmd->full_cmd);
 			free(cmd->full_path);
 			free_redirects(cmd->redirects);
 			free(cmd);
-			//free_all(req);//1 seg yapar hatalı durumda
 			return (NULL);
 		}
 		else if (result == 2)
@@ -52,9 +48,7 @@ static t_cmd	*process_command_tokens(char **tokens, int *i, t_req *req)
 			(*i)++;
 		}
 		else if (result == 3)
-		{
 			continue;
-		}
 		else
 			(*i)++;
 	}
@@ -78,7 +72,6 @@ static void	set_command_path(t_cmd *cmd, t_req *req)
 		trimmed = ft_strtrim(cmd->full_cmd[0], " \t");
 		if (trimmed)
 		{
-			//free_all(req);
 			free(cmd->full_cmd[0]);
 			cmd->full_cmd[0] = trimmed;
 		}
@@ -86,57 +79,72 @@ static void	set_command_path(t_cmd *cmd, t_req *req)
 	}
 }
 
-
-t_list	*parse_tokens(char **tokens, t_req *req)
+static void	add_cmd_to_list(t_cmd **list, t_cmd *new_cmd)
 {
-	t_list	*cmds;
+	t_cmd	*current;
+
+	new_cmd->next = NULL;
+	if (!*list)
+	{
+		*list = new_cmd;
+		return;
+	}
+	current = *list;
+	while (current->next)
+		current = current->next;
+	current->next = new_cmd;
+}
+
+static int	handle_pipe_processing(int *i, t_req *req)
+{
+	if (req->tokens[*i] && !ft_strncmp(req->tokens[*i], "|", 2))
+	{
+		(*i)++;
+		if (!req->tokens[*i] || !ft_strncmp(req->tokens[*i], "|", 2))
+		{
+			ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+static void	cleanup_and_return(t_req *req)
+{
+	free_cmds(req->cmds);
+	req->cmds = NULL;
+}
+
+void	parse_tokens(t_req *req)
+{
 	t_cmd	*current;
 	int		i;
 
-	cmds = NULL;
-	i = 0;
-	if (!tokens || !tokens[0])
-		return (NULL);
-	if (!ft_strncmp(tokens[0], "|", 2))
-		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), NULL);
-	while (tokens[i])
+	if (!req->tokens || !req->tokens[0] || 
+		!ft_strncmp(req->tokens[0], "|", 2))
 	{
-		// Heredoc interrupt kontrolü
-		if (req && req->heredoc_interrupted)
-		{
-			if (cmds)
-				free_cmds(cmds);
-			return (NULL);
-		}
-		current = process_command_tokens(tokens, &i, req);
+		if (req->tokens && req->tokens[0] && 
+			!ft_strncmp(req->tokens[0], "|", 2))
+			ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
+		req->cmds = NULL;
+		return;
+	}
+	req->cmds = NULL;
+	i = 0;
+	while (req->tokens[i])
+	{
+		if (req->heredoc_interrupted)
+			return (cleanup_and_return(req));
+		current = process_command_tokens(&i, req);
 		if (!current)
 		{
-			if (req && req->heredoc_interrupted)
-			{
-				free_cmds(cmds);
-				return (NULL);
-			}
-			if (process_empty_cmd_case(tokens, &i, &cmds, req))
-				return (NULL);
+			if (req->heredoc_interrupted || handle_pipe_processing(&i, req))
+				return (cleanup_and_return(req));
 			continue;
 		}
 		set_command_path(current, req);
-		ft_lstadd_back(&cmds, ft_lstnew(current));
-
-		// PIPE SONRASI KONTROL: Eğer bir sonraki token pipe ise ve ardından komut yoksa veya tekrar pipe geliyorsa syntax error ver
-		if (tokens[i] && !ft_strncmp(tokens[i], "|", 2))
-		{
-			// Sonraki token yoksa veya tekrar pipe ise hata
-			if (!tokens[i + 1] || !ft_strncmp(tokens[i + 1], "|", 2))
-			{
-				ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
-				free_cmds(cmds);
-				return (NULL);
-			}
-		}
-
-		if (process_pipe_case(tokens, &i, &cmds, req))
-			return (NULL);
+		add_cmd_to_list(&req->cmds, current);
+		if (handle_pipe_processing(&i, req))
+			return (cleanup_and_return(req));
 	}
-	return (cmds);
 }

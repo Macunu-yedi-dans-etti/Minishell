@@ -44,15 +44,16 @@ typedef struct s_cmd
 	int			infile;
 	int			outfile;
 	t_redirect	*redirects;
+	struct s_cmd	*next;
 }				t_cmd;
 
 typedef struct s_request
 {
-	t_list		*cmds;
+	t_cmd		*cmds;
 	char		**envp;
 	char		**export_list;
 	char		**tokens;
-	pid_t		pid;
+	char		*trimmed_input;
 	int			exit_stat;
 	int			should_exit;
 	int			heredoc_interrupted;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_handler.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:41:08 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:43:38 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,19 +68,19 @@ static int	handle_output_redirect(t_redirect *redir, int *last_out, t_req *req)
 	return (0);
 }
 
-int	apply_redirects(t_cmd *cmd, t_req *req)
+int	apply_redirects(t_pipeline_data *data)
 {
 	t_redirect	*redir;
 	int			last_in;
 	int			last_out;
 
-	redir = cmd->redirects;
+	redir = data->current_cmd->redirects;
 	last_in = -1;
 	last_out = -1;
 	while (redir)
 	{
 		if (redir->type == R_IN
-			&& handle_input_redirect(redir, &last_in, req))
+			&& handle_input_redirect(redir, &last_in, data->req))
 		{
 			if (last_in != -1 && last_in != STDIN_FILENO)
 				close(last_in);
@@ -89,7 +89,7 @@ int	apply_redirects(t_cmd *cmd, t_req *req)
 			return (1);
 		}
 		if ((redir->type == R_OUT || redir->type == R_APPEND)
-			&& handle_output_redirect(redir, &last_out, req))
+			&& handle_output_redirect(redir, &last_out, data->req))
 		{
 			if (last_in != -1 && last_in != STDIN_FILENO)
 				close(last_in);
@@ -100,8 +100,8 @@ int	apply_redirects(t_cmd *cmd, t_req *req)
 		redir = redir->next;
 	}
 	if (last_in != -1)
-		cmd->infile = last_in;
+		data->current_cmd->infile = last_in;
 	if (last_out != -1)
-		cmd->outfile = last_out;
+		data->current_cmd->outfile = last_out;
 	return (0);
 }

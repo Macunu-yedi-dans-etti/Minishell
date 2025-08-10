@@ -11,7 +11,6 @@ SRCS = main/minishell.c \
 	   src/tokenizer/tokenizer_core2.c\
 	   src/parser/parser.c\
 	   src/parser/parser_utils.c\
-	   src/parser/parser_utils2.c\
 	   src/parser/parser_utils3.c\
 	   src/executor/executor_utils.c\
 	   src/executor/executor_exec.c\

@@ -16,15 +16,15 @@
 # include "types.h"
 
 /* Builtin functions */
-int				run_builtin(t_cmd *cmd, t_req *req);
+int				run_builtin(t_pipeline_data *data);
 int				is_builtin(char *cmd);
-int				builtin_echo(t_cmd *cmd, t_req *req);
-int				builtin_pwd(t_req *req);
+int				builtin_echo(t_pipeline_data *data);
+int				builtin_pwd(t_pipeline_data *data);
 int				builtin_env(char **envp, t_req *req);
-int				builtin_cd(t_cmd *cmd, t_req *req);
-int				builtin_export(char **args, t_req *req);
-int				builtin_unset(char **args, t_req *req);
-int				builtin_exit(char **args, t_req *req);
+int				builtin_cd(t_pipeline_data *data);
+int				builtin_export(t_pipeline_data *data);
+int				builtin_unset(t_pipeline_data *data);
+int				builtin_exit(t_pipeline_data *data);
 void			print_cd_error(char *arg, char *msg);
 char			*get_cd_target(t_cmd *cmd, t_req *req, int *need_free);
 int				cd_free_and_home_error(char *oldpwd, t_req *req);

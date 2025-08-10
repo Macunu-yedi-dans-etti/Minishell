@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/02 16:35:42 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ static void	print_sorted_export(char **envp, char **export_list)
 	ft_free_array(merged);
 }
 
-int	builtin_export(char **args, t_req *req)
+int	builtin_export(t_pipeline_data *data)
 {
 	int		i;
 	int		exit_code;
@@ -239,33 +239,33 @@ int	builtin_export(char **args, t_req *req)
 
 	i = 1;
 	exit_code = 0;
-	if (!args[1])
+	if (!data->current_cmd->full_cmd[1])
 	{
-		print_sorted_export(req->envp, req->export_list);
-		req->exit_stat = 0;
+		print_sorted_export(data->req->envp, data->req->export_list);
+		data->req->exit_stat = 0;
 		return (0);
 	}
-	while (args[i])
+	while (data->current_cmd->full_cmd[i])
 	{
-		var_name = get_variable_name(args[i]);
+		var_name = get_variable_name(data->current_cmd->full_cmd[i]);
 		if (!var_name || !is_valid_identifier(var_name))
 		{
-			print_export_error(args[i]);
+			print_export_error(data->current_cmd->full_cmd[i]);
 			exit_code = 1;
 		}
 		else
 		{
-			if (ft_strchr(args[i], '='))
+			if (ft_strchr(data->current_cmd->full_cmd[i], '='))
 			{
-				mini_setenv_line(&req->envp, args[i], req);
-				remove_from_export_list(&req->export_list, var_name);
+				mini_setenv_line(&data->req->envp, data->current_cmd->full_cmd[i], data->req);
+				remove_from_export_list(&data->req->export_list, var_name);
 			}
 			else
-				add_to_export_list(&req->export_list, var_name);
+				add_to_export_list(&data->req->export_list, var_name);
 		}
 		free(var_name);
 		i++;
 	}
-	req->exit_stat = exit_code;
+	data->req->exit_stat = exit_code;
 	return (exit_code);
 }

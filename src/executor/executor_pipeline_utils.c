@@ -6,18 +6,29 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:21:01 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 19:21:01 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	init_execution(t_list *cmds, pid_t **pids, t_req *req)
+static int	cmd_count(t_cmd *cmds)
+{
+	int c = 0;
+	while (cmds)
+	{
+		c++;
+		cmds = cmds->next;
+	}
+	return (c);
+}
+
+int	init_execution(t_cmd *cmds, pid_t **pids, t_req *req)
 {
 	int	count;
 
-	count = ft_lstsize(cmds);
-	if (count <= 0 || count > 1024) // Reasonable limit
+	count = cmd_count(cmds);
+	if (count <= 0 || count > 1024)
 	{
 		req->exit_stat = 1;
 		return (-1);
@@ -33,47 +44,46 @@ int	init_execution(t_list *cmds, pid_t **pids, t_req *req)
 	return (count);
 }
 
-int	setup_pipe_output(t_list *node, t_cmd *cmd, int *pipe_fd)
+int	setup_pipe_output(t_pipeline_data *data)
 {
 	int	output_fd;
 
 	output_fd = STDOUT_FILENO;
-	if (node->next)
+	if (data->current_cmd->next)
 	{
-		if (pipe(pipe_fd) == -1)
+		if (pipe(data->pipe_fd) == -1)
 		{
 			perror("minishell: pipe");
-			free_cmds(node);//4
+			free_cmds(data->current_cmd); // free remaining chain starting here
 			return (-1);
 		}
-		output_fd = pipe_fd[1];
+		output_fd = data->pipe_fd[1];
 	}
-	else if (cmd->outfile != STDOUT_FILENO)
-		output_fd = cmd->outfile;
+	else if (data->current_cmd->outfile != STDOUT_FILENO)
+		output_fd = data->current_cmd->outfile;
 	return (output_fd);
 }
 
-int	setup_pipe_input(t_cmd *cmd, int input_fd)
+int	setup_pipe_input(t_pipeline_data *data)
 {
 	int	real_in;
 
-	real_in = input_fd;
-	if (cmd->infile != STDIN_FILENO)
+	real_in = data->input_fd;
+	if (data->current_cmd->infile != STDIN_FILENO)
 	{
-		if (input_fd != STDIN_FILENO)
-			close(input_fd);
-		real_in = cmd->infile;
+		if (data->input_fd != STDIN_FILENO)
+			close(data->input_fd);
+		real_in = data->current_cmd->infile;
 	}
 	return (real_in);
 }
 
-void	handle_pipe_cleanup(int real_in, int input_fd, int output_fd,
-	t_list *node)
+void	handle_pipe_cleanup(t_pipeline_data *data)
 {
-	if (real_in != STDIN_FILENO && real_in != input_fd)
-		close(real_in);
-	if (input_fd != STDIN_FILENO)
-		close(input_fd);
-	if (node->next && output_fd != STDOUT_FILENO)
-		close(output_fd);
+	if (data->real_in != STDIN_FILENO && data->real_in != data->input_fd)
+		close(data->real_in);
+	if (data->input_fd != STDIN_FILENO)
+		close(data->input_fd);
+	if (data->current_cmd->next && data->output_fd != STDOUT_FILENO)
+		close(data->output_fd);
 }

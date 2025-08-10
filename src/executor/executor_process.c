@@ -12,40 +12,40 @@
 
 #include "../../minishell.h"
 
-static void	setup_and_exec(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
+static void	setup_and_exec(t_pipeline_data *data)
 {
-	close_extra_fds(in_fd, out_fd);
+	close_extra_fds(data->real_in, data->output_fd);
 	reset_signals();
-	if (!cmd->full_cmd || !cmd->full_cmd[0] || cmd->full_cmd[0][0] == '\0')
+	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0] || data->current_cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
-		free_all(req);//5
+		free_all(data->req);//5
 		exit(0);
 	}
-	if (apply_redirects(cmd, req))
+	if (apply_redirects(data))
 	{
-		free_all(req);
+		free_all(data->req);
 		exit(1);
 	}
-	if (cmd->infile != STDIN_FILENO)
-		set_fd(cmd->infile, STDIN_FILENO);
+	if (data->current_cmd->infile != STDIN_FILENO)
+		set_fd(data->current_cmd->infile, STDIN_FILENO);
 	else
-		set_fd(in_fd, STDIN_FILENO);
-	if (cmd->outfile != STDOUT_FILENO)
-		set_fd(cmd->outfile, STDOUT_FILENO);
+		set_fd(data->real_in, STDIN_FILENO);
+	if (data->current_cmd->outfile != STDOUT_FILENO)
+		set_fd(data->current_cmd->outfile, STDOUT_FILENO);
 	else
-		set_fd(out_fd, STDOUT_FILENO);
-	if (in_fd != STDIN_FILENO)
-		close(in_fd);
-	if (out_fd != STDOUT_FILENO)
-		close(out_fd);
-	if (is_builtin(cmd->full_cmd[0]))
-		handle_builtin_execution(cmd, req);
+		set_fd(data->output_fd, STDOUT_FILENO);
+	if (data->real_in != STDIN_FILENO)
+		close(data->real_in);
+	if (data->output_fd != STDOUT_FILENO)
+		close(data->output_fd);
+	if (is_builtin(data->current_cmd->full_cmd[0]))
+		handle_builtin_execution(data);
 	else
-		handle_external_execution(cmd, req);
+		handle_external_execution(data);
 }
 
-pid_t	exec_external_cmd(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
+pid_t	exec_external_cmd(t_pipeline_data *data)
 {
 	pid_t	pid;
 
@@ -53,10 +53,10 @@ pid_t	exec_external_cmd(t_cmd *cmd, t_req *req, int in_fd, int out_fd)
 	if (pid < 0)
 	{
 		perror("minishell: fork");
-		free_all(req);//5
+		free_all(data->req);//5
 		return (-1);
 	}
 	if (pid == 0)
-		setup_and_exec(cmd, req, in_fd, out_fd);
+		setup_and_exec(data);
 	return (pid);
 }

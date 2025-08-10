@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 21:25:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 21:25:00 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:16:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ char			**ft_double_copy(char **envp);
 void			strip_newline(char *s);
 char			*resolve_path(char *cmd, char **envp);
 
-/* List utilities */
+/* List utilities (legacy for other uses) */
 t_list			*ft_lstnew(void *content);
 void			ft_lstadd_back(t_list **lst, t_list *new_node);
 
 /* Memory utilities */
 void			ft_free(char **tab);
 void			ft_double_free(char ***freee);
-void			free_cmds(t_list *cmds);
+void			free_cmds(t_cmd *cmds); // updated
 void			free_all(t_req *req);
 
 /* FD utilities */

@@ -3,49 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   run_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:23:04 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/26 20:20:42 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int	handle_builtin(t_cmd *cmd, t_req *req)
+static int	handle_builtin(t_pipeline_data *data)
 {
-	if (!ft_strncmp(cmd->full_cmd[0], "echo", 5))
-		return (builtin_echo(cmd, req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "pwd", 4))
-		return (builtin_pwd(req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "cd", 3))
-		return (builtin_cd(cmd, req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "export", 7))
-		return (builtin_export(cmd->full_cmd, req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "unset", 6))
-		return (builtin_unset(cmd->full_cmd, req));
-	else if (!ft_strncmp(cmd->full_cmd[0], "exit", 5))
-		return (builtin_exit(cmd->full_cmd, req));
+	if (!ft_strncmp(data->current_cmd->full_cmd[0], "echo", 5))
+		return (builtin_echo(data));
+	else if (!ft_strncmp(data->current_cmd->full_cmd[0], "pwd", 4))
+		return (builtin_pwd(data));
+	else if (!ft_strncmp(data->current_cmd->full_cmd[0], "cd", 3))
+		return (builtin_cd(data));
+	else if (!ft_strncmp(data->current_cmd->full_cmd[0], "export", 7))
+		return (builtin_export(data));
+	else if (!ft_strncmp(data->current_cmd->full_cmd[0], "unset", 6))
+		return (builtin_unset(data));
+	else if (!ft_strncmp(data->current_cmd->full_cmd[0], "exit", 5))
+		return (builtin_exit(data));
 	else
 		return (-1);
 }
 
-int	run_builtin(t_cmd *cmd, t_req *req)
+int	run_builtin(t_pipeline_data *data)
 {
 	int	ret;
 
-	if (!cmd || !cmd->full_cmd || !cmd->full_cmd[0])
+	if (!data->current_cmd || !data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
 	{
-		req->exit_stat = 1;
+		data->req->exit_stat = 1;
 		return (1);
 	}
-	ret = handle_builtin(cmd, req);
+	ret = handle_builtin(data);
 	if (ret == -1)
 	{
-		ms_error(ERR_NO_CMD, cmd->full_cmd[0], 1, req);
-		req->exit_stat = 127;
+		ms_error(ERR_NO_CMD, data->current_cmd->full_cmd[0], 1, data->req);
+		data->req->exit_stat = 127;
 		return (127);
 	}
-	req->exit_stat = ret;
+	data->req->exit_stat = ret;
 	return (ret);
 }

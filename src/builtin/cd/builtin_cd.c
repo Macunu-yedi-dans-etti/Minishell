@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:28:32 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 22:50:08 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,15 @@ static void	update_env_after_cd(t_req *req, char *oldpwd)
 	req->exit_stat = 0;
 }
 
-int	builtin_cd(t_cmd *cmd, t_req *req)
+int	builtin_cd(t_pipeline_data *data)
 {
 	char	*oldpwd;
 	int		need_free;
 
-	if (check_arg_count(cmd, req))
+	if (check_arg_count(data->current_cmd, data->req))
 		return (1);
-	if (change_directory(cmd, req, &oldpwd, &need_free))
+	if (change_directory(data->current_cmd, data->req, &oldpwd, &need_free))
 		return (1);
-	update_env_after_cd(req, oldpwd);
+	update_env_after_cd(data->req, oldpwd);
 	return (0);
 }

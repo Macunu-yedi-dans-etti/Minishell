@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:22:13 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:23 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,26 @@ static int	is_valid_identifier(const char *str)
 	return (1);
 }
 
-int	builtin_unset(char **args, t_req *req)
+int	builtin_unset(t_pipeline_data *data)
 {
 	int	i;
 	int	exit_code;
 
 	i = 1;
 	exit_code = 0;
-	while (args[i])
+	while (data->current_cmd->full_cmd[i])
 	{
-		if (!is_valid_identifier(args[i]))
+		if (!is_valid_identifier(data->current_cmd->full_cmd[i]))
 		{
 			ft_putstr_fd("minishell: unset: `", 2);
-			ft_putstr_fd(args[i], 2);
+			ft_putstr_fd(data->current_cmd->full_cmd[i], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
 			exit_code = 1;
 		}
 		else
-			mini_unsetenv(&req->envp, args[i]);
+			mini_unsetenv(&data->req->envp, data->current_cmd->full_cmd[i]);
 		i++;
 	}
-	req->exit_stat = exit_code;
+	data->req->exit_stat = exit_code;
 	return (exit_code);
 }

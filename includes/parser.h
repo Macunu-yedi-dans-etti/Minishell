@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 21:26:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 21:26:00 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ typedef struct s_token_state
 
 /* Parser functions */
 char			**tokenize_input(const char *input);
-t_list			*parse_tokens(char **tokens, t_req *req);
-char			**process_input(char *output, t_req *res);
-char			**tokenize_and_validate(char *trimmed_output, t_req *res);
-char			**quote_control_and_expand(char **tokens, t_req *res);
+void			parse_tokens(t_req *req);
+int				process_input(char *output, t_req *res);
+int				tokenize_and_validate(t_req *res);
+char			**quote_control_and_expand(t_req *res);
 int				needs_retokenization(char *str);
 char			**expand_tokens(char **tokens, t_req *res);
 void			free_string_array(char **tokens);

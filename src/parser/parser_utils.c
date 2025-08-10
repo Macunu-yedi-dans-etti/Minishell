@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 10:30:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 10:30:00 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 t_cmd	*init_cmd(t_req *req)
 {
-	t_cmd	*cmd;
-
-	cmd = malloc(sizeof(t_cmd));
+	// allocate and initialize a standalone command node
+	// caller will chain via cmd->next
+	// req is unused except for error reporting
+	(void)req;
+	t_cmd *cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (ms_error(ERR_ALLOC, "t_cmd", 1, req), NULL);
 	cmd->full_cmd = NULL;
@@ -25,13 +27,13 @@ t_cmd	*init_cmd(t_req *req)
 	cmd->infile = STDIN_FILENO;
 	cmd->outfile = STDOUT_FILENO;
 	cmd->redirects = NULL;
+	cmd->next = NULL;
 	return (cmd);
 }
 
 void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 {
 	t_redirect	*new_redir;
-	t_redirect	*current;
 
 	new_redir = malloc(sizeof(t_redirect));
 	if (!new_redir)
@@ -48,7 +50,7 @@ void	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 		cmd->redirects = new_redir;
 	else
 	{
-		current = cmd->redirects;
+		t_redirect *current = cmd->redirects;
 		while (current->next)
 			current = current->next;
 		current->next = new_redir;
@@ -65,11 +67,9 @@ int	is_redirect(const char *token)
 
 void	free_redirects(t_redirect *redir)
 {
-	t_redirect	*next;
-
 	while (redir)
 	{
-		next = redir->next;
+		t_redirect *next = redir->next;
 		free(redir->filename);
 		free(redir);
 		redir = next;

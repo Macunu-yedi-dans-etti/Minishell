@@ -1,12 +1,28 @@
-/* ************************************************************************** */
-/*                                                                            */
+/* **************************************************************************int	handle_token_processing(t_cmd *cmd, int *i, t_req *req)
+{
+	if (is_redirect(req->tokens[*i]))
+	{
+		if (set_redirection(cmd, i, req))
+			return (1);
+		return (3);
+	}
+	else if (req->tokens[*i])
+	{
+		if (process_token_expand(cmd, req->tokens[*i], req))
+			return (1);
+		if (!cmd->full_cmd && req->tokens[*i][0] == '\0')
+			return (0);
+		return (2);
+	}
+	return (0);
+}                                                                 */
 /*                                                        :::      ::::::::   */
 /*   parser_utils3.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 10:30:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 10:30:00 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +53,17 @@ static int	handle_redir(t_cmd *cmd, char *redir, char *file, t_req *req)
 	return (0);
 }
 
-int	set_redirection(t_cmd *cmd, char **tokens, int *i, t_req *req)
+int	set_redirection(t_cmd *cmd, int *i, t_req *req)
 {
 	char	*redir;
 
-	redir = tokens[*i];
+	redir = req->tokens[*i];
 	(*i)++;
-	if (!tokens[*i])
+	if (!req->tokens[*i])
 		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
-	if (!ft_strncmp(tokens[*i], "|", 2))
+	if (!ft_strncmp(req->tokens[*i], "|", 2))
 		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), 1);
-	if (handle_redir(cmd, redir, tokens[*i], req))
+	if (handle_redir(cmd, redir, req->tokens[*i], req))
 		return (1);
 	(*i)++;
 	return (0);
@@ -57,10 +73,8 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 {
 	char	*expanded;
 
-	// Eğer komut henüz belirlenmemişse ve token boş string ise atla
 	if (!cmd->full_cmd && token[0] == '\0')
 		return (0);
-		
 	expanded = ft_strdup(token);
 	if (!expanded)
 	{
@@ -71,29 +85,25 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 	free(expanded);
 	if (!cmd->full_cmd)
 	{
-		//free_string_array(cmd->full_cmd);
-		//free_all(req); // seg yapar sebebi handle_token_processing de kullanarak bunun dönüşünde hatalı durumu freeledik
 		ms_error(ERR_ALLOC, "full_cmd", 1, req);
 		return (1);
 	}
 	return (0);
 }
 
-int	handle_token_processing(t_cmd *cmd, char **tokens, int *i,
-		t_req *req)
+int	handle_token_processing(t_cmd *cmd, int *i, t_req *req)
 {
-	if (is_redirect(tokens[*i]))
+	if (is_redirect(req->tokens[*i]))
 	{
-		if (set_redirection(cmd, tokens, i, req))
+		if (set_redirection(cmd, i, req))
 			return (1);
 		return (3);
 	}
-	else if (tokens[*i])
+	else if (req->tokens[*i])
 	{
-		if (process_token_expand(cmd, tokens[*i], req))
+		if (process_token_expand(cmd, req->tokens[*i], req))
 			return (1);
-		// Eğer komut henüz belirlenmemişse ve token boş string ise has_cmd set etme
-		if (!cmd->full_cmd && tokens[*i][0] == '\0')
+		if (!cmd->full_cmd && req->tokens[*i][0] == '\0')
 			return (0);
 		return (2);
 	}

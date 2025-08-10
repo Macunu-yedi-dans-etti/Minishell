@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:15:39 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 15:40:07 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,34 +37,34 @@ void	ft_double_free(char ***ptr)
 	*ptr = NULL;
 }
 
-void	free_cmds(t_list *cmds)
+static void	free_single_cmd(t_cmd *cmd)
 {
-	t_list	*tmp;
-	t_cmd	*cmd;
+	if (!cmd)
+		return ;
+	if (cmd->infile >= 0 && cmd->infile != STDIN_FILENO)
+	{
+		close(cmd->infile);
+		cmd->infile = -1;
+	}
+	if (cmd->outfile >= 0 && cmd->outfile != STDOUT_FILENO)
+	{
+		close(cmd->outfile);
+		cmd->outfile = -1;
+	}
+	ft_double_free(&cmd->full_cmd);
+	free(cmd->full_path);
+	free_redirects(cmd->redirects);
+	free(cmd);
+}
 
+void	free_cmds(t_cmd *cmds)
+{
+	// iterate over direct t_cmd linked list
 	while (cmds)
 	{
-		tmp = cmds->next;
-		cmd = (t_cmd *)cmds->content;
-		if (cmd)
-		{
-			if (cmd->infile >= 0 && cmd->infile != STDIN_FILENO)
-			{
-				close(cmd->infile);
-				cmd->infile = -1;
-			}
-			if (cmd->outfile >= 0 && cmd->outfile != STDOUT_FILENO)
-			{
-				close(cmd->outfile);
-				cmd->outfile = -1;
-			}
-			ft_double_free(&cmd->full_cmd);
-			free(cmd->full_path);
-			free_redirects(cmd->redirects);
-			free(cmd);
-		}
-		free(cmds);
-		cmds = tmp;
+		t_cmd *next = cmds->next;
+		free_single_cmd(cmds);
+		cmds = next;
 	}
 }
 

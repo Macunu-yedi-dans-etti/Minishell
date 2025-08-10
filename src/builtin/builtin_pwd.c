@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:22:01 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:20:22 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	builtin_pwd(t_req *req)
+int	builtin_pwd(t_pipeline_data *data)
 {
 	char	*cwd;
 
@@ -21,13 +21,13 @@ int	builtin_pwd(t_req *req)
 	{
 		ft_putstr_fd("minishell: pwd: ", 2);
 		perror("");
-		if (req)
-			req->exit_stat = 1;
+		if (data->req)
+			data->req->exit_stat = 1;
 		return (1);
 	}
 	ft_putendl_fd(cwd, STDOUT_FILENO);
 	free(cwd);
-	if (req)
-		req->exit_stat = 0;
+	if (data->req)
+		data->req->exit_stat = 0;
 	return (0);
 }

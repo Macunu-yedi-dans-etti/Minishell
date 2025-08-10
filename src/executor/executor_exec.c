@@ -12,9 +12,9 @@
 
 #include "../../minishell.h"
 
-void	handle_builtin_execution(t_cmd *cmd, t_req *req)
+void	handle_builtin_execution(t_pipeline_data *data)
 {
-	int	devnull;
+	int				devnull;
 
 	devnull = open("/dev/null", O_RDONLY);
 	if (devnull != -1)
@@ -22,47 +22,48 @@ void	handle_builtin_execution(t_cmd *cmd, t_req *req)
 		dup2(devnull, STDIN_FILENO);
 		close(devnull);
 	}
-	run_builtin(cmd, req);
-	free_all(req);
-	exit(req->exit_stat);
+	data->input_fd = STDIN_FILENO;
+	run_builtin(data);
+	free_all(data->req);
+	exit(data->req->exit_stat);
 }
 
-static void	handle_execve_error(t_cmd *cmd, t_req *req)
+static void	handle_execve_error(t_pipeline_data *data)
 {
 	if (errno == EISDIR)
-		ms_error(ERR_IS_DIR, cmd->full_path, 126, req);
+		ms_error(ERR_IS_DIR, data->current_cmd->full_path, 126, data->req);
 	else if (errno == EACCES)
 	{
-		if (access(cmd->full_path, X_OK) == 0)
-			ms_error(ERR_IS_DIR, cmd->full_path, 126, req);
+		if (access(data->current_cmd->full_path, X_OK) == 0)
+			ms_error(ERR_IS_DIR, data->current_cmd->full_path, 126, data->req);
 		else
-			ms_error(ERR_NO_PERM, cmd->full_path, 126, req);
+			ms_error(ERR_NO_PERM, data->current_cmd->full_path, 126, data->req);
 	}
 	else if (errno == ENOENT)
-		ms_error(ERR_NO_CMD, cmd->full_path, 127, req);
+		ms_error(ERR_NO_CMD, data->current_cmd->full_path, 127, data->req);
 	else
 	{
 		perror("execve");
-		req->exit_stat = 1;
+		data->req->exit_stat = 1;
 	}
-	free_all(req);
+	free_all(data->req);
 }
 
-void	handle_external_execution(t_cmd *cmd, t_req *req)
+void	handle_external_execution(t_pipeline_data *data)
 {
-	if (!cmd->full_path)
+	if (!data->current_cmd->full_path)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
-		if (cmd->full_cmd && cmd->full_cmd[0])
+		if (data->current_cmd->full_cmd && data->current_cmd->full_cmd[0])
 		{
-			ft_putendl_fd(cmd->full_cmd[0], 2);
+			ft_putendl_fd(data->current_cmd->full_cmd[0], 2);
 		}
 		else
 			ft_putendl_fd("(null)", 2);
-		free_all(req);
+		free_all(data->req);
 		exit(127);
 	}
-	execve(cmd->full_path, cmd->full_cmd, req->envp);
-	handle_execve_error(cmd, req);
-	exit(req->exit_stat);
+	execve(data->current_cmd->full_path, data->current_cmd->full_cmd, data->req->envp);
+	handle_execve_error(data);
+	exit(data->req->exit_stat);
 }

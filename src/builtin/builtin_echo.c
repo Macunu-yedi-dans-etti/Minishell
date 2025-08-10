@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:20:23 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 20:17:33 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,29 @@ static int	is_valid_n_flag(char *arg)
 	return (1);
 }
 
-int	builtin_echo(t_cmd *cmd, t_req *req)
+int	builtin_echo(t_pipeline_data *data)
 {
 	int	i;
 	int	newline;
 
 	i = 1;
 	newline = 1;
-	while (cmd->full_cmd[i] && is_valid_n_flag(cmd->full_cmd[i]))
+	while (data->current_cmd->full_cmd[i] && is_valid_n_flag(data->current_cmd->full_cmd[i]))
 	{
 		newline = 0;
 		i++;
 	}
-	while (cmd->full_cmd[i])
+	while (data->current_cmd->full_cmd[i])
 	{
-		if (cmd->full_cmd[i])
-			ft_putstr_fd(cmd->full_cmd[i], STDOUT_FILENO);
-		if (cmd->full_cmd[i + 1])
+		if (data->current_cmd->full_cmd[i])
+			ft_putstr_fd(data->current_cmd->full_cmd[i], STDOUT_FILENO);
+		if (data->current_cmd->full_cmd[i + 1])
 			write(STDOUT_FILENO, " ", 1);
 		i++;
 	}
 	if (newline)
 		write(STDOUT_FILENO, "\n", 1);
-	if (req)
-		req->exit_stat = 0;
+	if (data->req)
+		data->req->exit_stat = 0;
 	return (0);
 }

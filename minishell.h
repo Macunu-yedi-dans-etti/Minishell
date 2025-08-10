@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/03 16:03:27 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 16:37:21 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,24 +28,23 @@
 
 char			*mini_getinput(t_req input);
 t_req			setup(char **av, char **env);
-int				execute_pipeline(char **tokens, t_req *res);
+int				execute_pipeline(t_req *res);
 void			free_redirects(t_redirect *redir);
 
 t_cmd			*init_cmd(t_req *req);
 void			add_redirect(t_cmd *cmd, t_redirect_type type, char *filename);
 int				is_redirect(const char *token);
-int				process_empty_cmd_case(char **tokens, int *i, t_list **cmds, t_req *req);
-int				process_pipe_case(char **tokens, int *i, t_list **cmds, t_req *req);
-int				handle_token_processing(t_cmd *cmd, char **tokens, int *i, t_req *req);
-int				set_redirection(t_cmd *cmd, char **tokens, int *i, t_req *req);
+int				process_empty_cmd_case(int *i, t_cmd **cmds, t_req *req);
+int				process_pipe_case(int *i, t_cmd **cmds, t_req *req);
+int				handle_token_processing(t_cmd *cmd, int *i, t_req *req);
+int				set_redirection(t_cmd *cmd, int *i, t_req *req);
 
 int				is_separator(char c);
 int				is_operator(char c);
 char			*get_operator_string(const char *input, int *i);
 char			*get_word_string(const char *input, int *i);
 char			**tokenize_input(const char *input);
-char			**tokenize_and_validate(char *trimmed_output, t_req *res);
-char			**quote_control_and_expand(char **tokens, t_req *res);
+char			**quote_control_and_expand(t_req *res);
 int				resize_string_array(char ***tokens, int *capacity, int count);
 void			free_string_array(char **array);
 char			*process_quotes_and_expand(char *str, t_req *res);

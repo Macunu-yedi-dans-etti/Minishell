@@ -6,33 +6,17 @@
 /*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:19:38 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/19 19:19:38 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int	check_valid_tokens(char **tokens)
-{
-	int	i;
-
-	if (!tokens)
-		return (0);
-	i = 0;
-	while (tokens[i])
-	{
-		if (tokens[i][0] != '\0')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 int	needs_retokenization(char *str)
 {
-	int		i;
 	int		in_quotes;
 	char	quote_char;
+	int		i;
 
 	i = 0;
 	in_quotes = 0;
@@ -56,57 +40,47 @@ int	needs_retokenization(char *str)
 	return (0);
 }
 
-char	**process_input(char *output, t_req *res)//trimm input
+int	process_input(char *output, t_req *res)
 {
-	char		*trimmed_output;
-	char		**result;
+	char	*trimmed_output;
 
-	add_history(output); // aşağı yukarı tuşlarıyla geçmiş - kullanıcının girdiği RAW komut
-	trimmed_output = ft_strtrim(output, " \t"); // prompttaki  baştaki ve sondaki boşluklar ile tabları temizler
+	add_history(output);
+	trimmed_output = ft_strtrim(output, " \t");
 	if (!trimmed_output || !trimmed_output[0])
 	{
 		if (trimmed_output)
 			free(trimmed_output);
-		return (NULL);
+		return (0);
 	}
-	if (ft_strncmp(trimmed_output, "\"\"", ft_strlen(trimmed_output)) == 0 || ft_strncmp(trimmed_output, "''", ft_strlen(trimmed_output)) == 0)
+	if (ft_strncmp(trimmed_output, "\"\"", ft_strlen(trimmed_output)) == 0
+		|| ft_strncmp(trimmed_output, "''", ft_strlen(trimmed_output)) == 0)
 	{
 		ms_error(ERR_NO_CMD, trimmed_output, 127, res);
 		free(trimmed_output);
-		return (NULL);
+		return (0);
 	}
 	
-	result = tokenize_and_validate(trimmed_output, res); //tokenizera gider
-	free(trimmed_output); // Memory leak fix!
-	//free(output); // inputu temizle
-	return (result);
+	res->trimmed_input = trimmed_output;
+	if (!tokenize_and_validate(res))
+	{
+		free(trimmed_output);
+		res->trimmed_input = NULL;
+		return (0);
+	}
+	free(trimmed_output);
+	res->trimmed_input = NULL;
+	return (1);
 }
 
-int	execute_pipeline(char **tokens, t_req *res)
+int	execute_pipeline(t_req *res)
 {
-	t_list	*cmds;
-
-	cmds = parse_tokens(tokens, res);
-	if (!cmds)
+	parse_tokens(res);
+	if (!res->cmds)
 		return (0);
-	res->cmds = cmds;
-	execute_cmds(cmds, res);
-	if (!check_valid_tokens(tokens))
-	{
-		// if (res->tokens)
-		// {
-		// 	free_string_array(res->tokens);
-		// 	res->tokens = NULL;
-		// }
-		free_all(res);//3
-		free_cmds(cmds);
-		res->cmds = NULL;
-		return (0);
-	}
-	if (tokens && tokens[0]) // son çalışan bilgisi için güncelleme
-		res->envp = mini_setenv("_", tokens[0], res->envp, 1);
-	
-	free_cmds(cmds);
+	execute_cmds(res);
+	if (res->tokens && res->tokens[0])
+		res->envp = mini_setenv("_", res->tokens[0], res->envp, 1);
+	free_cmds(res->cmds);
 	res->cmds = NULL;
 	return (1);
 }

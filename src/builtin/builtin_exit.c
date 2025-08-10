@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:25:33 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,36 +32,36 @@ static int	is_numeric(const char *str)
 	return (1);
 }
 
-int	builtin_exit(char **args, t_req *req)
+int	builtin_exit(t_pipeline_data *data)
 {
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (args[1])
+	if (data->current_cmd->full_cmd[1])
 	{
-		if (!is_numeric(args[1]))
+		if (!is_numeric(data->current_cmd->full_cmd[1]))
 		{
-			ms_error(ERR_EMPTY, "exit: numeric argument required", 2, req);
-			if (req)
+			ms_error(ERR_EMPTY, "exit: numeric argument required", 2, data->req);
+			if (data->req)
 			{
-				req->exit_stat = 2;
-				req->should_exit = 1;
+				data->req->exit_stat = 2;
+				data->req->should_exit = 1;
 				// rl_clear_history();
-				// free_all(req);
+				// free_all(data->req);
 			}
 			return (2);
 		}
-		if (args[2])
+		if (data->current_cmd->full_cmd[2])
 		{
-			ms_error(ERR_EMPTY, "exit: too many arguments", 1, req);
-			if (req)
-				req->exit_stat = 1;
+			ms_error(ERR_EMPTY, "exit: too many arguments", 1, data->req);
+			if (data->req)
+				data->req->exit_stat = 1;
 			return (1);
 		}
-		if (req)
-			req->exit_stat = ft_atoi(args[1]) & 255;
+		if (data->req)
+			data->req->exit_stat = ft_atoi(data->current_cmd->full_cmd[1]) & 255;
 	}
-	else if (req)
-		req->exit_stat = 0;
-	if (req)
-		req->should_exit = 1;
-	return (req ? req->exit_stat : 0);
+	else if (data->req)
+		data->req->exit_stat = 0;
+	if (data->req)
+		data->req->should_exit = 1;
+	return (data->req ? data->req->exit_stat : 0);
 }

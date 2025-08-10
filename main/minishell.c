@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/09 00:33:01 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/10 15:57:26 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,37 +29,24 @@ static char	*get_input_prompt(t_req *res)
 static int	process_main_loop(t_req *res)
 {
 	char		*output;
-	char		**tokens;
 
 	setup_signals();
-	res->tokens = NULL;
+	ft_double_free(&res->tokens);
 	output = get_input_prompt(res);
 	if (!output)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
-		rl_clear_history();
-		if (res->tokens)
-		{
-			free_string_array(res->tokens);
-			res->tokens = NULL;
-			free_all(res);//2
-		}
-		return (0);
+		return (rl_clear_history(), free_all(res), 0);
 	}
 	if (output[0])
 	{
-		tokens = process_input(output, res);
-		if (tokens)
+		if (process_input(output, res))
 		{
-			res->tokens = tokens;
-			execute_pipeline(tokens, res);
-			free_string_array(tokens);
-			tokens = NULL;
-			res->tokens = NULL;
+			execute_pipeline(res);
+			ft_double_free(&res->tokens);
 		}
 	}
-	// Interrupt sonrası cleanup
 	if (res->heredoc_interrupted)
 	{
 		if (res->cmds)
@@ -76,7 +63,7 @@ static int	process_main_loop(t_req *res)
 	}
 	free(output);
 	if (res->should_exit)
-	{	
+	{
 		if (res->tokens)
 		{
 			free_string_array(res->tokens);
@@ -96,7 +83,7 @@ int	main(int ac, char **av, char **env)
 		fprintf(stderr, "Usage: %s\n", av[0]);
 		return (1);
 	}
-	res = setup(av, env); // setup fonksiyonu env ve diğer değişkenleri ayarlar
+	res = setup(av, env);
 	if (!res.envp)
 	{
 		fprintf(stderr, "Error: Environment setup failed.\n");

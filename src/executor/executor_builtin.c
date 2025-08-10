@@ -12,45 +12,45 @@
 
 #include "../../minishell.h"
 
-static void	setup_builtin_io(t_cmd *cmd, int input_fd, int *backup_in,
+static void	setup_builtin_io(t_pipeline_data *data, int *backup_in,
 							int *backup_out)
 {
-	if (cmd->infile == STDIN_FILENO && input_fd != STDIN_FILENO)
+	if (data->current_cmd->infile == STDIN_FILENO && data->input_fd != STDIN_FILENO)
 	{
 		*backup_in = dup(STDIN_FILENO);
-		dup2(input_fd, STDIN_FILENO);
-		close(input_fd);
+		dup2(data->input_fd, STDIN_FILENO);
+		close(data->input_fd);
 	}
-	else if (cmd->infile != STDIN_FILENO)
+	else if (data->current_cmd->infile != STDIN_FILENO)
 	{
 		*backup_in = dup(STDIN_FILENO);
-		dup2(cmd->infile, STDIN_FILENO);
+		dup2(data->current_cmd->infile, STDIN_FILENO);
 	}
-	if (cmd->outfile != STDOUT_FILENO)
+	if (data->current_cmd->outfile != STDOUT_FILENO)
 	{
 		*backup_out = dup(STDOUT_FILENO);
-		dup2(cmd->outfile, STDOUT_FILENO);
+		dup2(data->current_cmd->outfile, STDOUT_FILENO);
 	}
 }
 
-void	exec_single_builtin(t_cmd *cmd, t_req *req, int input_fd)
+void	exec_single_builtin(t_pipeline_data *data)
 {
 	int	backup_out;
 	int	backup_in;
 
 	backup_out = -1;
 	backup_in = -1;
-	if (!cmd->full_cmd || !cmd->full_cmd[0])
+	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
 	{
-		req->exit_stat = 0;
+		data->req->exit_stat = 0;
 		return ;
 	}
-	if (apply_redirects(cmd, req))
+	if (apply_redirects(data))
 	{
-		req->exit_stat = 1;
+		data->req->exit_stat = 1;
 		return ;
 	}
-	setup_builtin_io(cmd, input_fd, &backup_in, &backup_out);
-	run_builtin(cmd, req);
+	setup_builtin_io(data, &backup_in, &backup_out);
+	run_builtin(data);
 	restore_io(&backup_in, &backup_out);
 }
