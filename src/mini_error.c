@@ -6,13 +6,13 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:03:04 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/08 17:28:29 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:19:34 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	print_error_message_prefix(t_error_type type)
+static void	print_system_errors(t_error_type type)
 {
 	if (type == ERR_QUOTE)
 		ft_putstr_fd("minishell: unmatched quote detected\n", 2);
@@ -26,7 +26,11 @@ static void	print_error_message_prefix(t_error_type type)
 		ft_putstr_fd("minishell: syntax error near '|'\n", 2);
 	else if (type == ERR_ALLOC)
 		ft_putstr_fd("minishell: memory allocation failed\n", 2);
-	else if (type == ERR_NO_DIR)
+}
+
+static void	print_file_errors(t_error_type type)
+{
+	if (type == ERR_NO_DIR)
 		ft_putstr_fd("minishell: directory not found: ", 2);
 	else if (type == ERR_NO_PERM)
 		ft_putstr_fd("minishell: permission denied: ", 2);
@@ -40,6 +44,12 @@ static void	print_error_message_prefix(t_error_type type)
 		ft_putstr_fd("minishell: heredoc failed: ", 2);
 	else if (type == ERR_EMPTY)
 		ft_putstr_fd("minishell: ", 2);
+}
+
+static void	print_error_message_prefix(t_error_type type)
+{
+	print_system_errors(type);
+	print_file_errors(type);
 }
 
 static void	print_error_message_detail(const char *detail)

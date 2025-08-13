@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/13 13:30:13 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	process_main_loop(t_req *res)
 {
 	char		*output;
 
-	setup_signals();
+	setup_signals(res);
 	ft_double_free(&res->tokens);
 	output = get_input_prompt(res);
 	if (!output)

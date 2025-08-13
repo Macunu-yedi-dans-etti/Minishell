@@ -34,8 +34,6 @@ static int	add_string_to_array(char ***tokens, char *token_str, int *count,
 	return (1);
 }
 
-
-
 char	**tokenize_input(const char *input)
 {
 	char	**tokens;

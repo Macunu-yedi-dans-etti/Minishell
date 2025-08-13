@@ -60,4 +60,11 @@ typedef struct s_request
 	int			heredoc_interrupted;
 }				t_req;
 
+typedef struct s_word_builder
+{
+	char	**result;
+	int		*len;
+	int		*capacity;
+}				t_word_builder;
+
 #endif

@@ -6,13 +6,13 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 19:17:09 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/13 15:46:01 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void    safe_close(int *fd)
+void	safe_close(int *fd)
 {
 	if (!fd)
 		return ;
@@ -34,14 +34,26 @@ int	ft_find_chr(const char *s, char c)
 	return (i);
 }
 
-char	**ft_double_extension(char **matrix, char *new_str) // envp = ft_double_extension(envp, new_entry);
+static void	free_matrix(char **matrix)
+{
+	int	j;
+
+	if (!matrix)
+		return ;
+	j = 0;
+	while (matrix[j])
+		free(matrix[j++]);
+	free(matrix);
+}
+
+char	**ft_double_extension(char **matrix, char *new_str)
 {
 	int		i;
 	int		size;
 	char	**new_matrix;
 
 	i = 0;
-	while (matrix && matrix[i]) // matrix saysını tutar mesela : "SHELL=/bin/bash", = matrix[0] &&  "PWD=/home/user",     = matrix[1] ve matrix[2] ise NULL olur gibi
+	while (matrix && matrix[i])
 		i++;
 	size = i + 1;
 	if (new_str)
@@ -56,54 +68,8 @@ char	**ft_double_extension(char **matrix, char *new_str) // envp = ft_double_ext
 		i++;
 	}
 	if (new_str)
-		new_matrix[i++] = ft_strdup(new_str); // new_entry burada aslında matrixin sonuna eklenecek veriyi temsil ediyor
+		new_matrix[i++] = ft_strdup(new_str);
 	new_matrix[i] = NULL;
-	if (matrix)
-	{
-		int j = 0;
-		while (matrix[j])
-			free(matrix[j++]);
-		free(matrix);
-	}
+	free_matrix(matrix);
 	return (new_matrix);
-}
-
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*node;
-
-	node = malloc(sizeof(t_list));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
-}
-
-void	ft_lstadd_back(t_list **lst, t_list *new_node)
-{
-	t_list	*temp;
-
-	if (!lst || !new_node)
-		return ;
-	if (!*lst)
-	{
-		*lst = new_node;
-		return ;
-	}
-	temp = *lst;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new_node;
-}
-
-void	strip_newline(char *s)
-{
-	size_t	len;
-
-	if (!s)
-		return ;
-	len = ft_strlen(s);
-	while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r'))
-		s[--len] = '\0';
 }

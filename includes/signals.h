@@ -18,7 +18,7 @@
 /* Signal handling */
 void			handle_sigint(int sig);
 void			handle_sigquit(int sig);
-void			setup_signals(void);
+void			setup_signals(t_req *req);
 void			reset_signals(void);
 void			set_signal_req(t_req *req);
 

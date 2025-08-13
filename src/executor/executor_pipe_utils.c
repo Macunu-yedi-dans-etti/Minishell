@@ -54,5 +54,5 @@ void	wait_for_processes(t_pipeline_data *data)
 		}
 		i++;
 	}
-	setup_signals();
+	setup_signals(data->req);
 }

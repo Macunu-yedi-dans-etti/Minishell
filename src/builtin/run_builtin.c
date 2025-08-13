@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:23:04 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:17:20 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	run_builtin(t_pipeline_data *data)
 {
 	int	ret;
 
-	if (!data->current_cmd || !data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
+	if (!data->current_cmd || !data->current_cmd->full_cmd
+		|| !data->current_cmd->full_cmd[0])
 	{
 		data->req->exit_stat = 1;
 		return (1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/11 00:32:06 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:16:57 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,12 @@ void	free_cmd(t_cmd *cmd)
 	ft_double_free(&cmd->full_cmd);
 	free(cmd->full_path);
 	free_redirects(cmd->redirects);
-	// if (cmd->redirects && cmd->redirects->filename)
-	// 	free(cmd->redirects->filename);
 	free(cmd);
 }
 
 void	free_cmds(t_cmd *cmds)
 {
-	t_cmd *next;
+	t_cmd	*next;
 
 	while (cmds)
 	{
@@ -71,26 +69,22 @@ void	free_req(t_req *req)
 		ft_double_free(&req->tokens);
 }
 
-void free_all(t_pipeline_data *data)
+void	free_all(t_pipeline_data *data)
 {
 	if (!data)
 		return ;
 	if (data->req)
 	{
-		/* önce req->cmds varsa temizle (içinde cur_cmd olmayacak ama güvenlik) */
 		if (data->req->cmds)
 		{
 			free_cmds(data->req->cmds);
 			data->req->cmds = NULL;
 		}
-		/* req->cur_cmd parser sırasında kalmışsa temizle */
 		if (data->req->cur_cmd)
 		{
 			free_cmd(data->req->cur_cmd);
 			data->req->cur_cmd = NULL;
 		}
-		/* sonra req'nin diğer içeriğini temizle */
 		free_req(data->req);
 	}
 }
-

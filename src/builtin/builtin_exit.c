@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:59:54 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/13 16:18:04 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,36 +32,49 @@ static int	is_numeric(const char *str)
 	return (1);
 }
 
+static void	handle_numeric_error(t_pipeline_data *data)
+{
+	ms_error(ERR_EMPTY, "exit: numeric argument required", 2, data->req);
+	if (data->req)
+	{
+		data->req->exit_stat = 2;
+		data->req->should_exit = 1;
+	}
+}
+
+static int	handle_exit_args(t_pipeline_data *data)
+{
+	if (!is_numeric(data->current_cmd->full_cmd[1]))
+	{
+		handle_numeric_error(data);
+		return (2);
+	}
+	if (data->current_cmd->full_cmd[2])
+	{
+		ms_error(ERR_EMPTY, "exit: too many arguments", 1, data->req);
+		if (data->req)
+			data->req->exit_stat = 1;
+		return (1);
+	}
+	if (data->req)
+		data->req->exit_stat = ft_atoi(data->current_cmd->full_cmd[1]) & 255;
+	return (-1);
+}
+
 int	builtin_exit(t_pipeline_data *data)
 {
+	int	result;
+
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (data->current_cmd->full_cmd[1])
 	{
-		if (!is_numeric(data->current_cmd->full_cmd[1]))
-		{
-			ms_error(ERR_EMPTY, "exit: numeric argument required", 2, data->req);
-			if (data->req)
-			{
-				data->req->exit_stat = 2;
-				data->req->should_exit = 1;
-				// rl_clear_history();
-				// free_all(data->req);
-			}
-			return (2);
-		}
-		if (data->current_cmd->full_cmd[2])
-		{
-			ms_error(ERR_EMPTY, "exit: too many arguments", 1, data->req);
-			if (data->req)
-				data->req->exit_stat = 1;
-			return (1);
-		}
-		if (data->req)
-			data->req->exit_stat = ft_atoi(data->current_cmd->full_cmd[1]) & 255;
+		result = handle_exit_args(data);
+		if (result != -1)
+			return (result);
 	}
-	else if (data->req)
-		data->req->exit_stat = 0;
 	if (data->req)
 		data->req->should_exit = 1;
-	return (data->req ? data->req->exit_stat : 0);
+	if (data->req)
+		return (data->req->exit_stat);
+	return (0);
 }

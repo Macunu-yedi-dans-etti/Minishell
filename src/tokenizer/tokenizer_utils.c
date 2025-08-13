@@ -21,3 +21,50 @@ int	is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
+
+static char	*reallocate_result(char *result, int *capacity)
+{
+	char	*new_result;
+	int		new_capacity;
+
+	new_capacity = (*capacity) * 2;
+	new_result = malloc(new_capacity);
+	if (!new_result)
+	{
+		free(result);
+		return (NULL);
+	}
+	ft_strlcpy(new_result, result, *capacity);
+	free(result);
+	*capacity = new_capacity;
+	return (new_result);
+}
+
+int	append_char_to_result(char **result, int *len, int *capacity, char c)
+{
+	if (*len >= *capacity - 1)
+	{
+		*result = reallocate_result(*result, capacity);
+		if (!*result)
+			return (0);
+	}
+	(*result)[*len] = c;
+	(*len)++;
+	(*result)[*len] = '\0';
+	return (1);
+}
+
+t_word_builder	init_word_builder(char **result, int *len, int *capacity)
+{
+	t_word_builder	builder;
+
+	*len = 0;
+	*capacity = 32;
+	*result = malloc(*capacity);
+	if (*result)
+		(*result)[0] = '\0';
+	builder.result = result;
+	builder.len = len;
+	builder.capacity = capacity;
+	return (builder);
+}
