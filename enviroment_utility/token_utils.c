@@ -6,20 +6,19 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/10 19:06:25 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/14 18:50:51 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
-
-// Basit variable expansion
 static char	*expand_token_var(char *str, int *i, t_req *res)
 {
-	int		start = ++(*i); // $ karakterini geç
-	char	*name, *value;
-	
+	int		start;
+	char	*name;
+	char	*value;
+
+	start = ++(*i);
 	if (!str[*i])
 		return (ft_strdup("$"));
 	if (str[*i] == '?')
@@ -28,20 +27,19 @@ static char	*expand_token_var(char *str, int *i, t_req *res)
 		return ((*i)++, ft_strdup("minishell"));
 	if (!ft_isalnum(str[*i]) && str[*i] != '_')
 		return (ft_strdup("$"));
-	
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
-	
 	if (start == *i)
 		return (ft_strdup("$"));
-	
 	name = ft_substr(str, start, *i - start);
 	value = mini_getenv(name, res->envp, 1);
 	free(name);
-	return (value ? value : ft_strdup(""));  // mini_getenv zaten ft_strdup döndürüyor!
+	if (value)
+		return (value);
+	else
+		return (ft_strdup(""));
 }
 
-// Quote validation fonksiyonu
 int	validate_quotes(char *str)
 {
 	int		i;
@@ -55,7 +53,6 @@ int	validate_quotes(char *str)
 	double_count = 0;
 	in_single = 0;
 	in_double = 0;
-	
 	while (str[i])
 	{
 		if (str[i] == '\'' && !in_double)
@@ -70,33 +67,32 @@ int	validate_quotes(char *str)
 		}
 		i++;
 	}
-	
-	// Çift sayıda olmalı (açılan her tırnak kapatılmalı)
-	return (single_count % 2 == 0 && double_count % 2 == 0);
+	if (single_count % 2 == 0 && double_count % 2 == 0)
+		return (1);
+	else
+		return (0);
 }
 
-// Ana işleme fonksiyonu - çok daha basit
 char	*process_quotes_and_expand(char *input, t_req *res)
 {
-	char	*result = ft_strdup("");
-	char	*temp, *expanded;
-	int		i = 0;
-	
+	char	*result;
+	char	*temp;
+	char	*expanded;
+	int		i;
+	int		start;
+	char	c[2];
+
+	result = ft_strdup("");
+	i = 0;
 	if (!input)
 		return (result);
-	
-	// Quote validation
 	if (!validate_quotes(input))
-	{
-		free(result);
-		return (NULL); // Quote error
-	}
-	
+		return (free(result), NULL);
 	while (input[i])
 	{
-		if (input[i] == '\'') // Tek tırnak - literal
+		if (input[i] == '\'')
 		{
-			int start = ++i;
+			start = ++i;
 			while (input[i] && input[i] != '\'')
 				i++;
 			if (input[i])
@@ -109,7 +105,7 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 				i++;
 			}
 		}
-		else if (input[i] == '"') // Çift tırnak - variable expansion
+		else if (input[i] == '"')
 		{
 			i++;
 			while (input[i] && input[i] != '"')
@@ -124,7 +120,8 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 				}
 				else
 				{
-					char c[2] = {input[i++], '\0'};
+					c[0] = input[i++];
+					c[1] = '\0';
 					temp = ft_strjoin(result, c);
 					free(result);
 					result = temp;
@@ -133,7 +130,7 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 			if (input[i] == '"')
 				i++;
 		}
-		else if (input[i] == '$') // Tırnak dışı variable
+		else if (input[i] == '$')
 		{
 			temp = expand_token_var(input, &i, res);
 			expanded = ft_strjoin(result, temp);
@@ -141,15 +138,15 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 			free(temp);
 			result = expanded;
 		}
-		else // Normal karakter
+		else
 		{
-			char c[2] = {input[i++], '\0'};
+			c[0] = input[i++];
+			c[1] = '\0';
 			temp = ft_strjoin(result, c);
 			free(result);
 			result = temp;
 		}
 	}
-	
 	return (result);
 }
 

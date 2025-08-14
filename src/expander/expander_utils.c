@@ -38,7 +38,7 @@ static void	copy_to_new_str(char *new_str, char *dst, const char *src, int len)
 	ft_memcpy(new_str + len - 1, src, src_len + 1);
 }
 
-char	*append_str(char *dst, const char *src, int *len) // expansion sırasında string'i parça parça büyütmek için kullanılıyor
+char	*append_str(char *dst, const char *src, int *len)
 {
 	int		src_len;
 	char	*new_str;

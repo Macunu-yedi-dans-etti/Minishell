@@ -32,7 +32,7 @@ char	**quote_control_and_expand(t_req *res)
 {
 	int		i;
 	char	*expanded;
-	
+
 	i = 0;
 	while (res->tokens[i])
 	{

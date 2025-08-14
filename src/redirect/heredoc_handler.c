@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 16:28:35 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/14 18:31:13 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		if (!line)
 		{
 			close(pipe_fd[1]);
-			free_cmd(req->cur_cmd);
-			free_cmd(req->cmds);
-			free_req(req);
+			(free_cmd(req->cur_cmd), free_cmd(req->cmds), free_req(req));
 			exit(130);
 		}
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
@@ -48,9 +46,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		free(line);
 	}
 	close(pipe_fd[1]);
-	free_cmd(req->cur_cmd);
-	free_cmd(req->cmds);
-	free_req(req);
+	(free_cmd(req->cur_cmd), free_cmd(req->cmds), free_req(req));
 	exit(0);
 }
 
@@ -62,8 +58,7 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 	void (*old_sigint)(int);
 
 	if (req && req->heredoc_interrupted)
-		return -1;
-
+		return (-1);
 	old_sigint = signal(SIGINT, SIG_IGN);
 	if (pipe(pipe_fd) == -1)
 	{
@@ -71,9 +66,8 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		if (req)
 			req->exit_stat = 1;
 		signal(SIGINT, old_sigint);
-		return -1;
+		return (-1);
 	}
-
 	pid = fork();
 	if (pid == -1)
 	{
@@ -91,11 +85,9 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		signal(SIGINT, heredoc_sigint_handler);
 		do_heredoc_child(delimiter, pipe_fd, req);
 	}
-
-	close(pipe_fd[1]); /* parent sadece okuyacak */
+	close(pipe_fd[1]);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, old_sigint);
-
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		if (req)
@@ -104,7 +96,7 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 			req->heredoc_interrupted = 1;
 		}
 		close(pipe_fd[0]);
-		return -1;
+		return (-1);
 	}
 	else if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
 	{
@@ -123,6 +115,6 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		close(pipe_fd[0]);
 		return -1;
 	}
-	return pipe_fd[0]; /* infile olarak kullanılacak */
+	return (pipe_fd[0]);
 }
 

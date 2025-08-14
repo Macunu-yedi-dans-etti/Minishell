@@ -37,10 +37,10 @@ static char	*handle_dollar_sign(char *result, const char *input, int *i,
 {
 	char	*expanded;
 
-	expanded = process_variable(input, i, envp, req);// expand_var(input, i, data->envp, data->req);
+	expanded = process_variable(input, i, envp, req);
 	if (!expanded)
 		return (free(result), NULL);
-	result = append_str(result, expanded, len); // result = ft_strjoin_free(result, expanded);
+	result = append_str(result, expanded, len);
 	free(expanded);
 	return (result);
 }
@@ -58,7 +58,7 @@ char	*process_input_loop(const char *input, char **envp, t_req *req)
 		return (NULL);
 	while (input[i])
 	{
-		if (input[i] == '$') // Eğer $ karakteri varsa, değişken genişletme işlemi yapar
+		if (input[i] == '$')
 		{
 			result = handle_dollar_sign(result, input, &i, envp, req, &len);
 			if (!result)
@@ -71,28 +71,3 @@ char	*process_input_loop(const char *input, char **envp, t_req *req)
 	}
 	return (result);
 }
-
-/*
-Step-by-step processing:
-
-i=0: 'H' → process_character → result="H" (len=2)
-i=1: 'e' → process_character → result="He" (len=3)  
-i=2: 'l' → process_character → result="Hel" (len=4)
-i=3: 'l' → process_character → result="Hell" (len=5)
-i=4: 'o' → process_character → result="Hello" (len=6)
-i=5: ' ' → process_character → result="Hello " (len=7)
-
-i=6: '$' → handle_dollar_sign:
-    ↳ process_variable() → expand $USER → "haloztur"
-    ↳ append_str() → result="Hello haloztur" (len=15)
-    ↳ i=11 (skipped $USER)
-
-i=11: ' ' → process_character → result="Hello haloztur " (len=16)
-i=12: 'w' → process_character → result="Hello haloztur w" (len=17)
-i=13: 'o' → process_character → result="Hello haloztur wo" (len=18)
-i=14: 'r' → process_character → result="Hello haloztur wor" (len=19)
-i=15: 'l' → process_character → result="Hello haloztur worl" (len=20)
-i=16: 'd' → process_character → result="Hello haloztur world" (len=21)
-
-Final: "Hello haloztur world"
-*/

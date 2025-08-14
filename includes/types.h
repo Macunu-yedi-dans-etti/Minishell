@@ -39,11 +39,11 @@ typedef struct s_redirect
 
 typedef struct s_cmd
 {
-	char		**full_cmd;
-	char		*full_path;
-	int			infile;
-	int			outfile;
-	t_redirect	*redirects;
+	char			**full_cmd;
+	char			*full_path;
+	int				infile;
+	int				outfile;
+	t_redirect		*redirects;
 	struct s_cmd	*next;
 }				t_cmd;
 

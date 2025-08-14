@@ -6,33 +6,36 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:47:29 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 13:31:13 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/14 19:54:06 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
 #define EXIT_SIGINT 130
 #define EXIT_SIGQUIT 131
 
-t_req* get_signal_req(t_req *req)
+t_req	*get_signal_req(t_req *req)
 {
-	static t_req *g_req_ptr = NULL;
+	static t_req	*g_req_ptr;
+
 	if (req)
 	{
 		g_req_ptr = req;
-		return g_req_ptr;
+		return (g_req_ptr);
 	}
-	return g_req_ptr;
+	return (g_req_ptr);
 }
 
 void	handle_sigint(int sig)
 {
+	t_req	*req;
+
 	if (sig == SIGINT)
 	{
-		if (!get_signal_req(NULL))
-			get_signal_req(NULL)->exit_stat = EXIT_SIGINT;
+		req = get_signal_req(NULL);
+		if (req)
+			req->exit_stat = EXIT_SIGINT;
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
@@ -42,10 +45,13 @@ void	handle_sigint(int sig)
 
 void	handle_sigquit(int sig)
 {
+	t_req	*req;
+
 	if (sig == SIGQUIT)
 	{
-		if (!get_signal_req(NULL))
-			get_signal_req(NULL)->exit_stat = EXIT_SIGQUIT;
+		req = get_signal_req(NULL);
+		if (req)
+			req->exit_stat = EXIT_SIGQUIT;
 		write(1, "Quit (core dumped)\n", 19);
 	}
 }
@@ -53,7 +59,7 @@ void	handle_sigquit(int sig)
 void	setup_signals(t_req *req)
 {
 	if (!req)
-		return;
+		return ;
 	get_signal_req(req);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);

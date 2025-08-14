@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enviroment.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/02 11:36:53 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/13 19:15:32 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static char	*ft_strjoin_free(char *s1, const char *s2)
 
 	res = ft_strjoin(s1, s2);
 	free(s1);
-	return (res);// new_entry free oldu ve kontrole gerek yok
+	return (res);
 }
 
-char	**mini_setenv(char *var, char *value, char **envp, int n) // mini_setenv("PWD", str, prompt.envp, 3);
+char	**mini_setenv(char *var, char *value, char **envp, int n)
 {
 	int		i;
 	int		len;
@@ -29,10 +29,10 @@ char	**mini_setenv(char *var, char *value, char **envp, int n) // mini_setenv("P
 
 	if (n < 0)
 		n = ft_strlen(var);
-	new_entry = ft_strjoin(var, "="); // PWD=
+	new_entry = ft_strjoin(var, "=");
 	if (!new_entry)
 		return (NULL);
-	new_entry = ft_strjoin_free(new_entry, value);// s1 = free , s2 = s1 + value
+	new_entry = ft_strjoin_free(new_entry, value);
 	if (!new_entry)
 		return (NULL);
 	i = 0;
@@ -96,7 +96,7 @@ char	**mini_unsetenv(char ***envp, const char *var)
 	return (new_env);
 }
 
-char	*mini_getenv(char *var, char **envp, int n) // shlvl = mini_getenv("SHLVL", prompt.envp, 5);
+char	*mini_getenv(char *var, char **envp, int n)
 {
 	int	i;
 	int	len;
