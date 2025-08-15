@@ -32,11 +32,6 @@ SRCS = main/minishell.c \
 	   src/builtin/run_builtin.c\
 	   src/redirect/redirect_handler.c\
 	   src/redirect/heredoc_handler.c\
-	   src/expander/expander.c\
-	   src/expander/expander_utils.c\
-	   src/expander/expander_var.c\
-	   src/expander/expander_process.c\
-	   src/expander/expander_init.c\
 	   src/mini_error.c\
        general_utility/ft_free.c \
        general_utility/utility.c \

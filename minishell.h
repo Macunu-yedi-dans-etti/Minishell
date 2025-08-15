@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/15 20:48:07 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/15 22:59:40 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include "includes/mini_error.h"
 # include "includes/color.h"
 # include "includes/executor.h"
-# include "includes/expander.h"
 # include "includes/utilities.h"
 # include "includes/parser.h"
 # include "includes/builtin.h"
