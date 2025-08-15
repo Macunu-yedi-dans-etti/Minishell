@@ -12,6 +12,27 @@
 
 #include "../../minishell.h"
 
+static char	*get_operator_string(const char *input, int *i)
+{
+	char	op[3];
+
+	if ((input[*i] == '<' || input[*i] == '>')
+		&& input[*i] == input[*i + 1])
+	{
+		op[0] = input[*i];
+		op[1] = input[*i];
+		op[2] = '\0';
+		*i += 2;
+	}
+	else
+	{
+		op[0] = input[*i];
+		op[1] = '\0';
+		(*i)++;
+	}
+	return (ft_strdup(op));
+}
+
 static char	*gechar_string(const char *input, int *i)
 {
 	while (input[*i] && is_separator(input[*i]))
@@ -21,6 +42,23 @@ static char	*gechar_string(const char *input, int *i)
 	if (is_operator(input[*i]))
 		return (get_operator_string(input, i));
 	return (get_word_string(input, i));
+}
+
+static int	resize_string_array(char ***tokens, int *capacity, int count)
+{
+	char	**tmp;
+	int		j;
+
+	*capacity *= 2;
+	tmp = malloc(sizeof(char *) * (*capacity));
+	if (!tmp)
+		return (0);
+	j = -1;
+	while (++j < count)
+		tmp[j] = (*tokens)[j];
+	free(*tokens);
+	*tokens = tmp;
+	return (1);
 }
 
 static int	add_string_to_array(char ***tokens, char *token_str, int *count,
@@ -63,19 +101,3 @@ char	**tokenize_input(const char *trimmed_input)
 	return (tokens);
 }
 
-int	resize_string_array(char ***tokens, int *capacity, int count)
-{
-	char	**tmp;
-	int		j;
-
-	*capacity *= 2;
-	tmp = malloc(sizeof(char *) * (*capacity));
-	if (!tmp)
-		return (0);
-	j = -1;
-	while (++j < count)
-		tmp[j] = (*tokens)[j];
-	free(*tokens);
-	*tokens = tmp;
-	return (1);
-}

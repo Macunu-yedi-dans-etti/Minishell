@@ -54,17 +54,3 @@ int	append_char_to_result(char **result, int *len, int *capacity, char c)
 	return (1);
 }
 
-t_word_builder	init_word_builder(char **result, int *len, int *capacity)
-{
-	t_word_builder	builder;
-
-	*len = 0;
-	*capacity = 32;
-	*result = malloc(*capacity);
-	if (*result)
-		(*result)[0] = '\0';
-	builder.result = result;
-	builder.len = len;
-	builder.capacity = capacity;
-	return (builder);
-}

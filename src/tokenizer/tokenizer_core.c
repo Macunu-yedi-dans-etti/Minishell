@@ -12,25 +12,20 @@
 
 #include "../../minishell.h"
 
-char	*get_operator_string(const char *input, int *i)
-{
-	char	op[3];
 
-	if ((input[*i] == '<' || input[*i] == '>')
-		&& input[*i] == input[*i + 1])
-	{
-		op[0] = input[*i];
-		op[1] = input[*i];
-		op[2] = '\0';
-		*i += 2;
-	}
-	else
-	{
-		op[0] = input[*i];
-		op[1] = '\0';
-		(*i)++;
-	}
-	return (ft_strdup(op));
+static t_word_builder	init_word_builder(char **result, int *len, int *capacity)
+{
+	t_word_builder	builder;
+
+	*len = 0;
+	*capacity = 32;
+	*result = malloc(*capacity);
+	if (*result)
+		(*result)[0] = '\0';
+	builder.result = result;
+	builder.len = len;
+	builder.capacity = capacity;
+	return (builder);
 }
 
 static int	handle_quoted_section(const char *input, int *i,
