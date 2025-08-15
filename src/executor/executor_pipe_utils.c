@@ -14,7 +14,8 @@
 
 void	handle_empty_commands(t_pipeline_data *data)
 {
-	if (!data->current_cmd || !data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
+	if (!data->current_cmd || !data->current_cmd->full_cmd
+		|| !data->current_cmd->full_cmd[0])
 	{
 		data->req->exit_stat = 0;
 		data->pids[data->i] = -1;
@@ -30,17 +31,18 @@ void	handle_empty_commands(t_pipeline_data *data)
 
 void	process_single_command(t_pipeline_data *data)
 {
-	if (data->current_cmd && data->current_cmd->full_cmd && is_builtin(data->current_cmd->full_cmd[0]))
+	if (data->current_cmd && data->current_cmd->full_cmd
+		&& is_builtin(data->current_cmd->full_cmd[0]))
 		exec_single_builtin(data);
 }
 
 void	wait_for_processes(t_pipeline_data *data)
 {
 	int	status;
-	int		i;
+	int	i;
 
 	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, handle_sigquit);
 	i = 0;
 	while (i < data->count)
 	{

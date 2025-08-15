@@ -16,10 +16,11 @@ static void	setup_and_exec(t_pipeline_data *data)
 {
 	close_extra_fds(data->real_in, data->output_fd);
 	reset_signals();
-	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0] || data->current_cmd->full_cmd[0][0] == '\0')
+	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0]
+		|| data->current_cmd->full_cmd[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: empty command", 2);
-		free_all(data);//5
+		free_all(data);
 		exit(0);
 	}
 	if (apply_redirects(data))
@@ -53,7 +54,7 @@ pid_t	exec_external_cmd(t_pipeline_data *data)
 	if (pid < 0)
 	{
 		perror("minishell: fork");
-		free_all(data);//5
+		free_all(data);
 		return (-1);
 	}
 	if (pid == 0)

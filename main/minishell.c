@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 13:30:13 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/15 14:37:21 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,14 @@ static int	process_main_loop(t_req *res)
 			res->cmds = NULL;
 		}
 		if (res->tokens)
-		{
 			ft_double_free(&res->tokens);
-		}
 		res->heredoc_interrupted = 0;
 	}
 	free(output);
 	if (res->should_exit)
 	{
 		if (res->tokens)
-		{
 			ft_double_free(&res->tokens);
-		}
 		return (0);
 	}
 	return (1);
@@ -78,13 +74,15 @@ int	main(int ac, char **av, char **env)
 
 	if (ac != 1)
 	{
-		fprintf(stderr, "Usage: %s\n", av[0]);
+		ft_putstr_fd("Usage: ", 2);
+		if (av && av[0])
+			ft_putstr_fd(av[0], 2);
 		return (1);
 	}
 	res = setup(av, env);
 	if (!res.envp)
 	{
-		fprintf(stderr, "Error: Environment setup failed.\n");
+		ft_putstr_fd("Error: Environment setup failed.\n", 2);
 		free_req(&res);
 		return (1);
 	}

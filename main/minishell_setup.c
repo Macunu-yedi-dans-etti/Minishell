@@ -12,29 +12,29 @@
 
 #include "../minishell.h"
 
-static t_req	init_variable_continue(t_req prompt, char **av) // init_variable_continue(prompt, av)
+static t_req	init_variable_continue(t_req prompt, char **av)
 {
 	char	*str;
 
 	str = mini_getenv("PATH", prompt.envp, 4);
-	if (!str) // yoksa oluştur işte 
+	if (!str)
 		prompt.envp = mini_setenv("PATH",
 				"/usr/local/sbin:/usr/local/bin:/usr/bin:/bin",
 				prompt.envp, 4);
 	free(str);
-	str = mini_getenv("_", prompt.envp, 1); // son çalışan bilgisi
-	if (!str && av[0]) // strnin varlığı aslında env yi temsil ediyor çünkü path yok demek env yok demek
+	str = mini_getenv("_", prompt.envp, 1);
+	if (!str && av[0])
 		prompt.envp = mini_setenv("_", av[0], prompt.envp, 1);
 	free(str);
 	return (prompt);
 }
 
-static void	tier_pid(t_req *p) // ulimit -n fork destek testi
+static void	tier_pid(t_req *p)
 {
 	pid_t	pid;
 
 	pid = fork();
-	if (pid < 0) // baarısız sistem desteklemiyo
+	if (pid < 0)
 	{
 		ft_double_free(&p->envp);
 		ms_error(ERR_FORK, NULL, 1, NULL);
@@ -46,16 +46,14 @@ static void	tier_pid(t_req *p) // ulimit -n fork destek testi
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);
-	//p->pid = pid - 1;
-	//p->pid = pid 0;
 }
 
-static t_req	init_variable(t_req prompt, char *str, char **av) // av önemli gidişatta kullanılacak 
+static t_req	init_variable(t_req prompt, char *str, char **av)
 {
 	char	*num;
 	char	*shlvl;
 
-	str = getcwd(NULL, 0); // o anki bulunduğun dizin (env için)
+	str = getcwd(NULL, 0);
 	if (str)
 	{
 		prompt.envp = mini_setenv("PWD", str, prompt.envp, 3);
@@ -81,8 +79,8 @@ t_req	setup(char **av, char **env)
 	res.envp = ft_double_copy(env);
 	res.export_list = NULL;
 	res.exit_stat = 0;
-	res.should_exit = 0; // shelin çıkıp çıkmayacağını belirler
-	res.heredoc_interrupted = 0; // heredoc interrupt flag'ini sıfırla
+	res.should_exit = 0;
+	res.heredoc_interrupted = 0;
 	tier_pid(&res);
 	res = init_variable(res, NULL, av);
 	return (res);

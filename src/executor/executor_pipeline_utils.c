@@ -14,7 +14,9 @@
 
 static int	cmd_count(t_cmd *cmds)
 {
-	int c = 0;
+	int	c;
+
+	c = 0;
 	while (cmds)
 	{
 		c++;
@@ -54,7 +56,7 @@ int	setup_pipe_output(t_pipeline_data *data)
 		if (pipe(data->pipe_fd) == -1)
 		{
 			perror("minishell: pipe");
-			free_cmds(data->current_cmd); // free remaining chain starting here
+			free_cmds(data->current_cmd);
 			return (-1);
 		}
 		output_fd = data->pipe_fd[1];

@@ -63,7 +63,8 @@ void	handle_external_execution(t_pipeline_data *data)
 		free_all(data);
 		exit(127);
 	}
-	execve(data->current_cmd->full_path, data->current_cmd->full_cmd, data->req->envp);
+	execve(data->current_cmd->full_path, data->current_cmd->full_cmd,
+		data->req->envp);
 	handle_execve_error(data);
 	exit(data->req->exit_stat);
 }

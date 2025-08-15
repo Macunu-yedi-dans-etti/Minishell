@@ -38,7 +38,7 @@ static void	handle_single_builtin(t_pipeline_data *data)
 static void	execute_single_cmd(t_pipeline_data *data)
 {
 	if (!data->current_cmd)
-		return;
+		return ;
 	handle_empty_commands(data);
 	if (data->pids[data->i] != -1)
 	{
@@ -65,7 +65,8 @@ static void	execute_loop(t_pipeline_data *data)
 	data->current_cmd = data->req->cmds;
 	while (data->current_cmd)
 	{
-		if (data->count == 1 && data->current_cmd->full_cmd && is_builtin(data->current_cmd->full_cmd[0]))
+		if (data->count == 1 && data->current_cmd->full_cmd
+			&& is_builtin(data->current_cmd->full_cmd[0]))
 			handle_single_builtin(data);
 		else
 			execute_single_cmd(data);

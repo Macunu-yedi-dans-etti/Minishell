@@ -59,7 +59,6 @@ int	process_input(char *output, t_req *res)
 		free(trimmed_output);
 		return (0);
 	}
-	
 	res->trimmed_input = trimmed_output;
 	if (!tokenize_and_validate(res))
 	{

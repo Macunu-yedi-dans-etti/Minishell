@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/10 17:29:32 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/15 12:07:25 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,16 @@ static void	remove_from_export_list(char ***export_list, char *var)
 	*export_list = new_list;
 }
 
+size_t	ft_strarrlen(char **arr)
+{
+	size_t	len;
+
+	len = 0;
+	while (arr && arr[len])
+		len++;
+	return (len);
+}
+
 static char	**merge_env_export(char **envp, char **export_list)
 {
 	int		env_count;
@@ -137,12 +147,8 @@ static char	**merge_env_export(char **envp, char **export_list)
 	int		j;
 	char	**merged;
 
-	env_count = 0;
-	while (envp && envp[env_count])
-		env_count++;
-	exp_count = 0;
-	while (export_list && export_list[exp_count])
-		exp_count++;
+	env_count = ft_strarrlen(envp);
+	exp_count = ft_strarrlen(export_list);
 	merged = malloc(sizeof(char *) * (env_count + exp_count + 1));
 	if (!merged)
 		return (NULL);
@@ -257,7 +263,8 @@ int	builtin_export(t_pipeline_data *data)
 		{
 			if (ft_strchr(data->current_cmd->full_cmd[i], '='))
 			{
-				mini_setenv_line(&data->req->envp, data->current_cmd->full_cmd[i], data->req);
+				mini_setenv_line(&data->req->envp,
+					data->current_cmd->full_cmd[i], data->req);
 				remove_from_export_list(&data->req->export_list, var_name);
 			}
 			else

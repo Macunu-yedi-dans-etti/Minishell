@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:47:29 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/14 19:54:06 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/15 12:59:24 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	setup_signals(t_req *req)
 		return ;
 	get_signal_req(req);
 	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	reset_signals(void)

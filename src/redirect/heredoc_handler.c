@@ -6,13 +6,13 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/14 18:31:13 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/15 11:34:03 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static void heredoc_sigint_handler(int sig)
+static void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -21,12 +21,11 @@ static void heredoc_sigint_handler(int sig)
 	close(STDIN_FILENO);
 }
 
-static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
+static int	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 {
-	char *line;
+	char	*line;
 
 	close(pipe_fd[0]);
-
 	while (1)
 	{
 		line = readline("> ");
@@ -39,7 +38,7 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
 			free(line);
-			break;
+			break ;
 		}
 		write(pipe_fd[1], line, ft_strlen(line));
 		write(pipe_fd[1], "\n", 1);
@@ -52,10 +51,10 @@ static int do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 
 int	handle_heredoc(const char *delimiter, t_req *req)
 {
-	int pipe_fd[2];
-	pid_t pid;
-	int status;
-	void (*old_sigint)(int);
+	int		pipe_fd[2];
+	pid_t	pid;
+	int		status;
+	void	(*old_sigint)(int);
 
 	if (req && req->heredoc_interrupted)
 		return (-1);
@@ -77,9 +76,8 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		if (req)
 			req->exit_stat = 1;
 		signal(SIGINT, old_sigint);
-		return -1;
+		return (-1);
 	}
-
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_sigint_handler);
@@ -106,15 +104,14 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 			req->heredoc_interrupted = 1;
 		}
 		close(pipe_fd[0]);
-		return -1;
+		return (-1);
 	}
 	else if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 	{
 		if (req)
 			req->exit_stat = WEXITSTATUS(status);
 		close(pipe_fd[0]);
-		return -1;
+		return (-1);
 	}
 	return (pipe_fd[0]);
 }
-

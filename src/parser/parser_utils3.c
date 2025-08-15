@@ -1,59 +1,41 @@
-/* **************************************************************************int	handle_token_processing(t_cmd *cmd, int *i, t_req *req)
-{
-	if (is_redirect(req->tokens[*i]))
-	{
-		if (set_redirection(cmd, i, req))
-			return (1);
-		return (3);
-	}
-	else if (req->tokens[*i])
-	{
-		if (process_token_expand(cmd, req->tokens[*i], req))
-			return (1);
-		if (!cmd->full_cmd && req->tokens[*i][0] == '\0')
-			return (0);
-		return (2);
-	}
-	return (0);
-}                                                                 */
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser_utils3.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/20 10:30:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/15 11:42:53 by musoysal          #+#    #+#             */
+/*   Updated: 2025/08/15 11:42:53 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int handle_redir(char *redir, char *file, t_req *req)
+static int	handle_redir(char *redir, char *file, t_req *req)
 {
-    if (!file)
-    {
-        ms_error(ERR_NO_DIR, "filename is NULL", 1, req);
-        return (1);
-    }
-    if (!ft_strncmp(redir, "<", 2))
-        return add_redirect(req->cur_cmd, R_IN, file);
-    else if (!ft_strncmp(redir, ">", 2))
-        return add_redirect(req->cur_cmd, R_OUT, file);
-    else if (!ft_strncmp(redir, ">>", 3))
-        return add_redirect(req->cur_cmd, R_APPEND, file);
-    else if (!ft_strncmp(redir, "<<", 3))
-    {
-        if (req && req->heredoc_interrupted)
-            return (1);
-        req->cur_cmd->infile = handle_heredoc(file, req);
-        if (req->cur_cmd->infile == -1 || (req && req->heredoc_interrupted))
-            return (1);
-        return add_redirect(req->cur_cmd, R_HEREDOC, file);
-    }
-    return (0);
+	if (!file)
+	{
+		ms_error(ERR_NO_DIR, "filename is NULL", 1, req);
+		return (1);
+	}
+	if (!ft_strncmp(redir, "<", 2))
+		return (add_redirect(req->cur_cmd, R_IN, file));
+	else if (!ft_strncmp(redir, ">", 2))
+		return (add_redirect(req->cur_cmd, R_OUT, file));
+	else if (!ft_strncmp(redir, ">>", 3))
+		return (add_redirect(req->cur_cmd, R_APPEND, file));
+	else if (!ft_strncmp(redir, "<<", 3))
+	{
+		if (req && req->heredoc_interrupted)
+			return (1);
+		req->cur_cmd->infile = handle_heredoc(file, req);
+		if (req->cur_cmd->infile == -1 || (req && req->heredoc_interrupted))
+			return (1);
+		return (add_redirect(req->cur_cmd, R_HEREDOC, file));
+	}
+	return (0);
 }
-
-
 
 int	set_redirection(int *i, t_req *req)
 {

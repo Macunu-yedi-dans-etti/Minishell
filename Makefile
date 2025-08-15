@@ -51,7 +51,7 @@ LIBFT_DIR = includes/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 CC = cc
-CFLAGS = -g -O0 -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 
 all: $(NAME)

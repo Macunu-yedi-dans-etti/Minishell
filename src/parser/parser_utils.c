@@ -15,11 +15,10 @@
 
 t_cmd	*init_cmd(t_req *req)
 {
-	// allocate and initialize a standalone command node
-	// caller will chain via cmd->next
-	// req is unused except for error reporting
 	(void)req;
-	t_cmd *cmd = malloc(sizeof(t_cmd));
+	t_cmd	*cmd;
+
+	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (ms_error(ERR_ALLOC, "t_cmd", 1, req), NULL);
 	cmd->full_cmd = NULL;
@@ -34,6 +33,7 @@ t_cmd	*init_cmd(t_req *req)
 int	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 {
 	t_redirect	*new_redir;
+	t_redirect	*current;
 
 	new_redir = malloc(sizeof(t_redirect));
 	if (!new_redir)
@@ -50,14 +50,13 @@ int	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
 		cmd->redirects = new_redir;
 	else
 	{
-		t_redirect *current = cmd->redirects;
+		current = cmd->redirects;
 		while (current->next)
 			current = current->next;
 		current->next = new_redir;
 	}
 	return (0);
 }
-
 
 int	is_redirect(const char *token)
 {
@@ -69,9 +68,11 @@ int	is_redirect(const char *token)
 
 void	free_redirects(t_redirect *redir)
 {
+	t_redirect	*next;
+
 	while (redir)
 	{
-		t_redirect *next = redir->next;
+		next = redir->next;
 		free(redir->filename);
 		free(redir);
 		redir = next;

@@ -15,7 +15,8 @@
 static void	setup_builtin_io(t_pipeline_data *data, int *backup_in,
 							int *backup_out)
 {
-	if (data->current_cmd->infile == STDIN_FILENO && data->input_fd != STDIN_FILENO)
+	if (data->current_cmd->infile == STDIN_FILENO
+		&& data->input_fd != STDIN_FILENO)
 	{
 		*backup_in = dup(STDIN_FILENO);
 		dup2(data->input_fd, STDIN_FILENO);
