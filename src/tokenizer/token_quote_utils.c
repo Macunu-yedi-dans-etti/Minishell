@@ -1,51 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   token_quote_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/15 22:36:59 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/15 23:04:39 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-
-static char	*expand_token_var(char *str, int *i, t_req *res)
-{
-	int		start;
-	char	*name;
-	char	*value;
-
-	start = ++(*i);
-	if (!str[*i])
-		return (ft_strdup("$"));
-	if (str[*i] == '?')
-		return ((*i)++, ft_itoa(res->exit_stat));
-	if (str[*i] == '_')
-	{
-		(*i)++;
-		value = mini_getenv("_", res->envp, 1);
-		if (value)
-			return (ft_strdup(value));
-		else
-			return (ft_strdup(""));
-	}
-	if (!ft_isalnum(str[*i]) && str[*i] != '_')
-		return (ft_strdup("$"));
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	if (start == *i)
-		return (ft_strdup("$"));
-	name = ft_substr(str, start, *i - start);
-	value = mini_getenv(name, res->envp, 1);
-	free(name);
-	if (value)
-		return (value);
-	else
-		return (ft_strdup(""));
-}
+#include "../../minishell.h"
 
 int	validate_quotes(char *str)
 {

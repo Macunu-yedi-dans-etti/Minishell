@@ -5,10 +5,13 @@ SRCS = main/minishell.c \
        main/minishell_processing.c \
        main/minishell_token_utils.c \
        src/signal.c \
+	   src/expander.c\
+	   src/mini_error.c\
 	   src/input_message.c\
-	   src/tokenizer/tokenizer_utils.c\
 	   src/tokenizer/tokenizer_core.c\
 	   src/tokenizer/tokenizer_core2.c\
+	   src/tokenizer/tokenizer_utils.c\
+	   src/tokenizer/token_quote_utils.c\
 	   src/parser/parser.c\
 	   src/parser/parser_utils.c\
 	   src/parser/parser_utils3.c\
@@ -32,13 +35,11 @@ SRCS = main/minishell.c \
 	   src/builtin/run_builtin.c\
 	   src/redirect/redirect_handler.c\
 	   src/redirect/heredoc_handler.c\
-	   src/mini_error.c\
        general_utility/ft_free.c \
        general_utility/utility.c \
 	   general_utility/resolve_path.c\
        enviroment_utility/enviroment.c\
 	   enviroment_utility/mini_setenv_line.c\
-	   enviroment_utility/token_utils.c\
 
 OBJS = $(SRCS:.c=.o)
 
