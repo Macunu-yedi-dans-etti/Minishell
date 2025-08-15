@@ -12,34 +12,6 @@
 
 #include "../minishell.h"
 
-int	needs_retokenization(char *str)
-{
-	int		in_quotes;
-	char	quote_char;
-	int		i;
-
-	i = 0;
-	in_quotes = 0;
-	quote_char = 0;
-	while (str[i])
-	{
-		if (!in_quotes && (str[i] == '\'' || str[i] == '"'))
-		{
-			in_quotes = 1;
-			quote_char = str[i];
-		}
-		else if (in_quotes && str[i] == quote_char)
-		{
-			in_quotes = 0;
-			quote_char = 0;
-		}
-		else if (!in_quotes && str[i] == '$')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 int	process_input(char *output, t_req *res)
 {
 	char	*trimmed_output;
