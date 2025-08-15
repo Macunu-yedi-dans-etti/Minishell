@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_handler.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:10 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/15 11:34:03 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/15 23:49:05 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static void	heredoc_sigint_handler(int sig)
 static int	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 {
 	char	*line;
+	char	*expanded;
+	int		i;
 
 	close(pipe_fd[0]);
 	while (1)
@@ -35,13 +37,38 @@ static int	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 			(free_cmd(req->cur_cmd), free_cmd(req->cmds), free_req(req));
 			exit(130);
 		}
+
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
 			free(line);
 			break ;
 		}
-		write(pipe_fd[1], line, ft_strlen(line));
+		expanded = ft_strdup("");
+		i = 0;
+		while (line[i])
+		{
+			if (line[i] == '$')
+			{
+				char *tmp = expand_token_var(line, &i, req);
+				char *new_exp = ft_strjoin(expanded, tmp);
+				free(expanded);
+				free(tmp);
+				expanded = new_exp;
+			}
+			else
+			{
+				char c[2];
+				c[0] = line[i++];
+				c[1] = '\0';
+				char *new_exp = ft_strjoin(expanded, c);
+				free(expanded);
+				expanded = new_exp;
+			}
+		}
+
+		write(pipe_fd[1], expanded, ft_strlen(expanded));
 		write(pipe_fd[1], "\n", 1);
+		free(expanded);
 		free(line);
 	}
 	close(pipe_fd[1]);
