@@ -34,7 +34,7 @@ static int	add_string_to_array(char ***tokens, char *token_str, int *count,
 	return (1);
 }
 
-char	**tokenize_input(const char *input)
+char	**tokenize_input(const char *trimmed_input)
 {
 	char	**tokens;
 	char	*token_str;
@@ -49,9 +49,9 @@ char	**tokenize_input(const char *input)
 	if (!tokens)
 		return (NULL);
 	tokens[0] = NULL;
-	while (input[i])
+	while (trimmed_input[i])
 	{
-		token_str = gechar_string(input, &i);
+		token_str = gechar_string(trimmed_input, &i);
 		if (!token_str)
 			return (ft_double_free(&tokens), NULL);
 		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
