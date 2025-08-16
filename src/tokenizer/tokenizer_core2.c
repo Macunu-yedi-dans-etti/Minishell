@@ -100,4 +100,3 @@ char	**tokenize_input(const char *trimmed_input)
 	}
 	return (tokens);
 }
-

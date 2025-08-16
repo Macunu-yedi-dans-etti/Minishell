@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 15:31:48 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/16 17:03:14 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	add_to_export_list(char ***export_list, char *var, char **envp)
 		return ;
 	if (str_in_array(envp, var))
 		return ;
-	
 	len = ft_strarrlen(*export_list);
 	new_list = malloc(sizeof(char *) * (len + 2));
 	if (!new_list)

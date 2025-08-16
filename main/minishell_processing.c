@@ -26,7 +26,8 @@ int	process_input(char *output, t_req *res)
 	}
 	if (ft_strncmp(trimmed_output, "\"\"", ft_strlen(trimmed_output)) == 0
 		|| ft_strncmp(trimmed_output, "''", ft_strlen(trimmed_output)) == 0)
-		return (ms_error(ERR_NO_CMD, trimmed_output, 127, res), free(trimmed_output), 0);
+		return (ms_error(ERR_NO_CMD, trimmed_output, 127, res),
+			free(trimmed_output), 0);
 	res->trimmed_input = trimmed_output;
 	if (!tokenize_and_validate(res))
 		return (free(trimmed_output), res->trimmed_input = NULL, 0);

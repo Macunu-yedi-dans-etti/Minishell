@@ -53,4 +53,3 @@ int	append_char_to_result(char **result, int *len, int *capacity, char c)
 	(*result)[*len] = '\0';
 	return (1);
 }
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 19:24:40 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/16 17:06:13 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,6 @@ int				process_empty_cmd_case(int *i, t_cmd **cmds, t_req *req);
 int				process_pipe_case(int *i, t_cmd **cmds, t_req *req);
 int				handle_token_processing(int *i, t_req *req);
 int				set_redirection(int *i, t_req *req);
-
-
 char			**quote_control_and_expand(t_req *res);
-
-char	*expand_token_var(char *str, int *i, t_req *res);
+char			*expand_token_var(char *str, int *i, t_req *res);
 #endif

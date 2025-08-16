@@ -12,8 +12,8 @@
 
 #include "../../minishell.h"
 
-
-static t_word_builder	init_word_builder(char **result, int *len, int *capacity)
+static t_word_builder	init_word_builder(char **result, int *len,
+	int *capacity)
 {
 	t_word_builder	builder;
 

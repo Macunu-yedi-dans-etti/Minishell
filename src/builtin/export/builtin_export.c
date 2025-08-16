@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 16:08:06 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/16 17:02:56 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ static void	print_export_error(char *arg)
 	ft_putendl_fd("': not a valid identifier", 2);
 }
 
-static void	process_export_arg(t_pipeline_data *data, char *arg, int *exit_code)
+static void	process_export_arg(t_pipeline_data *data, char *arg,
+	int *exit_code)
 {
 	char	*var_name;
 
@@ -55,7 +56,8 @@ static void	process_export_arg(t_pipeline_data *data, char *arg, int *exit_code)
 			remove_from_export_list(&data->req->export_list, var_name);
 		}
 		else
-			add_to_export_list(&data->req->export_list, var_name, data->req->envp);
+			add_to_export_list(&data->req->export_list, var_name,
+				data->req->envp);
 	}
 	free(var_name);
 }

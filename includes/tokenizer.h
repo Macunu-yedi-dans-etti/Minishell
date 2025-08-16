@@ -17,7 +17,8 @@
 
 int				is_separator(char c);
 int				is_operator(char c);
-int				append_char_to_result(char **result, int *len, int *capacity, char c);
+int				append_char_to_result(char **result, int *len, int *capacity,
+					char c);
 char			**tokenize_input(const char *input);
 char			*get_word_string(const char *input, int *i);
 char			*process_quotes_and_expand(char *input, t_req *res);
