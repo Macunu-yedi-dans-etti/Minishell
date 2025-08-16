@@ -3,34 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 14:29:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 11:10:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/16 22:14:07 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/16 22:14:07 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h" 
-#include "../../includes/utilities.h"
+#include "../../minishell.h"
 
-static void	cleanup_and_return(t_req *req)
+static int	handle_process_result(int result, t_req *req, int *i, int *has_cmd)
 {
-	if (req->cur_cmd)
+	if (result == 1)
 	{
 		free_cmd(req->cur_cmd);
 		req->cur_cmd = NULL;
+		return (1);
 	}
-	if (req->cmds)
+	else if (result == 2)
 	{
-		free_cmds(req->cmds);
-		req->cmds = NULL;
+		*has_cmd = 1;
+		(*i)++;
 	}
+	else if (result == 3)
+		return (0);
+	else
+		(*i)++;
+	return (-1);
 }
 
 static int	process_command_tokens(int *i, t_req *req)
 {
 	int	has_cmd;
 	int	result;
+	int	status;
 
 	req->cur_cmd = init_cmd();
 	if (!req->cur_cmd)
@@ -39,34 +45,16 @@ static int	process_command_tokens(int *i, t_req *req)
 	while (req->tokens[*i] && ft_strncmp(req->tokens[*i], "|", 2))
 	{
 		if (req->heredoc_interrupted)
-		{
-			free_cmd(req->cur_cmd);
-			req->cur_cmd = NULL;
-			return (1);
-		}
+			return (free_cmd(req->cur_cmd), req->cur_cmd = NULL, 1);
 		result = handle_token_processing(i, req);
-		if (result == 1)
-		{
-			free_cmd(req->cur_cmd);
-			req->cur_cmd = NULL;
+		status = handle_process_result(result, req, i, &has_cmd);
+		if (status == 1)
 			return (1);
-		}
-		else if (result == 2)
-		{
-			has_cmd = 1;
-			(*i)++;
-		}
-		else if (result == 3)
+		if (status == 0)
 			continue ;
-		else
-			(*i)++;
 	}
 	if (!has_cmd)
-	{
-		free_cmd(req->cur_cmd);
-		req->cur_cmd = NULL;
-		return (2);
-	}
+		return (free_cmd(req->cur_cmd), req->cur_cmd = NULL, 2);
 	return (0);
 }
 
@@ -86,22 +74,6 @@ static void	set_command_path(t_cmd *cmd, t_req *req)
 	}
 }
 
-static void	add_cmd_to_list(t_cmd **list, t_cmd *new_cmd)
-{
-	t_cmd	*current;
-
-	new_cmd->next = NULL;
-	if (!*list)
-	{
-		*list = new_cmd;
-		return ;
-	}
-	current = *list;
-	while (current->next)
-		current = current->next;
-	current->next = new_cmd;
-}
-
 static int	handle_pipe_processing(int *i, t_req *req)
 {
 	if (req->tokens[*i] && !ft_strncmp(req->tokens[*i], "|", 2))
@@ -118,50 +90,29 @@ static int	handle_pipe_processing(int *i, t_req *req)
 
 void	parse_tokens(t_req *req)
 {
-	int		i;
-	int		res;
+	int	i;
+	int	res;
 
-	if (!req->tokens || !req->tokens[0]
-		|| !ft_strncmp(req->tokens[0], "|", 2))
-	{
-		if (req->tokens && req->tokens[0]
-			&& !ft_strncmp(req->tokens[0], "|", 2))
-			ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
-		req->cmds = NULL;
+	if (parse_syntax_check(req))
 		return ;
-	}
-	req->cmds = NULL;
-	req->cur_cmd = NULL;
 	i = 0;
 	while (req->tokens[i])
 	{
 		if (req->heredoc_interrupted)
-		{
-			cleanup_and_return(req);
-			return ;
-		}
+			return (cleanup_and_return(req));
 		res = process_command_tokens(&i, req);
 		if (res == 1)
-		{
-			cleanup_and_return(req);
-			return ;
-		}
+			return (cleanup_and_return(req));
 		else if (res == 2)
 		{
 			if (req->heredoc_interrupted || handle_pipe_processing(&i, req))
-			{
-				cleanup_and_return(req);
-				return ;
-			}
+				return (cleanup_and_return(req));
 			continue ;
 		}
 		set_command_path(req->cur_cmd, req);
 		add_cmd_to_list(&req->cmds, req->cur_cmd);
 		req->cur_cmd = NULL;
 		if (handle_pipe_processing(&i, req))
-		{
-			cleanup_and_return(req);
-			return ;
-		}
+			return (cleanup_and_return(req));
 	}
 }

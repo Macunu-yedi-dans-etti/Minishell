@@ -15,46 +15,18 @@
 
 t_cmd	*init_cmd(void)
 {
-    t_cmd	*cmd;
+	t_cmd	*cmd;
 
-    cmd = malloc(sizeof(t_cmd));
-    if (!cmd)
-        return (ms_error(ERR_ALLOC, "t_cmd", 1, NULL), NULL);
-    cmd->full_cmd = NULL;
-    cmd->full_path = NULL;
-    cmd->infile = STDIN_FILENO;
-    cmd->outfile = STDOUT_FILENO;
-    cmd->redirects = NULL;
-    cmd->next = NULL;
-    return (cmd);
-}
-
-int	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
-{
-	t_redirect	*new_redir;
-	t_redirect	*current;
-
-	new_redir = malloc(sizeof(t_redirect));
-	if (!new_redir)
-		return (1);
-	new_redir->type = type;
-	new_redir->filename = ft_strdup(filename);
-	if (!new_redir->filename)
-	{
-		free(new_redir);
-		return (1);
-	}
-	new_redir->next = NULL;
-	if (!cmd->redirects)
-		cmd->redirects = new_redir;
-	else
-	{
-		current = cmd->redirects;
-		while (current->next)
-			current = current->next;
-		current->next = new_redir;
-	}
-	return (0);
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (ms_error(ERR_ALLOC, "t_cmd", 1, NULL), NULL);
+	cmd->full_cmd = NULL;
+	cmd->full_path = NULL;
+	cmd->infile = STDIN_FILENO;
+	cmd->outfile = STDOUT_FILENO;
+	cmd->redirects = NULL;
+	cmd->next = NULL;
+	return (cmd);
 }
 
 int	is_redirect(const char *token)
@@ -65,15 +37,46 @@ int	is_redirect(const char *token)
 	return (0);
 }
 
-void	free_redirects(t_redirect *redir)
+void	cleanup_and_return(t_req *req)
 {
-	t_redirect	*next;
-
-	while (redir)
+	if (req->cur_cmd)
 	{
-		next = redir->next;
-		free(redir->filename);
-		free(redir);
-		redir = next;
+		free_cmd(req->cur_cmd);
+		req->cur_cmd = NULL;
 	}
+	if (req->cmds)
+	{
+		free_cmds(req->cmds);
+		req->cmds = NULL;
+	}
+}
+
+void	add_cmd_to_list(t_cmd **list, t_cmd *new_cmd)
+{
+	t_cmd	*current;
+
+	new_cmd->next = NULL;
+	if (!*list)
+	{
+		*list = new_cmd;
+		return ;
+	}
+	current = *list;
+	while (current->next)
+		current = current->next;
+	current->next = new_cmd;
+}
+
+int	parse_syntax_check(t_req *req)
+{
+	if (!req->tokens || !req->tokens[0]
+		|| !ft_strncmp(req->tokens[0], "|", 2))
+	{
+		if (req->tokens && req->tokens[0]
+			&& !ft_strncmp(req->tokens[0], "|", 2))
+			ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
+		req->cmds = NULL;
+		return (1);
+	}
+	return (0);
 }

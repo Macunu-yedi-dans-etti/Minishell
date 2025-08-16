@@ -12,6 +12,34 @@
 
 #include "../../minishell.h"
 
+static int	add_redirect(t_cmd *cmd, t_redirect_type type, char *filename)
+{
+	t_redirect	*new_redir;
+	t_redirect	*current;
+
+	new_redir = malloc(sizeof(t_redirect));
+	if (!new_redir)
+		return (1);
+	new_redir->type = type;
+	new_redir->filename = ft_strdup(filename);
+	if (!new_redir->filename)
+	{
+		free(new_redir);
+		return (1);
+	}
+	new_redir->next = NULL;
+	if (!cmd->redirects)
+		cmd->redirects = new_redir;
+	else
+	{
+		current = cmd->redirects;
+		while (current->next)
+			current = current->next;
+		current->next = new_redir;
+	}
+	return (0);
+}
+
 static int	handle_redir(char *redir, char *file, t_req *req)
 {
 	if (!file)
@@ -37,7 +65,7 @@ static int	handle_redir(char *redir, char *file, t_req *req)
 	return (0);
 }
 
-int	set_redirection(int *i, t_req *req)
+static int	set_redirection(int *i, t_req *req)
 {
 	char	*redir;
 
@@ -63,6 +91,7 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 	if (!expanded)
 	{
 		ms_error(ERR_ALLOC, "expanded", 1, req);
+		free(expanded);
 		return (1);
 	}
 	cmd->full_cmd = ft_double_extension(cmd->full_cmd, expanded);

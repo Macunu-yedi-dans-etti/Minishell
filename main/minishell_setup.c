@@ -75,6 +75,7 @@ t_req	setup(char **av, char **env)
 	t_req	res;
 
 	res.cmds = NULL;
+	res.cur_cmd = NULL;
 	res.tokens = NULL;
 	res.trimmed_input = NULL;
 	res.envp = ft_double_copy(env);

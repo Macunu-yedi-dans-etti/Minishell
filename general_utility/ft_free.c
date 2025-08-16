@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 14:16:57 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/16 22:23:57 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,18 @@ void	free_all(t_pipeline_data *data)
 			data->req->cur_cmd = NULL;
 		}
 		free_req(data->req);
+	}
+}
+
+void	free_redirects(t_redirect *redir)
+{
+	t_redirect	*next;
+
+	while (redir)
+	{
+		next = redir->next;
+		free(redir->filename);
+		free(redir);
+		redir = next;
 	}
 }

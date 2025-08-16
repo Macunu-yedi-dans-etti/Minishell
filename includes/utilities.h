@@ -38,6 +38,7 @@ void			free_cmds(t_cmd *cmds);
 void			free_all(t_pipeline_data *data);
 void			free_req(t_req *req);
 void			free_cmd(t_cmd *cmd);
+void			free_redirects(t_redirect *redir);
 
 /* FD utilities */
 void			safe_close(int *fd);

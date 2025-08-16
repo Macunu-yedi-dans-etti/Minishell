@@ -31,11 +31,15 @@ int	process_input(char *output, t_req *res)
 	res->trimmed_input = trimmed_output;
 	if (!tokenize_and_validate(res))
 		return (free(trimmed_output), res->trimmed_input = NULL, 0);
-	return (free(trimmed_output), res->trimmed_input = NULL, 1);
+	free(trimmed_output);
+	res->trimmed_input = NULL;
+	return (1);
 }
 
 int	execute_pipeline(t_req *res)
 {
+	res->cmds = NULL;
+	res->cur_cmd = NULL;
 	parse_tokens(res);
 	if (!res->cmds)
 		return (0);

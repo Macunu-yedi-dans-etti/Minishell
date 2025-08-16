@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 17:06:13 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/16 22:12:31 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,10 @@
 char			*mini_getinput(t_req input);
 t_req			setup(char **av, char **env);
 int				execute_pipeline(t_req *res);
-void			free_redirects(t_redirect *redir);
 
-int				is_redirect(const char *token);
 int				process_empty_cmd_case(int *i, t_cmd **cmds, t_req *req);
 int				process_pipe_case(int *i, t_cmd **cmds, t_req *req);
 int				handle_token_processing(int *i, t_req *req);
-int				set_redirection(int *i, t_req *req);
 char			**quote_control_and_expand(t_req *res);
 char			*expand_token_var(char *str, int *i, t_req *res);
 #endif
