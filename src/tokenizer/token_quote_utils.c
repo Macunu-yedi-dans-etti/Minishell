@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/15 23:38:06 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/16 21:34:24 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,18 +122,3 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 	return (result);
 }
 
-int	check_valid_tokens(char **tokens)
-{
-	int	i;
-
-	if (!tokens)
-		return (0);
-	i = 0;
-	while (tokens[i])
-	{
-		if (tokens[i][0] != '\0')
-			return (1);
-		i++;
-	}
-	return (0);
-}

@@ -19,7 +19,6 @@
 void			parse_tokens(t_req *req);
 int				process_input(char *output, t_req *res);
 int				tokenize_and_validate(t_req *res);
-char			**quote_control_and_expand(t_req *res);
 char			**expand_tokens(char **tokens, t_req *res);
 t_cmd			*init_cmd(void);
 int				add_redirect(t_cmd *cmd, t_redirect_type type, char *filename);
