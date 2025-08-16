@@ -32,7 +32,7 @@ static int	process_command_tokens(int *i, t_req *req)
 	int	has_cmd;
 	int	result;
 
-	req->cur_cmd = init_cmd(req);
+	req->cur_cmd = init_cmd();
 	if (!req->cur_cmd)
 		return (1);
 	has_cmd = 0;
