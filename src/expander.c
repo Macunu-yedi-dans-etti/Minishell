@@ -47,13 +47,15 @@ static int	is_var_char(int c)
 
 char	*expand_token_var(char *str, int *i, t_req *res)
 {
-	int		start;
-	char	*name;
-	char	*value;
-	char	*special;
-	char	*dup;
+	int     start;
+	char    *name;
+	char    *value;
+	char    *special;
+	char    *dup;
 
 	(*i)++;
+	if (str[*i] == '"' || str[*i] == '\'')
+		return (ft_strdup(""));
 	if (!str[*i])
 		return (ft_strdup("$"));
 	special = expand_special_vars(str, i, res);
@@ -66,10 +68,8 @@ char	*expand_token_var(char *str, int *i, t_req *res)
 		(*i)++;
 	name = ft_substr(str, start, *i - start);
 	value = mini_getenv(name, res->envp, 1);
-	free(name);
 	if (!value)
-		return (ft_strdup(""));
+		return (free(name), ft_strdup(""));
 	dup = ft_strdup(value);
-	free(value);
-	return (dup);
+	return (free(name), free(value), dup);
 }
