@@ -30,6 +30,10 @@ SRCS = main/minishell.c \
 	   src/builtin/builtin_env.c\
 	   src/builtin/builtin_exit.c\
 	   src/builtin/export/builtin_export.c\
+	   src/builtin/export/export_validation.c\
+	   src/builtin/export/export_list.c\
+	   src/builtin/export/export_print.c\
+	   src/builtin/export/export_utils.c\
 	   src/builtin/builtin_unset.c\
 	   src/builtin/builtin_pwd.c\
 	   src/builtin/run_builtin.c\
