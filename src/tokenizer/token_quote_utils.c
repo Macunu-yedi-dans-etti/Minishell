@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_quote_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 17:52:44 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/17 19:25:46 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,4 +121,3 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 	}
 	return (result);
 }
-

@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/17 15:14:05 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 19:24:05 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,24 +81,3 @@ void	free_req(t_req *req)
 	if (req->tokens)
 		ft_double_free(&req->tokens);
 }
-
-void	free_all(t_pipeline_data *data)
-{
-	if (!data)
-		return ;
-	if (data->req)
-	{
-		if (data->req->cmds)
-		{
-			free_cmds(data->req->cmds);
-			data->req->cmds = NULL;
-		}
-		if (data->req->cur_cmd)
-		{
-			free_cmd(data->req->cur_cmd);
-			data->req->cur_cmd = NULL;
-		}
-		free_req(data->req);
-	}
-}
-
