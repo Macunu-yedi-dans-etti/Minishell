@@ -5,24 +5,19 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 19:25:46 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/17 20:09:32 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/17 20:11:58 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int	validate_quotes(char *str)
+static int	validate_quotes(char *str, int i, int single_count,
+	int double_count)
 {
-	int		i;
-	int		single_count;
-	int		double_count;
-	int		in_single;
-	int		in_double;
+	int	in_single;
+	int	in_double;
 
-	i = 0;
-	single_count = 0;
-	double_count = 0;
 	in_single = 0;
 	in_double = 0;
 	while (str[i])
@@ -39,72 +34,42 @@ static int	validate_quotes(char *str)
 		}
 		i++;
 	}
-	if (single_count % 2 == 0 && double_count % 2 == 0)
-		return (1);
-	else
-		return (0);
+	return ((single_count % 2 == 0 && double_count % 2 == 0));
 }
 
-char	*process_quotes_and_expand(char *input, t_req *res)
+static char	*handle_single_quotes(char *input, int *i, char *result)
 {
-	char	*result;
+	int		start;
 	char	*temp;
 	char	*expanded;
-	int		i;
-	int		start;
-	char	c[2];
 
-	result = ft_strdup("");
-	i = 0;
-	if (!input)
-		return (result);
-	if (!validate_quotes(input))
-		return (free(result), NULL);
-	while (input[i])
+	start = ++(*i);
+	while (input[*i] && input[*i] != '\'')
+		(*i)++;
+	if (input[*i])
 	{
-		if (input[i] == '\'')
+		temp = ft_substr(input, start, *i - start);
+		expanded = ft_strjoin(result, temp);
+		free(result);
+		free(temp);
+		result = expanded;
+		(*i)++;
+	}
+	return (result);
+}
+
+static char	*handle_double_quotes(char *input, int *i, char *result, t_req *res)
+{
+	char	c[2];
+	char	*temp;
+	char	*expanded;
+
+	(*i)++;
+	while (input[*i] && input[*i] != '"')
+	{
+		if (input[*i] == '$')
 		{
-			start = ++i;
-			while (input[i] && input[i] != '\'')
-				i++;
-			if (input[i])
-			{
-				temp = ft_substr(input, start, i - start);
-				expanded = ft_strjoin(result, temp);
-				free(result);
-				free(temp);
-				result = expanded;
-				i++;
-			}
-		}
-		else if (input[i] == '"')
-		{
-			i++;
-			while (input[i] && input[i] != '"')
-			{
-				if (input[i] == '$')
-				{
-					temp = expand_token_var(input, &i, res);
-					expanded = ft_strjoin(result, temp);
-					free(result);
-					free(temp);
-					result = expanded;
-				}
-				else
-				{
-					c[0] = input[i++];
-					c[1] = '\0';
-					temp = ft_strjoin(result, c);
-					free(result);
-					result = temp;
-				}
-			}
-			if (input[i] == '"')
-				i++;
-		}
-		else if (input[i] == '$')
-		{
-			temp = expand_token_var(input, &i, res);
+			temp = expand_token_var(input, i, res);
 			expanded = ft_strjoin(result, temp);
 			free(result);
 			free(temp);
@@ -112,12 +77,62 @@ char	*process_quotes_and_expand(char *input, t_req *res)
 		}
 		else
 		{
-			c[0] = input[i++];
+			c[0] = input[(*i)++];
 			c[1] = '\0';
 			temp = ft_strjoin(result, c);
 			free(result);
 			result = temp;
 		}
+	}
+	if (input[*i] == '"')
+		(*i)++;
+	return (result);
+}
+
+static char	*handle_no_quotes(char *input, int *i, char *result, t_req *res)
+{
+	char	c[2];
+	char	*temp;
+	char	*expanded;
+
+	if (input[*i] == '$')
+	{
+		temp = expand_token_var(input, i, res);
+		expanded = ft_strjoin(result, temp);
+		free(result);
+		free(temp);
+		result = expanded;
+	}
+	else
+	{
+		c[0] = input[(*i)++];
+		c[1] = '\0';
+		temp = ft_strjoin(result, c);
+		free(result);
+		result = temp;
+	}
+	return (result);
+}
+
+char	*process_quotes_and_expand(char *input, t_req *res)
+{
+	char	*result;
+	int		i;
+
+	if (!input)
+		return (ft_strdup(""));
+	if (!validate_quotes(input, 0, 0, 0))
+		return (NULL);
+	result = ft_strdup("");
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'')
+			result = handle_single_quotes(input, &i, result);
+		else if (input[i] == '"')
+			result = handle_double_quotes(input, &i, result, res);
+		else
+			result = handle_no_quotes(input, &i, result, res);
 	}
 	return (result);
 }
