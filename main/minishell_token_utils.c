@@ -55,7 +55,7 @@ static char	**quote_control_and_expand(t_req *res)
 
 int	tokenize_and_validate(t_req *res)
 {
-	res->tokens = tokenize_input(res->trimmed_input);
+	res->tokens = tokenize_input(res->trimmed_input, 0, 0, 16);
 	if (!res->tokens)
 		return (0);
 	res->tokens = quote_control_and_expand(res);

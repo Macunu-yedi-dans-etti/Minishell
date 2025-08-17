@@ -80,17 +80,12 @@ static int	add_string_to_array(char ***tokens, char *token_str, int *count,
 	return (1);
 }
 
-char	**tokenize_input(const char *trimmed_input)
+char	**tokenize_input(const char *trimmed_input, int i, int count,
+	int capacity)
 {
 	char	**tokens;
 	char	*token_str;
-	int		i;
-	int		count;
-	int		capacity;
 
-	i = 0;
-	count = 0;
-	capacity = 16;
 	tokens = malloc(sizeof(char *) * capacity);
 	if (!tokens)
 		return (NULL);
