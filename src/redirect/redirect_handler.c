@@ -3,20 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_handler.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:45:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/10 17:43:38 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/17 19:48:14 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int	open_redirect_file(char *filename, t_redirect_type type, t_req *req)
+static int	open_redirect_file(char *filename, t_redirect_type type,
+	t_req *req, int fd)
 {
-	int	fd;
-
-	fd = -1;
 	if (!filename)
 	{
 		ft_putstr_fd("minishell: redirect: filename is NULL\n", 2);
@@ -46,7 +44,7 @@ static int	handle_input_redirect(t_redirect *redir, int *last_in, t_req *req)
 {
 	int	fd;
 
-	fd = open_redirect_file(redir->filename, R_IN, req);
+	fd = open_redirect_file(redir->filename, R_IN, req, -1);
 	if (fd < 0)
 		return (1);
 	if (*last_in != -1 && *last_in != STDIN_FILENO)
@@ -59,12 +57,36 @@ static int	handle_output_redirect(t_redirect *redir, int *last_out, t_req *req)
 {
 	int	fd;
 
-	fd = open_redirect_file(redir->filename, redir->type, req);
+	fd = open_redirect_file(redir->filename, redir->type, req, -1);
 	if (fd < 0)
 		return (1);
 	if (*last_out != -1 && *last_out != STDOUT_FILENO)
 		close(*last_out);
 	*last_out = fd;
+	return (0);
+}
+
+static int	process_single_redirect(t_redirect *redir,
+	int *last_in, int *last_out, t_req *req)
+{
+	if (redir->type == R_IN
+		&& handle_input_redirect(redir, last_in, req))
+	{
+		if (*last_in != -1 && *last_in != STDIN_FILENO)
+			close(*last_in);
+		if (*last_out != -1 && *last_out != STDOUT_FILENO)
+			close(*last_out);
+		return (1);
+	}
+	if ((redir->type == R_OUT || redir->type == R_APPEND)
+		&& handle_output_redirect(redir, last_out, req))
+	{
+		if (*last_in != -1 && *last_in != STDIN_FILENO)
+			close(*last_in);
+		if (*last_out != -1 && *last_out != STDOUT_FILENO)
+			close(*last_out);
+		return (1);
+	}
 	return (0);
 }
 
@@ -79,24 +101,8 @@ int	apply_redirects(t_pipeline_data *data)
 	last_out = -1;
 	while (redir)
 	{
-		if (redir->type == R_IN
-			&& handle_input_redirect(redir, &last_in, data->req))
-		{
-			if (last_in != -1 && last_in != STDIN_FILENO)
-				close(last_in);
-			if (last_out != -1 && last_out != STDOUT_FILENO)
-				close(last_out);
+		if (process_single_redirect(redir, &last_in, &last_out, data->req))
 			return (1);
-		}
-		if ((redir->type == R_OUT || redir->type == R_APPEND)
-			&& handle_output_redirect(redir, &last_out, data->req))
-		{
-			if (last_in != -1 && last_in != STDIN_FILENO)
-				close(last_in);
-			if (last_out != -1 && last_out != STDOUT_FILENO)
-				close(last_out);
-			return (1);
-		}
 		redir = redir->next;
 	}
 	if (last_in != -1)

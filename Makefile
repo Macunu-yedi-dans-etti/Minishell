@@ -39,7 +39,8 @@ SRCS = main/minishell.c \
 	   src/builtin/builtin_pwd.c\
 	   src/builtin/run_builtin.c\
 	   src/redirect/redirect_handler.c\
-	   src/redirect/heredoc_handler.c\
+	   src/redirect/heredoc_handler/heredoc_handler.c\
+	   src/redirect/heredoc_handler/heredoc_handler_utils.c\
        general_utility/ft_free.c \
 	   general_utility/ft_free2.c\
        general_utility/utility.c \

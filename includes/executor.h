@@ -51,5 +51,7 @@ void			wait_for_processes(t_pipeline_data *data);
 
 int				apply_redirects(t_pipeline_data *data);
 int				handle_heredoc(const char *delimiter, t_req *req);
+void			heredoc_sigint_handler(int sig);
+void			do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req);
 
 #endif
