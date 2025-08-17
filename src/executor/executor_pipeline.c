@@ -80,23 +80,18 @@ static void	execute_loop(t_pipeline_data *data)
 
 void	execute_cmds(t_req *req)
 {
+	pid_t			pids_stack[2048];
 	t_pipeline_data	data;
 
 	data.req = req;
 	data.count = cmd_count(&data);
-	if (data.count <= 0 || data.count > 1024)
+	if (data.count <= 0 || data.count > 2048)
 	{
 		req->exit_stat = 1;
 		return ;
 	}
-		data.pids = (pid_t *)malloc(sizeof(pid_t) * data.count);
-		if (!data.pids)
-		{
-				req->exit_stat = 1;
-				return ;
-		}
+	data.pids = pids_stack;
 	ft_memset(data.pids, 0, sizeof(pid_t) * data.count);
 	execute_loop(&data);
 	ft_memset(data.pids, 0, sizeof(pid_t) * data.count);
-		free(data.pids);
 }
