@@ -12,6 +12,22 @@
 
 #include "../../minishell.h"
 
+static void	setup_and_exec_part2(t_pipeline_data *data)
+{
+	if (data->current_cmd->infile != STDIN_FILENO)
+		set_fd(data->current_cmd->infile, STDIN_FILENO);
+	else
+		set_fd(data->real_in, STDIN_FILENO);
+	if (data->current_cmd->outfile != STDOUT_FILENO)
+		set_fd(data->current_cmd->outfile, STDOUT_FILENO);
+	else
+		set_fd(data->output_fd, STDOUT_FILENO);
+	if (data->real_in != STDIN_FILENO)
+		close(data->real_in);
+	if (data->output_fd != STDOUT_FILENO)
+		close(data->output_fd);
+}
+
 static void	setup_and_exec(t_pipeline_data *data)
 {
 	close_extra_fds(data->real_in, data->output_fd);
@@ -28,18 +44,7 @@ static void	setup_and_exec(t_pipeline_data *data)
 		free_all(data);
 		exit(1);
 	}
-	if (data->current_cmd->infile != STDIN_FILENO)
-		set_fd(data->current_cmd->infile, STDIN_FILENO);
-	else
-		set_fd(data->real_in, STDIN_FILENO);
-	if (data->current_cmd->outfile != STDOUT_FILENO)
-		set_fd(data->current_cmd->outfile, STDOUT_FILENO);
-	else
-		set_fd(data->output_fd, STDOUT_FILENO);
-	if (data->real_in != STDIN_FILENO)
-		close(data->real_in);
-	if (data->output_fd != STDOUT_FILENO)
-		close(data->output_fd);
+	setup_and_exec_part2(data);
 	if (is_builtin(data->current_cmd->full_cmd[0]))
 		handle_builtin_execution(data);
 	else
