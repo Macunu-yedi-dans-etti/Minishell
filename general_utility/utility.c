@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utility.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:45:08 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 15:46:01 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/17 11:51:57 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	safe_close(int *fd)
-{
-	if (!fd)
-		return ;
-	if (*fd >= 0 && *fd != STDIN_FILENO && *fd != STDOUT_FILENO
-		&& *fd != STDERR_FILENO)
-	{
-		close(*fd);
-		*fd = -1;
-	}
-}
 
 int	ft_find_chr(const char *s, char c)
 {
@@ -32,18 +20,6 @@ int	ft_find_chr(const char *s, char c)
 	while (s[i] && s[i] != c)
 		i++;
 	return (i);
-}
-
-static void	free_matrix(char **matrix)
-{
-	int	j;
-
-	if (!matrix)
-		return ;
-	j = 0;
-	while (matrix[j])
-		free(matrix[j++]);
-	free(matrix);
 }
 
 char	**ft_double_extension(char **matrix, char *new_str)
@@ -70,6 +46,6 @@ char	**ft_double_extension(char **matrix, char *new_str)
 	if (new_str)
 		new_matrix[i++] = ft_strdup(new_str);
 	new_matrix[i] = NULL;
-	free_matrix(matrix);
+	ft_double_free(&matrix);
 	return (new_matrix);
 }

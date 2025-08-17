@@ -25,12 +25,7 @@ char			**mini_setenv_line(char ***envp, const char *line, t_req *req);
 int				ft_find_chr(const char *s, char c);
 char			**ft_double_extension(char **matrix, char *new_str);
 char			**ft_double_copy(char **envp);
-void			strip_newline(char *s);
 char			*resolve_path(char *cmd, char **envp);
-
-/* List utilities (legacy for other uses) */
-t_list			*ft_lstnew(void *content);
-void			ft_lstadd_back(t_list **lst, t_list *new_node);
 
 /* Memory utilities */
 void			ft_double_free(char ***freee);
@@ -39,8 +34,5 @@ void			free_all(t_pipeline_data *data);
 void			free_req(t_req *req);
 void			free_cmd(t_cmd *cmd);
 void			free_redirects(t_redirect *redir);
-
-/* FD utilities */
-void			safe_close(int *fd);
 
 #endif
