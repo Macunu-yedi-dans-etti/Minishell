@@ -55,9 +55,7 @@ void	handle_external_execution(t_pipeline_data *data)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
 		if (data->current_cmd->full_cmd && data->current_cmd->full_cmd[0])
-		{
 			ft_putendl_fd(data->current_cmd->full_cmd[0], 2);
-		}
 		else
 			ft_putendl_fd("(null)", 2);
 		free_all(data);

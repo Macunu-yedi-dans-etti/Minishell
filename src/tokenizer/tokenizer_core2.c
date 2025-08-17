@@ -33,7 +33,7 @@ static char	*get_operator_string(const char *input, int *i)
 	return (ft_strdup(op));
 }
 
-static char	*gechar_string(const char *input, int *i)
+static char	*get_char_string(const char *input, int *i)
 {
 	while (input[*i] && is_separator(input[*i]))
 		(*i)++;
@@ -89,13 +89,17 @@ char	**tokenize_input(const char *trimmed_input)
 	tokens[0] = NULL;
 	while (trimmed_input[i])
 	{
-		token_str = gechar_string(trimmed_input, &i);
+		token_str = get_char_string(trimmed_input, &i);
 		if (!token_str)
-			return (ft_double_free(&tokens), NULL);
+		{
+			ft_double_free(&tokens);
+			return (NULL);
+		}
 		if (!add_string_to_array(&tokens, token_str, &count, &capacity))
 		{
 			free(token_str);
-			return (ft_double_free(&tokens), NULL);
+			ft_double_free(&tokens);
+			return (NULL);
 		}
 	}
 	return (tokens);

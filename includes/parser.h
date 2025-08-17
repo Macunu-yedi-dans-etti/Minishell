@@ -25,6 +25,4 @@ int				is_redirect(const char *token);
 void			cleanup_and_return(t_req *req);
 void			add_cmd_to_list(t_cmd **list, t_cmd *new_cmd);
 int				parse_syntax_check(t_req *req);
-
-
 #endif

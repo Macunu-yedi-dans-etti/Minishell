@@ -45,7 +45,11 @@ static int	process_command_tokens(int *i, t_req *req)
 	while (req->tokens[*i] && ft_strncmp(req->tokens[*i], "|", 2))
 	{
 		if (req->heredoc_interrupted)
-			return (free_cmd(req->cur_cmd), req->cur_cmd = NULL, 1);
+		{
+			free_cmd(req->cur_cmd);
+			req->cur_cmd = NULL;
+			return (1);
+		}
 		result = handle_token_processing(i, req);
 		status = handle_process_result(result, req, i, &has_cmd);
 		if (status == 1)
@@ -54,7 +58,11 @@ static int	process_command_tokens(int *i, t_req *req)
 			continue ;
 	}
 	if (!has_cmd)
-		return (free_cmd(req->cur_cmd), req->cur_cmd = NULL, 2);
+	{
+		free_cmd(req->cur_cmd);
+		req->cur_cmd = NULL;
+		return (2);
+	}
 	return (0);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/16 22:19:37 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 17:49:42 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,40 @@ static char	*get_input_prompt(t_req *res)
 	return (output);
 }
 
-static int	process_main_loop(t_req *res)
+static void	handle_heredoc_interrupt(t_req *res)
 {
-	char		*output;
+	if (res->cmds)
+	{
+		free_cmds(res->cmds);
+		res->cmds = NULL;
+	}
+	if (res->tokens)
+		ft_double_free(&res->tokens);
+	res->heredoc_interrupted = 0;
+}
 
-	setup_signals(res);
-	ft_double_free(&res->tokens);
-	output = get_input_prompt(res);
+static int	handle_exit_condition(t_req *res, char *output)
+{
 	if (!output)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "exit\n", 5);
-		return (rl_clear_history(), free_req(res), 0);
+		rl_clear_history();
+		free_req(res);
+		return (0);
 	}
+	return (1);
+}
+
+static int	process_main_loop(t_req *res)
+{
+	char	*output;
+
+	setup_signals(res);
+	ft_double_free(&res->tokens);
+	output = get_input_prompt(res);
+	if (!handle_exit_condition(res, output))
+		return (0);
 	if (output[0])
 	{
 		if (process_input(output, res))
@@ -48,16 +69,7 @@ static int	process_main_loop(t_req *res)
 		}
 	}
 	if (res->heredoc_interrupted)
-	{
-		if (res->cmds)
-		{
-			free_cmds(res->cmds);
-			res->cmds = NULL;
-		}
-		if (res->tokens)
-			ft_double_free(&res->tokens);
-		res->heredoc_interrupted = 0;
-	}
+		handle_heredoc_interrupt(res);
 	free(output);
 	if (res->should_exit)
 	{

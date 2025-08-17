@@ -12,19 +12,6 @@
 
 #include "../../minishell.h"
 
-static int	cmd_count(t_cmd *cmds)
-{
-	int	c;
-
-	c = 0;
-	while (cmds)
-	{
-		c++;
-		cmds = cmds->next;
-	}
-	return (c);
-}
-
 int	setup_pipe_output(t_pipeline_data *data)
 {
 	int	output_fd;

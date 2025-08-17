@@ -71,15 +71,27 @@ static int	set_redirection(int *i, t_req *req)
 
 	redir = req->tokens[*i];
 	if (*i > 0 && !ft_strncmp(req->tokens[*i - 1], "|", 2))
-		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
+	{
+		ms_error(ERR_PIPE_SYNTAX, redir, 2, req);
+		return (1);
+	}
 	(*i)++;
 	if (!req->tokens[*i])
-		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
+	{
+		ms_error(ERR_PIPE_SYNTAX, redir, 2, req);
+		return (1);
+	}
 	if (!ft_strncmp(req->tokens[*i], "|", 2))
-		return (ms_error(ERR_PIPE_SYNTAX, "|", 2, req), 1);
+	{
+		ms_error(ERR_PIPE_SYNTAX, "|", 2, req);
+		return (1);
+	}
 	if (ft_strncmp(redir, "<<", 3) && ft_strncmp(redir, ">>", 3)
 		&& ft_strncmp(redir, "<", 2) && ft_strncmp(redir, ">", 2))
-		return (ms_error(ERR_PIPE_SYNTAX, redir, 2, req), 1);
+	{
+		ms_error(ERR_PIPE_SYNTAX, redir, 2, req);
+		return (1);
+	}
 	if (handle_redir(redir, req->tokens[*i], req))
 		return (1);
 	(*i)++;

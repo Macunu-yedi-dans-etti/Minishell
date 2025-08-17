@@ -86,7 +86,10 @@ char	*get_word_string(const char *input, int *i)
 	while (input[*i] && !is_separator(input[*i]) && !is_operator(input[*i]))
 	{
 		if (!process_character(input, i, &builder))
-			return (free(result), NULL);
+		{
+			free(result);
+			return (NULL);
+		}
 	}
 	return (result);
 }

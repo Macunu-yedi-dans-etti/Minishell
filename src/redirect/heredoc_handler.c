@@ -63,12 +63,22 @@ static void	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 	{
 		line = readline("> ");
 		if (!line)
-			(free_cmd(req->cur_cmd), free_cmd(req->cmds), free_req(req),
-				close(pipe_fd[1]), exit(130));
+		{
+			free_cmd(req->cur_cmd);
+			free_cmd(req->cmds);
+			free_req(req);
+			close(pipe_fd[1]);
+			exit(130);
+		}
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
-			return (free(line), close(pipe_fd[1]),
-				(free_cmd(req->cur_cmd), free_cmd(req->cmds), free_req(req)),
-				exit(0));
+		{
+			free(line);
+			close(pipe_fd[1]);
+			free_cmd(req->cur_cmd);
+			free_cmd(req->cmds);
+			free_req(req);
+			return (exit(0));
+		}
 		expanded = expand_line(line, req);
 		write(pipe_fd[1], expanded, ft_strlen(expanded));
 		write(pipe_fd[1], "\n", 1);
@@ -88,12 +98,22 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 		return (-1);
 	old_sigint = signal(SIGINT, SIG_IGN);
 	if (pipe(pipe_fd) == -1)
-		return (perror("minishell: pipe"), req->exit_stat = 1,
-			signal(SIGINT, old_sigint), -1);
+	{
+		perror("minishell: pipe");
+		req->exit_stat = 1;
+		signal(SIGINT, old_sigint);
+		return (-1);
+	}
 	pid = fork();
 	if (pid == -1)
-		return (perror("minishell: fork"), close(pipe_fd[0]), close(pipe_fd[1]),
-			req->exit_stat = 1, signal(SIGINT, old_sigint), -1);
+	{
+		perror("minishell: fork");
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		req->exit_stat = 1;
+		signal(SIGINT, old_sigint);
+		return (-1);
+	}
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_sigint_handler);
@@ -104,9 +124,17 @@ int	handle_heredoc(const char *delimiter, t_req *req)
 	signal(SIGINT, old_sigint);
 	if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
-		return (req->exit_stat = 130, req->heredoc_interrupted = 1,
-			close(pipe_fd[0]), -1);
+	{
+		req->exit_stat = 130;
+		req->heredoc_interrupted = 1;
+		close(pipe_fd[0]);
+		return (-1);
+	}
 	else if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-		return (req->exit_stat = WEXITSTATUS(status), close(pipe_fd[0]), -1);
+	{
+		req->exit_stat = WEXITSTATUS(status);
+		close(pipe_fd[0]);
+		return (-1);
+	}
 	return (pipe_fd[0]);
 }

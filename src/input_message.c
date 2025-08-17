@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_message.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:46:35 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 21:13:48 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 17:50:31 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ static char	*build_prompt_part2(char *input_str, char *cwd, t_req *req)
 	{
 		if (req)
 			req->exit_stat = 1;
-		return (free(cwd), NULL);
+		free(cwd);
+		return (NULL);
 	}
 	return (join_cwd_and_finalize(temp, cwd, req));
 }

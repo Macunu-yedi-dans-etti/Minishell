@@ -42,7 +42,8 @@ static char	**quote_control_and_expand(t_req *res)
 			if (!expanded)
 			{
 				ms_error(ERR_QUOTE, NULL, 258, res);
-				return (ft_double_free(&res->tokens), NULL);
+				ft_double_free(&res->tokens);
+				return (NULL);
 			}
 			free(res->tokens[i]);
 			res->tokens[i] = expanded;
