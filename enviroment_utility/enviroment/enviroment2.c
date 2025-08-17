@@ -1,58 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   enviroment.c                                       :+:      :+:    :+:   */
+/*   enviroment2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 12:35:57 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/13 19:15:32 by musoysal         ###   ########.fr       */
+/*   Created: 2025/08/17 20:31:01 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/17 20:34:29 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-
-static char	*ft_strjoin_free(char *s1, const char *s2)
-{
-	char	*res;
-
-	res = ft_strjoin(s1, s2);
-	free(s1);
-	return (res);
-}
-
-char	**mini_setenv(char *var, char *value, char **envp, int n)
-{
-	int		i;
-	int		len;
-	char	*new_entry;
-
-	if (n < 0)
-		n = ft_strlen(var);
-	new_entry = ft_strjoin(var, "=");
-	if (!new_entry)
-		return (NULL);
-	new_entry = ft_strjoin_free(new_entry, value);
-	if (!new_entry)
-		return (NULL);
-	i = 0;
-	while (envp && envp[i])
-	{
-		len = ft_find_chr(envp[i], '=');
-		if (len < n)
-			len = n;
-		if (!ft_strncmp(envp[i], var, len) && envp[i][len] == '=')
-		{
-			free(envp[i]);
-			envp[i] = new_entry;
-			return (envp);
-		}
-		i++;
-	}
-	envp = ft_double_extension(envp, new_entry);
-	free(new_entry);
-	return (envp);
-}
+#include "../../minishell.h"
 
 static char	**build_new_env(char **envp, const char *var, int len)
 {

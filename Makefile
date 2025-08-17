@@ -45,7 +45,8 @@ SRCS = main/minishell.c \
 	   general_utility/ft_free2.c\
        general_utility/utility.c \
 	   general_utility/resolve_path.c\
-       enviroment_utility/enviroment.c\
+       enviroment_utility/enviroment/enviroment.c\
+	   enviroment_utility/enviroment/enviroment2.c\
 	   enviroment_utility/mini_setenv_line.c\
 
 OBJS = $(SRCS:.c=.o)
