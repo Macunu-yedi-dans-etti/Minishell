@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_pipeline.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 19:21:07 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/10 11:15:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/17 13:22:42 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/17 13:22:42 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

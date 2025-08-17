@@ -41,7 +41,6 @@ void			exec_single_builtin(t_pipeline_data *data);
 
 void			execute_cmds(t_req *req);
 
-int				init_execution(t_cmd *cmds, pid_t **pids, t_req *req);
 int				setup_pipe_output(t_pipeline_data *data);
 int				setup_pipe_input(t_pipeline_data *data);
 void			handle_pipe_cleanup(t_pipeline_data *data);

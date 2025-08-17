@@ -22,6 +22,5 @@ int				append_char_to_result(char **result, int *len, int *capacity,
 char			**tokenize_input(const char *input);
 char			*get_word_string(const char *input, int *i);
 char			*process_quotes_and_expand(char *input, t_req *res);
-int				validate_quotes(char *str);
 char			*process_quotes_and_expand(char *input, t_req *res);
 #endif

@@ -25,7 +25,6 @@ int				builtin_cd(t_pipeline_data *data);
 int				builtin_export(t_pipeline_data *data);
 int				builtin_unset(t_pipeline_data *data);
 int				builtin_exit(t_pipeline_data *data);
-void			print_cd_error(char *arg, char *msg);
 char			*get_cd_target(t_cmd *cmd, t_req *req, int *need_free);
 int				cd_free_and_home_error(char *oldpwd, t_req *req);
 int				cd_free_and_oldpwd_error(char *oldpwd, t_req *req);

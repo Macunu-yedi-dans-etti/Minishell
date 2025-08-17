@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export_print.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 16:00:49 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 09:00:15 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/17 17:41:07 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "export_utils.h"
 
-void	sort_str_array(char **arr)
+static void	sort_str_array(char **arr)
 {
 	int		i;
 	int		j;
@@ -36,7 +36,7 @@ void	sort_str_array(char **arr)
 	}
 }
 
-char	**merge_env_export(char **envp, char **export_list)
+static char	**merge_env_export(char **envp, char **export_list)
 {
 	int		env_count;
 	int		exp_count;

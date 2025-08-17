@@ -6,11 +6,24 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:42:09 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/16 22:23:57 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:14:05 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static void	free_redirects(t_redirect *redir)
+{
+	t_redirect	*next;
+
+	while (redir)
+	{
+		next = redir->next;
+		free(redir->filename);
+		free(redir);
+		redir = next;
+	}
+}
 
 void	ft_double_free(char ***ptr)
 {
@@ -89,15 +102,3 @@ void	free_all(t_pipeline_data *data)
 	}
 }
 
-void	free_redirects(t_redirect *redir)
-{
-	t_redirect	*next;
-
-	while (redir)
-	{
-		next = redir->next;
-		free(redir->filename);
-		free(redir);
-		redir = next;
-	}
-}

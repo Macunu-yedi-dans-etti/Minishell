@@ -6,13 +6,13 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/16 21:34:24 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 17:40:16 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	validate_quotes(char *str)
+static int	validate_quotes(char *str)
 {
 	int		i;
 	int		single_count;

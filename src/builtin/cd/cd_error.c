@@ -12,7 +12,7 @@
 
 #include "../../../minishell.h"
 
-void	print_cd_error(char *arg, char *msg)
+static void	print_cd_error(char *arg, char *msg)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
 	if (arg)

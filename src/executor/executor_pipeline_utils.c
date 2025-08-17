@@ -25,27 +25,6 @@ static int	cmd_count(t_cmd *cmds)
 	return (c);
 }
 
-int	init_execution(t_cmd *cmds, pid_t **pids, t_req *req)
-{
-	int	count;
-
-	count = cmd_count(cmds);
-	if (count <= 0 || count > 1024)
-	{
-		req->exit_stat = 1;
-		return (-1);
-	}
-	*pids = ft_calloc(count, sizeof(pid_t));
-	if (!*pids)
-	{
-		*pids = NULL;
-		perror("malloc");
-		req->exit_stat = 1;
-		return (-1);
-	}
-	return (count);
-}
-
 int	setup_pipe_output(t_pipeline_data *data)
 {
 	int	output_fd;

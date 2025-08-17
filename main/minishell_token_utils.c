@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/20 10:00:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 10:00:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/17 13:22:32 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/17 13:22:32 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	has_quotes_or_variables(char *str)
 	return (0);
 }
 
-char	**quote_control_and_expand(t_req *res)
+static char	**quote_control_and_expand(t_req *res)
 {
 	int		i;
 	char	*expanded;

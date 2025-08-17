@@ -43,7 +43,7 @@ void	exec_single_builtin(t_pipeline_data *data)
 	backup_in = -1;
 	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
 	{
-		data->req->exit_stat = 0;
+		data->req->exit_stat = 1;
 		return ;
 	}
 	if (apply_redirects(data))
