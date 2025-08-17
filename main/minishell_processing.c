@@ -30,9 +30,8 @@ int	process_input(char *output, t_req *res)
 			free(trimmed_output), 0);
 	res->trimmed_input = trimmed_output;
 	if (!tokenize_and_validate(res))
-		return (free(trimmed_output), res->trimmed_input = NULL, 0);
+		return (free(trimmed_output), 0);
 	free(trimmed_output);
-	res->trimmed_input = NULL;
 	return (1);
 }
 
