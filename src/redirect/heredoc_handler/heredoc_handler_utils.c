@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:30:01 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 19:57:59 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:15:15 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,16 +76,4 @@ void	handle_heredoc_line(char *line, const char *delimiter,
 	write(pipe_fd[1], "\n", 1);
 	free(expanded);
 	free(line);
-}
-
-void	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
-{
-	char	*line;
-
-	close(pipe_fd[0]);
-	while (1)
-	{
-		line = readline("> ");
-		handle_heredoc_line(line, delimiter, pipe_fd, req);
-	}
 }

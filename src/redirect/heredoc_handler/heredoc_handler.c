@@ -6,11 +6,23 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:22:42 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 19:59:06 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:15:15 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../minishell.h"
+
+static void	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
+{
+	char	*line;
+
+	close(pipe_fd[0]);
+	while (1)
+	{
+		line = readline("> ");
+		handle_heredoc_line(line, delimiter, pipe_fd, req);
+	}
+}
 
 static int	start_heredoc_process(const char *delimiter,
 	int pipe_fd[2], t_req *req, void (*old_sigint)(int))

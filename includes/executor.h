@@ -33,7 +33,6 @@ void			close_extra_fds(int keep1, int keep2);
 void			restore_io(int *backup_in, int *backup_out);
 
 void			handle_builtin_execution(t_pipeline_data *data);
-void			handle_external_execution(t_pipeline_data *data);
 
 pid_t			exec_external_cmd(t_pipeline_data *data);
 
@@ -52,6 +51,6 @@ void			wait_for_processes(t_pipeline_data *data);
 int				apply_redirects(t_pipeline_data *data);
 int				handle_heredoc(const char *delimiter, t_req *req);
 void			heredoc_sigint_handler(int sig);
-void			do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req);
-
+void			handle_heredoc_line(char *line, const char *delimiter,
+					int pipe_fd[2], t_req *req);
 #endif
