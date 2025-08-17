@@ -1,9 +1,9 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer_core2.c                                  :+:      :+:    :+:   */
+/*   tokenizer_core2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42istanbul.c>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 21:19:52 by haloztur          #+#    #+#             */
 /*   Updated: 2025/07/19 21:19:52 by haloztur         ###   ########.fr       */
@@ -14,21 +14,29 @@
 
 static char	*get_operator_string(const char *input, int *i)
 {
-	char	op[3];
+	char	op[4];
 
 	if ((input[*i] == '<' || input[*i] == '>')
-		&& input[*i] == input[*i + 1])
+		&& input[*i] == input[*i + 1]
+		&& input[*i + 2] != '>' && input[*i + 2] != '<')
 	{
 		op[0] = input[*i];
 		op[1] = input[*i];
 		op[2] = '\0';
 		*i += 2;
 	}
-	else
+	else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
 	{
 		op[0] = input[*i];
 		op[1] = '\0';
 		(*i)++;
+	}
+	else
+	{
+		op[0] = input[*i];
+		op[1] = input[*i + 1];
+		op[2] = '\0';
+		*i += 2;
 	}
 	return (ft_strdup(op));
 }
@@ -62,7 +70,7 @@ static int	resize_string_array(char ***tokens, int *capacity, int count)
 }
 
 static int	add_string_to_array(char ***tokens, char *token_str, int *count,
-		int *capacity)
+	int *capacity)
 {
 	if (*count >= *capacity - 1 && !resize_string_array(tokens, capacity,
 			*count))

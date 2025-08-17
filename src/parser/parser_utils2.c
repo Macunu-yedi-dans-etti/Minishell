@@ -70,11 +70,6 @@ static int	set_redirection(int *i, t_req *req)
 	char	*redir;
 
 	redir = req->tokens[*i];
-	if (*i > 0 && !ft_strncmp(req->tokens[*i - 1], "|", 2))
-	{
-		ms_error(ERR_PIPE_SYNTAX, redir, 2, req);
-		return (1);
-	}
 	(*i)++;
 	if (!req->tokens[*i])
 	{

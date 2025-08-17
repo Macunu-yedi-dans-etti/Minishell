@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include "../../includes/utilities.h"
 
 t_cmd	*init_cmd(void)
 {
