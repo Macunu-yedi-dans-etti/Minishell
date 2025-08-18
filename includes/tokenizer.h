@@ -23,5 +23,5 @@ char			**tokenize_input(const char *trimmed_input, int i, int count,
 					int capacity);
 char			*get_word_string(const char *input, int *i);
 char			*process_quotes_and_expand(char *input, t_req *res);
-char			*process_quotes_and_expand(char *input, t_req *res);
+char			*handle_single_quotes(char *input, int *i, char *result);
 #endif

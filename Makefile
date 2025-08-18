@@ -12,6 +12,7 @@ SRCS = main/minishell.c \
 	   src/tokenizer/tokenizer_core2.c\
 	   src/tokenizer/tokenizer_utils.c\
 	   src/tokenizer/token_quote_utils.c\
+	   src/tokenizer/token_quote_utils2.c\
 	   src/parser/parser.c\
 	   src/parser/parser_utils.c\
 	   src/parser/parser_utils2.c\
@@ -55,7 +56,7 @@ LIBFT_DIR = includes/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror -fsanitize=address
 LDFLAGS = -lreadline
 
 all: $(NAME)

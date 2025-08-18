@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_quote_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:09:32 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 20:11:58 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/18 09:00:59 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,30 +37,22 @@ static int	validate_quotes(char *str, int i, int single_count,
 	return ((single_count % 2 == 0 && double_count % 2 == 0));
 }
 
-static char	*handle_single_quotes(char *input, int *i, char *result)
-{
-	int		start;
-	char	*temp;
-	char	*expanded;
+/* handle_single_quotes moved to token_quote_utils2.c */
 
-	start = ++(*i);
-	while (input[*i] && input[*i] != '\'')
-		(*i)++;
-	if (input[*i])
-	{
-		temp = ft_substr(input, start, *i - start);
-		expanded = ft_strjoin(result, temp);
-		free(result);
-		free(temp);
-		result = expanded;
-		(*i)++;
-	}
-	return (result);
+static char	*append_char(char *result, char c)
+{
+	char	tmp[2];
+	char	*new_res;
+
+	tmp[0] = c;
+	tmp[1] = '\0';
+	new_res = ft_strjoin(result, tmp);
+	free(result);
+	return (new_res);
 }
 
 static char	*handle_double_quotes(char *input, int *i, char *result, t_req *res)
 {
-	char	c[2];
 	char	*temp;
 	char	*expanded;
 
@@ -76,13 +68,7 @@ static char	*handle_double_quotes(char *input, int *i, char *result, t_req *res)
 			result = expanded;
 		}
 		else
-		{
-			c[0] = input[(*i)++];
-			c[1] = '\0';
-			temp = ft_strjoin(result, c);
-			free(result);
-			result = temp;
-		}
+			result = append_char(result, input[(*i)++]);
 	}
 	if (input[*i] == '"')
 		(*i)++;
