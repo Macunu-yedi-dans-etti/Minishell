@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/20 14:40:00 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/20 14:40:00 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/18 11:22:27 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/18 11:22:27 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

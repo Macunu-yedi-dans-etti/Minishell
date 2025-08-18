@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_error.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 19:23:15 by haloztur          #+#    #+#             */
-/*   Updated: 2025/07/26 17:05:30 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/18 11:20:54 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/18 11:20:56 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_setenv_line.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 12:40:40 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/19 19:24:04 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/18 11:20:11 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/18 11:20:12 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   resolve_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/13 12:49:15 by musoysal          #+#    #+#             */
-/*   Updated: 2025/07/26 18:38:15 by haloztur         ###   ########.fr       */
+/*   Created: 2025/08/18 11:19:55 by haloztur          #+#    #+#             */
+/*   Updated: 2025/08/18 11:19:58 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
