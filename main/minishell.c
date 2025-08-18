@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 14:49:00 by musoysal          #+#    #+#             */
-/*   Updated: 2025/08/17 17:49:42 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/18 11:51:23 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	main(int ac, char **av, char **env)
 		ft_putstr_fd("Usage: ", 2);
 		if (av && av[0])
 			ft_putstr_fd(av[0], 2);
+		ft_putstr_fd("\n", 2);
 		return (1);
 	}
 	res = setup(av, env);

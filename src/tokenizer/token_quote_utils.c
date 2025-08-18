@@ -6,7 +6,7 @@
 /*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:09:32 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/18 09:00:59 by musoysal         ###   ########.fr       */
+/*   Updated: 2025/08/18 16:02:20 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ static int	validate_quotes(char *str, int i, int single_count,
 		}
 		i++;
 	}
-	return ((single_count % 2 == 0 && double_count % 2 == 0));
+	if (single_count % 2 != 0 || double_count % 2 != 0)
+		return (0);
+	return (1);
 }
-
-/* handle_single_quotes moved to token_quote_utils2.c */
 
 static char	*append_char(char *result, char c)
 {
