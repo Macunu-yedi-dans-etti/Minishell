@@ -15,7 +15,6 @@
 
 # include "types.h"
 
-/* Signal handling */
 void			handle_sigint(int sig);
 void			handle_sigquit(int sig);
 void			setup_signals(t_req *req);

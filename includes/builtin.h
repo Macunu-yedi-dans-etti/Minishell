@@ -15,7 +15,6 @@
 
 # include "types.h"
 
-/* Builtin functions */
 int				run_builtin(t_pipeline_data *data);
 int				is_builtin(char *cmd);
 int				builtin_echo(t_pipeline_data *data);

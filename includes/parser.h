@@ -15,7 +15,6 @@
 
 # include "types.h"
 
-/* Parser functions */
 void			parse_tokens(t_req *req);
 int				process_input(char *output, t_req *res);
 int				tokenize_and_validate(t_req *res);
