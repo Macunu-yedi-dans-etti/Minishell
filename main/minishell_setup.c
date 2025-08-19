@@ -46,6 +46,7 @@ static void	tier_pid(t_req *p)
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);
+	p->pid = pid - 1;
 }
 
 static t_req	init_variable(t_req prompt, char *str, char **av)

@@ -20,7 +20,7 @@ static char	*expand_special_vars(char *str, int *i, t_req *res)
 	if (str[*i] == '?')
 		return ((*i)++, ft_itoa(res->exit_stat));
 	if (str[*i] == '$')
-		return ((*i)++, ft_itoa(getpid()));
+		return ((*i)++, ft_itoa(res->pid));
 	if (str[*i] == '_')
 	{
 		(*i)++;

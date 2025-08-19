@@ -58,6 +58,7 @@ typedef struct s_request
 	int			exit_stat;
 	int			should_exit;
 	int			heredoc_interrupted;
+	pid_t		pid;
 }				t_req;
 
 typedef struct s_word_builder
