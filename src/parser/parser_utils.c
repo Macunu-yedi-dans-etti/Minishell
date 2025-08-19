@@ -18,7 +18,10 @@ t_cmd	*init_cmd(void)
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
-		return (ms_error(ERR_ALLOC, "t_cmd", 1, NULL), NULL);
+	{
+		ms_error(ERR_ALLOC, "t_cmd", 1, NULL);
+		return (NULL);
+	}
 	cmd->full_cmd = NULL;
 	cmd->full_path = NULL;
 	cmd->infile = STDIN_FILENO;

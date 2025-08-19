@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser1.c                                          :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:14:48 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 19:14:49 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:39:33 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	parse_tokens(t_req *req)
 	{
 		if (req->heredoc_interrupted)
 			return (cleanup_and_return(req));
-		res = process_command_tokens(&i, req);
+		res = process_command_tokens(&i, req, 0);
 		if (res == 1)
 			return (cleanup_and_return(req));
 		else if (res == 2)

@@ -43,11 +43,10 @@ static int	check_heredoc_and_free(t_req *req)
 	return (0);
 }
 
-int	process_command_tokens(int *i, t_req *req)
+int	process_command_tokens(int *i, t_req *req, int status)
 {
 	int	has_cmd;
 	int	result;
-	int	status;
 
 	req->cur_cmd = init_cmd();
 	if (!req->cur_cmd)
@@ -65,7 +64,11 @@ int	process_command_tokens(int *i, t_req *req)
 			continue ;
 	}
 	if (!has_cmd)
-		return (free_cmd(req->cur_cmd), req->cur_cmd = NULL, 2);
+	{
+		free_cmd(req->cur_cmd);
+		req->cur_cmd = NULL;
+		return (2);
+	}
 	return (0);
 }
 

@@ -18,8 +18,6 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <signal.h>
-# include <dirent.h>
-# include <sys/ioctl.h>
 # include <errno.h>
 
 typedef enum e_redirect_type
