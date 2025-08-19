@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 19:22:55 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/17 17:39:49 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/19 11:21:26 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ char			*mini_getinput(t_req input);
 t_req			setup(char **av, char **env);
 int				execute_pipeline(t_req *res);
 
-int				process_empty_cmd_case(int *i, t_cmd **cmds, t_req *req);
-int				process_pipe_case(int *i, t_cmd **cmds, t_req *req);
 int				handle_token_processing(int *i, t_req *req);
 char			*expand_token_var(char *str, int *i, t_req *res);
 #endif

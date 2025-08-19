@@ -18,7 +18,6 @@
 void			parse_tokens(t_req *req);
 int				process_input(char *output, t_req *res);
 int				tokenize_and_validate(t_req *res);
-char			**expand_tokens(char **tokens, t_req *res);
 t_cmd			*init_cmd(void);
 int				is_redirect(const char *token);
 void			cleanup_and_return(t_req *req);
