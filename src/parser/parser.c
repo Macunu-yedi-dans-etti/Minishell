@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: musoysal <musoysal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:14:48 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/20 11:17:25 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/20 12:40:43 by musoysal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	parse_tokens(t_req *req)
 {
-	int	i;
-	t_parse_result res;
+	int				i;
+	t_parse_result	res;
 
 	if (parse_syntax_check(req))
 		return ;
@@ -31,7 +31,7 @@ void	parse_tokens(t_req *req)
 		{
 			if (req->heredoc_interrupted || handle_pipe_processing(&i, req))
 				return (cleanup_and_return(req));
-			continue;
+			continue ;
 		}
 		set_command_path(req->cur_cmd, req);
 		add_cmd_to_list(&req->cmds, req->cur_cmd);

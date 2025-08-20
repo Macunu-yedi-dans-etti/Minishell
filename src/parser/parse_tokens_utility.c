@@ -12,24 +12,25 @@
 
 #include "../../minishell.h"
 
-static t_parse_result handle_process_result(t_parse_result result, t_req *req, int *i, int *has_cmd)
+static t_parse_result	handle_process_result(t_parse_result result, t_req *req,
+	int *i, int *has_cmd)
 {
-       if (result == PARSE_ERROR)
-       {
-	       free_cmd(req->cur_cmd);
-	       req->cur_cmd = NULL;
-	       return PARSE_ERROR;
-       }
-       else if (result == PARSE_CMD_FOUND)
-       {
-	       *has_cmd = 1;
-	       (*i)++;
-       }
-       else if (result == PARSE_REDIRECT)
-	       return PARSE_CONTINUE;
-       else
-	       (*i)++;
-       return PARSE_NONE;
+	if (result == PARSE_ERROR)
+	{
+		free_cmd(req->cur_cmd);
+		req->cur_cmd = NULL;
+		return (PARSE_ERROR);
+	}
+	else if (result == PARSE_CMD_FOUND)
+	{
+		*has_cmd = 1;
+		(*i)++;
+	}
+	else if (result == PARSE_REDIRECT)
+		return (PARSE_CONTINUE);
+	else
+		(*i)++;
+	return (PARSE_NONE);
 }
 
 static int	check_heredoc_and_free(t_req *req)
@@ -43,33 +44,33 @@ static int	check_heredoc_and_free(t_req *req)
 	return (0);
 }
 
-t_parse_result process_command_tokens(int *i, t_req *req, int status)
+t_parse_result	process_command_tokens(int *i, t_req *req, int status)
 {
-	int	has_cmd;
-	t_parse_result result;
+	int				has_cmd;
+	t_parse_result	result;
 
 	req->cur_cmd = init_cmd();
 	if (!req->cur_cmd)
 		return (1);
 	has_cmd = 0;
-       while (req->tokens[*i] && ft_strncmp(req->tokens[*i], "|", 2))
-       {
-	       if (check_heredoc_and_free(req))
-		       return (1);
-	       result = handle_token_processing(i, req);
-	       status = handle_process_result(result, req, i, &has_cmd);
-	       if (status == PARSE_ERROR)
-		       return PARSE_ERROR;
-	       if (status == PARSE_CONTINUE)
-		       continue ;
-       }
+	while (req->tokens[*i] && ft_strncmp(req->tokens[*i], "|", 2))
+	{
+		if (check_heredoc_and_free(req))
+			return (1);
+		result = handle_token_processing(i, req);
+		status = handle_process_result(result, req, i, &has_cmd);
+		if (status == PARSE_ERROR)
+			return (PARSE_ERROR);
+		if (status == PARSE_CONTINUE)
+			continue ;
+	}
 	if (!has_cmd)
 	{
 		free_cmd(req->cur_cmd);
 		req->cur_cmd = NULL;
-		return PARSE_PIPE;
+		return (PARSE_PIPE);
 	}
-	return PARSE_OK;
+	return (PARSE_OK);
 }
 
 void	set_command_path(t_cmd *cmd, t_req *req)
