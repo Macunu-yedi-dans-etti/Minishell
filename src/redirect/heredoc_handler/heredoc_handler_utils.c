@@ -62,8 +62,14 @@ void	handle_heredoc_line(char *line, const char *delimiter,
 		close(pipe_fd[1]);
 		exit(130);
 	}
-	if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
+	/*
+	 * Bash uyumluluğu: Unquoted heredoc delimiter'da gövde satırları
+	 * genişletilir ve delimiter kontrolü genişletilmiş içerikle yapılır.
+	 */
+	expanded = expand_line(line, req, 0, ft_strdup(""));
+	if (!ft_strncmp(expanded, delimiter, ft_strlen(delimiter) + 1))
 	{
+		free(expanded);
 		free(line);
 		close(pipe_fd[1]);
 		free_cmd(req->cur_cmd);
@@ -71,7 +77,6 @@ void	handle_heredoc_line(char *line, const char *delimiter,
 		free_req(req);
 		exit(0);
 	}
-	expanded = expand_line(line, req, 0, ft_strdup(""));
 	write(pipe_fd[1], expanded, ft_strlen(expanded));
 	write(pipe_fd[1], "\n", 1);
 	free(expanded);

@@ -55,6 +55,11 @@ static int	handle_redir(char *redir, char *file, t_req *req)
 		return (add_redirect(req->cur_cmd, R_APPEND, file));
 	else if (!ft_strncmp(redir, "<<", 3))
 	{
+		/*
+		 * Bash uyumluluğu: Delimiter token'ı expand edilir (örn. <<$USER).
+		 * Tokenler zaten quote+expand aşamasından geçti, bu yüzden burada
+		 * doğrudan expanded 'file' ile heredoc başlatıyoruz.
+		 */
 		if (req && req->heredoc_interrupted)
 			return (1);
 		req->cur_cmd->infile = handle_heredoc(file, req);
