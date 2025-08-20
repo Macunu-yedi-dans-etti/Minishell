@@ -64,12 +64,6 @@ t_parse_result	process_command_tokens(int *i, t_req *req, int status)
 		if (status == PARSE_CONTINUE)
 			continue ;
 	}
-	/*
-	 * Komut adı yoksa bile (yalnızca yönlendirme var ise) bu komutu
-	 * düşürmeyelim. Redirect-only komutlar dosya oluşturma/açma
-	 * etkilerini gerçekleştirmelidir. Bu nedenle PARSE_OK döndürüp
-	 * üst seviyede komut listesine eklenmesini sağlıyoruz.
-	 */
 	return (PARSE_OK);
 }
 

@@ -71,13 +71,11 @@ static void	setup_and_exec(t_pipeline_data *data)
 {
 	close_extra_fds(data->real_in, data->output_fd);
 	reset_signals();
-	/* Önce redirect'leri uygula ki sadece redirect olan komutlar dosya oluşturabilsin */
 	if (apply_redirects(data))
 	{
 		free_all(data);
 		exit(1);
 	}
-	/* Komut yoksa (yalnızca redirect ise), child burada sessizce çıkar */
 	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0]
 		|| data->current_cmd->full_cmd[0][0] == '\0')
 	{

@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:30:01 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/19 14:12:59 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/20 15:39:08 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,6 @@ void	handle_heredoc_line(char *line, const char *delimiter,
 		close(pipe_fd[1]);
 		exit(130);
 	}
-	/*
-	 * Bash uyumluluğu: Unquoted heredoc delimiter'da gövde satırları
-	 * genişletilir ve delimiter kontrolü genişletilmiş içerikle yapılır.
-	 */
 	expanded = expand_line(line, req, 0, ft_strdup(""));
 	if (!ft_strncmp(expanded, delimiter, ft_strlen(delimiter) + 1))
 	{

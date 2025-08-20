@@ -14,11 +14,6 @@
 
 void	handle_empty_commands(t_pipeline_data *data)
 {
-	/*
-	 * Eğer komut yoksa fakat redirect varsa, fork edip child içinde
-	 * redirect'leri uygulayacağız. Bu nedenle yalnızca redirect
-	 * yoksa süreci atlayalım.
-	 */
 	if (!data->current_cmd)
 	{
 		data->req->exit_stat = 0;
