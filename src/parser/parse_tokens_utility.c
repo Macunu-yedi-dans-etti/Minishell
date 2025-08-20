@@ -12,24 +12,24 @@
 
 #include "../../minishell.h"
 
-static int	handle_process_result(int result, t_req *req, int *i, int *has_cmd)
+static t_parse_result handle_process_result(t_parse_result result, t_req *req, int *i, int *has_cmd)
 {
-	if (result == 1)
+	if (result == PARSE_ERROR)
 	{
 		free_cmd(req->cur_cmd);
 		req->cur_cmd = NULL;
-		return (1);
+		return PARSE_ERROR;
 	}
-	else if (result == 2)
+	else if (result == PARSE_PIPE)
 	{
 		*has_cmd = 1;
 		(*i)++;
 	}
-	else if (result == 3)
-		return (0);
+	else if (result == PARSE_REDIRECT)
+		return PARSE_CONTINUE;
 	else
 		(*i)++;
-	return (-1);
+	return -1;
 }
 
 static int	check_heredoc_and_free(t_req *req)
@@ -43,10 +43,10 @@ static int	check_heredoc_and_free(t_req *req)
 	return (0);
 }
 
-int	process_command_tokens(int *i, t_req *req, int status)
+t_parse_result process_command_tokens(int *i, t_req *req)
 {
 	int	has_cmd;
-	int	result;
+	t_parse_result result;
 
 	req->cur_cmd = init_cmd();
 	if (!req->cur_cmd)
@@ -57,19 +57,19 @@ int	process_command_tokens(int *i, t_req *req, int status)
 		if (check_heredoc_and_free(req))
 			return (1);
 		result = handle_token_processing(i, req);
-		status = handle_process_result(result, req, i, &has_cmd);
-		if (status == 1)
-			return (1);
-		if (status == 0)
+		int status = handle_process_result(result, req, i, &has_cmd);
+		if (status == PARSE_ERROR)
+			return PARSE_ERROR;
+		if (status == PARSE_CONTINUE)
 			continue ;
 	}
 	if (!has_cmd)
 	{
 		free_cmd(req->cur_cmd);
 		req->cur_cmd = NULL;
-		return (2);
+		return PARSE_PIPE;
 	}
-	return (0);
+	return PARSE_OK;
 }
 
 void	set_command_path(t_cmd *cmd, t_req *req)

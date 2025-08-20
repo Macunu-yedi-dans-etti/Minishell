@@ -116,21 +116,21 @@ static int	process_token_expand(t_cmd *cmd, char *token, t_req *req)
 	return (0);
 }
 
-int	handle_token_processing(int *i, t_req *req)
+t_parse_result handle_token_processing(int *i, t_req *req)
 {
 	if (is_redirect(req->tokens[*i]))
 	{
 		if (set_redirection(i, req))
-			return (1);
-		return (3);
+			return PARSE_ERROR;
+		return PARSE_REDIRECT;
 	}
 	else if (req->tokens[*i])
 	{
 		if (process_token_expand(req->cur_cmd, req->tokens[*i], req))
-			return (1);
+			return PARSE_ERROR;
 		if (!req->cur_cmd->full_cmd && req->tokens[*i][0] == '\0')
-			return (0);
-		return (2);
+			return PARSE_OK;
+		return PARSE_PIPE;
 	}
-	return (0);
+	return PARSE_OK;
 }
