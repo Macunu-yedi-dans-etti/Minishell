@@ -31,7 +31,7 @@ int				is_redirect(const char *token);
 void			cleanup_and_return(t_req *req);
 void			add_cmd_to_list(t_cmd **list, t_cmd *new_cmd);
 int				parse_syntax_check(t_req *req);
-t_parse_result  process_command_tokens(int *i, t_req *req);
+t_parse_result  process_command_tokens(int *i, t_req *req, int status);
 t_parse_result	handle_token_processing(int *i, t_req *req);
 int				handle_pipe_processing(int *i, t_req *req);
 void			set_command_path(t_cmd *cmd, t_req *req);

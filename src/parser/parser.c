@@ -6,7 +6,7 @@
 /*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:14:48 by haloztur          #+#    #+#             */
-/*   Updated: 2025/08/20 09:42:48 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/20 10:58:10 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	parse_tokens(t_req *req)
 	{
 		if (req->heredoc_interrupted)
 			return (cleanup_and_return(req));
-		res = process_command_tokens(&i, req);
+		res = process_command_tokens(&i, req, 0);
 		if (res == PARSE_ERROR)
 			return (cleanup_and_return(req));
 		else if (res == PARSE_PIPE)

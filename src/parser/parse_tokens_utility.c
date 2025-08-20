@@ -43,7 +43,7 @@ static int	check_heredoc_and_free(t_req *req)
 	return (0);
 }
 
-t_parse_result process_command_tokens(int *i, t_req *req)
+t_parse_result process_command_tokens(int *i, t_req *req, int status)
 {
 	int	has_cmd;
 	t_parse_result result;
@@ -57,7 +57,7 @@ t_parse_result process_command_tokens(int *i, t_req *req)
 		if (check_heredoc_and_free(req))
 			return (1);
 		result = handle_token_processing(i, req);
-		int status = handle_process_result(result, req, i, &has_cmd);
+		status = handle_process_result(result, req, i, &has_cmd);
 		if (status == PARSE_ERROR)
 			return PARSE_ERROR;
 		if (status == PARSE_CONTINUE)
