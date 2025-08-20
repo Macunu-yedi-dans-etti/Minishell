@@ -15,13 +15,16 @@
 
 # include "types.h"
 
-typedef enum e_parse_result {
-	PARSE_OK = 0,         // Başarıyla işlendi
-	PARSE_ERROR = 1,      // Hatalı durum
-	PARSE_PIPE = 2,       // Pipe veya özel durum
-	PARSE_REDIRECT = 3,   // Redirect işlendi
-	PARSE_CONTINUE = 4    // Sadece continue yapılacak durum
-}   t_parse_result;
+typedef enum e_parse_result
+{
+	PARSE_OK,
+	PARSE_ERROR,
+	PARSE_REDIRECT,
+	PARSE_PIPE,
+	PARSE_CONTINUE,
+	PARSE_CMD_FOUND,
+	PARSE_NONE
+}      t_parse_result;
 
 void			parse_tokens(t_req *req);
 int				process_input(char *output, t_req *res);
