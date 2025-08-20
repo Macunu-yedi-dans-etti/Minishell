@@ -14,14 +14,27 @@
 
 void	handle_empty_commands(t_pipeline_data *data)
 {
-	if (!data->current_cmd || !data->current_cmd->full_cmd
-		|| !data->current_cmd->full_cmd[0])
+	/*
+	 * Eğer komut yoksa fakat redirect varsa, fork edip child içinde
+	 * redirect'leri uygulayacağız. Bu nedenle yalnızca redirect
+	 * yoksa süreci atlayalım.
+	 */
+	if (!data->current_cmd)
 	{
 		data->req->exit_stat = 0;
 		data->pids[data->i] = -1;
 		return ;
 	}
-	if (data->current_cmd->full_cmd[0][0] == '\0')
+	if ((!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
+		&& !data->current_cmd->redirects)
+	{
+		data->req->exit_stat = 0;
+		data->pids[data->i] = -1;
+		return ;
+	}
+	if (data->current_cmd->full_cmd && data->current_cmd->full_cmd[0]
+		&& data->current_cmd->full_cmd[0][0] == '\0'
+		&& !data->current_cmd->redirects)
 	{
 		data->req->exit_stat = 0;
 		data->pids[data->i] = -1;

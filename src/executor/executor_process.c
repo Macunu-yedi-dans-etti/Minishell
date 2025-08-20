@@ -71,17 +71,18 @@ static void	setup_and_exec(t_pipeline_data *data)
 {
 	close_extra_fds(data->real_in, data->output_fd);
 	reset_signals();
-	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0]
-		|| data->current_cmd->full_cmd[0][0] == '\0')
-	{
-		ft_putendl_fd("minishell: empty command", 2);
-		free_all(data);
-		exit(0);
-	}
+	/* Önce redirect'leri uygula ki sadece redirect olan komutlar dosya oluşturabilsin */
 	if (apply_redirects(data))
 	{
 		free_all(data);
 		exit(1);
+	}
+	/* Komut yoksa (yalnızca redirect ise), child burada sessizce çıkar */
+	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0]
+		|| data->current_cmd->full_cmd[0][0] == '\0')
+	{
+		free_all(data);
+		exit(0);
 	}
 	setup_and_exec_part2(data);
 	if (is_builtin(data->current_cmd->full_cmd[0]))

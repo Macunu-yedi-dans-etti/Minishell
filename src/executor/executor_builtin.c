@@ -41,14 +41,16 @@ void	exec_single_builtin(t_pipeline_data *data)
 
 	backup_out = -1;
 	backup_in = -1;
-	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
+	/* Önce redirect'leri uygula: redirect-only tek komutlarda dosya oluşturulsun */
+	if (apply_redirects(data))
 	{
 		data->req->exit_stat = 1;
 		return ;
 	}
-	if (apply_redirects(data))
+	if (!data->current_cmd->full_cmd || !data->current_cmd->full_cmd[0])
 	{
-		data->req->exit_stat = 1;
+		/* Redirect-only builtin çağrısı: sadece IO ayarı yapıldı, çık */
+		data->req->exit_stat = 0;
 		return ;
 	}
 	setup_builtin_io(data, &backup_in, &backup_out);
